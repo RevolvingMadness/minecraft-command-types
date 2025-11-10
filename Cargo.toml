@@ -7,3 +7,9 @@ edition = "2024"
 nonempty = "0.12.0"
 itertools = "0.14.0"
 ordered-float = "5.1.0"
+serde = { version = "1.0.228", features = ["derive"], optional = true }
+serde_json = { version = "1.0.145", optional = true }
+
+[features]
+default = []
+serde = ["dep:serde", "serde_json", "ordered-float/serde"]
