@@ -2,10 +2,10 @@ use itertools::Itertools;
 use nonempty::{nonempty, NonEmpty};
 use std::fmt::{Display, Formatter};
 
-#[derive(Debug, Clone, Eq, PartialEq)]
+#[derive(Debug, Clone, Eq, PartialEq, Hash)]
 pub struct ResourceLocation {
-    namespace: Option<String>,
-    paths: NonEmpty<String>,
+    pub namespace: Option<String>,
+    pub paths: NonEmpty<String>,
 }
 
 impl ResourceLocation {
