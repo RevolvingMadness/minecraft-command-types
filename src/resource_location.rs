@@ -4,6 +4,7 @@ use std::fmt::{Display, Formatter};
 
 #[derive(Debug, Clone, Eq, PartialEq, Hash, Ord, PartialOrd)]
 pub struct ResourceLocation {
+    pub is_tag: bool,
     pub namespace: Option<String>,
     pub paths: NonEmpty<String>,
 }
@@ -11,8 +12,9 @@ pub struct ResourceLocation {
 impl ResourceLocation {
     #[inline]
     #[must_use]
-    pub fn new<T: ToString>(namespace: Option<T>, paths: NonEmpty<T>) -> Self {
+    pub fn new<T: ToString>(is_tag: bool, namespace: Option<T>, paths: NonEmpty<T>) -> Self {
         Self {
+            is_tag,
             namespace: namespace.map(|namespace| namespace.to_string()),
             paths: paths.map(|path| path.to_string()),
         }
@@ -21,7 +23,7 @@ impl ResourceLocation {
     #[inline]
     #[must_use]
     pub fn new_namespace_paths<T: ToString>(namespace: T, paths: NonEmpty<T>) -> Self {
-        Self::new(Some(namespace), paths)
+        Self::new(false, Some(namespace), paths)
     }
 
     #[inline]
@@ -33,18 +35,22 @@ impl ResourceLocation {
     #[inline]
     #[must_use]
     pub fn new_paths<T: ToString>(paths: NonEmpty<T>) -> Self {
-        Self::new(None, paths)
+        Self::new(false, None, paths)
     }
 
     #[inline]
     #[must_use]
     pub fn new_path<T: ToString>(path: T) -> Self {
-        Self::new(None, nonempty![path])
+        Self::new_paths(nonempty![path])
     }
 }
 
 impl Display for ResourceLocation {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        if self.is_tag {
+            "#".fmt(f)?;
+        }
+
         if let Some(namespace) = &self.namespace {
             if *namespace != "minecraft".to_string() {
                 write!(f, "{}:", namespace)?;

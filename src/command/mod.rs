@@ -10,6 +10,7 @@ use crate::command::permission_level::PermissionLevel;
 use crate::entity_selector::EntitySelector;
 use crate::enums::advancement_type::AdvancementType;
 use crate::enums::banlist_type::BanlistType;
+use crate::item::ItemPredicate;
 use crate::resource_location::ResourceLocation;
 use std::fmt::{Display, Formatter};
 
@@ -21,14 +22,16 @@ pub enum Command {
     BanIP(String, Option<String>),
     Banlist(Option<BanlistType>),
     Bossbar(BossbarCommand),
+    Clear(Option<EntitySelector>, Option<ItemPredicate>, Option<i32>),
 }
 
 impl Command {
     pub fn get_permission_level(&self) -> PermissionLevel {
         match self {
-            Command::Advancement(..) | Command::Attribute(..) | Command::Bossbar(..) => {
-                PermissionLevel::try_from(2).unwrap()
-            }
+            Command::Advancement(..)
+            | Command::Attribute(..)
+            | Command::Bossbar(..)
+            | Command::Clear(..) => PermissionLevel::try_from(2).unwrap(),
             Command::Ban(..) | Command::BanIP(..) | Command::Banlist(..) => {
                 PermissionLevel::try_from(3).unwrap()
             }
@@ -80,6 +83,23 @@ impl Display for Command {
                 Ok(())
             }
             Command::Bossbar(command) => write!(f, "bossbar {}", command),
+            Command::Clear(selector, item, max_count) => {
+                "clear".fmt(f)?;
+
+                if let Some(selector) = selector {
+                    write!(f, " {}", selector)?;
+
+                    if let Some(item) = item {
+                        write!(f, " {}", item)?;
+
+                        if let Some(max_count) = max_count {
+                            write!(f, " {}", max_count)?;
+                        }
+                    }
+                }
+
+                Ok(())
+            }
         }
     }
 }
