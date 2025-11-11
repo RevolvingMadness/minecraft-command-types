@@ -1,3 +1,6 @@
-mod coordinate;
+pub mod coordinate;
+pub mod entity_selector;
+pub mod enums;
+pub mod range;
 pub mod resource_location;
-mod snbt;
+pub mod snbt;

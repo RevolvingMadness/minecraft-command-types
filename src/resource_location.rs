@@ -2,7 +2,7 @@ use itertools::Itertools;
 use nonempty::{nonempty, NonEmpty};
 use std::fmt::{Display, Formatter};
 
-#[derive(Debug, Clone, Eq, PartialEq, Hash)]
+#[derive(Debug, Clone, Eq, PartialEq, Hash, Ord, PartialOrd)]
 pub struct ResourceLocation {
     pub namespace: Option<String>,
     pub paths: NonEmpty<String>,
