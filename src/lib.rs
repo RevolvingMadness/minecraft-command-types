@@ -1,3 +1,4 @@
+pub mod command;
 pub mod coordinate;
 pub mod entity_selector;
 pub mod enums;
