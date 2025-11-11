@@ -1,9 +1,11 @@
-mod advancement;
-mod attribute;
-mod permission_level;
+pub mod advancement;
+pub mod attribute;
+pub mod bossbar;
+pub mod permission_level;
 
 use crate::command::advancement::AdvancementCommand;
 use crate::command::attribute::AttributeCommand;
+use crate::command::bossbar::BossbarCommand;
 use crate::command::permission_level::PermissionLevel;
 use crate::entity_selector::EntitySelector;
 use crate::enums::advancement_type::AdvancementType;
@@ -18,12 +20,13 @@ pub enum Command {
     Ban(EntitySelector, Option<String>),
     BanIP(String, Option<String>),
     Banlist(Option<BanlistType>),
+    Bossbar(BossbarCommand),
 }
 
 impl Command {
     pub fn get_permission_level(&self) -> PermissionLevel {
         match self {
-            Command::Advancement(..) | Command::Attribute(..) => {
+            Command::Advancement(..) | Command::Attribute(..) | Command::Bossbar(..) => {
                 PermissionLevel::try_from(2).unwrap()
             }
             Command::Ban(..) | Command::BanIP(..) | Command::Banlist(..) => {
@@ -76,6 +79,7 @@ impl Display for Command {
 
                 Ok(())
             }
+            Command::Bossbar(command) => write!(f, "bossbar {}", command),
         }
     }
 }
