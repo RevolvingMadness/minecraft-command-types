@@ -195,16 +195,16 @@ impl Display for EntitySelectorOption {
 }
 
 #[derive(Debug, Clone, Eq, PartialEq, Hash)]
-pub struct EntitySelector {
-    pub variable: EntitySelectorVariable,
-    pub options: Vec<EntitySelectorOption>,
+pub enum EntitySelector {
+    Variable(EntitySelectorVariable, Vec<EntitySelectorOption>),
+    Name(String),
 }
 
 impl EntitySelector {
     #[inline]
     #[must_use]
     pub fn new(variable: EntitySelectorVariable, options: Vec<EntitySelectorOption>) -> Self {
-        Self { variable, options }
+        Self::Variable(variable, options)
     }
 
     #[inline]
@@ -288,26 +288,31 @@ impl Default for EntitySelector {
 
 impl Display for EntitySelector {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
-        write!(f, "@{}", self.variable)?;
+        match self {
+            EntitySelector::Variable(variable, options) => {
+                write!(f, "@{}", variable)?;
 
-        if !self.options.is_empty() {
-            write!(f, "[")?;
-            let mut first = true;
+                if !options.is_empty() {
+                    write!(f, "[")?;
+                    let mut first = true;
 
-            for option in &self.options {
-                if !first {
-                    write!(f, ", ")?;
+                    for option in options {
+                        if !first {
+                            write!(f, ", ")?;
+                        }
+
+                        write!(f, "{}", option)?;
+
+                        first = false;
+                    }
+
+                    write!(f, "]")?;
                 }
 
-                write!(f, "{}", option)?;
-
-                first = false;
+                Ok(())
             }
-
-            write!(f, "]")?;
+            EntitySelector::Name(name) => name.fmt(f),
         }
-
-        Ok(())
     }
 }
 
