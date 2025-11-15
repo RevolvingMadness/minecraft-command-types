@@ -68,6 +68,7 @@ pub enum Command {
     Dialog(DialogCommand),
     Difficulty(Difficulty),
     Effect(EffectCommand),
+    Enchant(EntitySelector, ResourceLocation, Option<i32>),
 }
 
 impl Command {
@@ -84,7 +85,8 @@ impl Command {
             | Command::DefaultGamemode(..)
             | Command::Dialog(..)
             | Command::Difficulty(..)
-            | Command::Effect(..) => PermissionLevel::try_from(2).unwrap(),
+            | Command::Effect(..)
+            | Command::Enchant(..) => PermissionLevel::try_from(2).unwrap(),
             Command::Ban(..)
             | Command::BanIP(..)
             | Command::Banlist(..)
@@ -208,6 +210,15 @@ impl Display for Command {
             Command::Dialog(dialog_command) => write!(f, "dialog {}", dialog_command),
             Command::Difficulty(difficulty) => write!(f, "difficulty {}", difficulty),
             Command::Effect(effect_command) => write!(f, "effect {}", effect_command),
+            Command::Enchant(selector, enchantment, level) => {
+                write!(f, "enchant {} {}", selector, enchantment)?;
+
+                if let Some(level) = level {
+                    write!(f, " {}", level)?;
+                }
+
+                Ok(())
+            }
         }
     }
 }
