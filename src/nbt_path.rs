@@ -6,6 +6,19 @@ use std::fmt::{Display, Formatter};
 
 type Compound = BTreeMap<String, SNBT>;
 
+fn escape_nbt_path_key(name: &str) -> String {
+    let needs_quotes = name
+        .chars()
+        .any(|c| matches!(c, ' ' | '"' | '\'' | '[' | ']' | '.' | '{' | '}'));
+
+    if needs_quotes {
+        let escaped_content = name.replace('\\', "\\\\").replace('"', "\\\"");
+        format!("\"{}\"", escaped_content)
+    } else {
+        name.to_string()
+    }
+}
+
 #[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
 pub enum NbtPathNode {
     RootCompound(Compound),
@@ -30,22 +43,13 @@ impl Display for NbtPathNode {
                             write!(f, ",")?;
                         }
                         first = false;
-                        if k.chars().any(|c| !c.is_ascii_alphanumeric() && c != '_') {
-                            write!(f, "\"{}\":{}", k, v)?;
-                        } else {
-                            write!(f, "{}:{}", k, v)?;
-                        }
+                        write!(f, "{}:{}", escape_nbt_path_key(k), v)?;
                     }
                     write!(f, "}}")
                 }
             }
             NbtPathNode::Named(name, filter) => {
-                let needs_quotes = name.chars().any(|c| !c.is_ascii_alphanumeric() && c != '_');
-                if needs_quotes {
-                    write!(f, "\"{}\"", name)?;
-                } else {
-                    write!(f, "{}", name)?;
-                }
+                write!(f, "{}", escape_nbt_path_key(name))?;
 
                 if let Some(comp) = filter {
                     if !comp.is_empty() {
@@ -56,16 +60,11 @@ impl Display for NbtPathNode {
                                 write!(f, ",")?;
                             }
                             first = false;
-                            if k.chars().any(|c| !c.is_ascii_alphanumeric() && c != '_') {
-                                write!(f, "\"{}\":{}", k, v)?;
-                            } else {
-                                write!(f, "{}:{}", k, v)?;
-                            }
+                            write!(f, "{}:{}", escape_nbt_path_key(k), v)?;
                         }
                         write!(f, "}}")?;
                     }
                 }
-
                 Ok(())
             }
             NbtPathNode::Index(Some(snbt)) => write!(f, "[{}]", snbt),
@@ -97,7 +96,6 @@ mod tests {
     use std::collections::BTreeMap;
 
     fn snbt_string(s: &str) -> SNBT {
-        // Helper to create SNBT string nodes
         SNBT::String(s.to_string())
     }
 
@@ -114,7 +112,7 @@ mod tests {
         let path = NbtPath(vec![
             NbtPathNode::Named("foo".to_string(), None),
             NbtPathNode::Named("bar".to_string(), None),
-            NbtPathNode::Index(Some(snbt_string("0"))),
+            NbtPathNode::Index(Some(SNBT::Integer(0))),
             NbtPathNode::Named("A [crazy name]!".to_string(), None),
             NbtPathNode::Named("baz".to_string(), None),
         ]);
@@ -126,12 +124,11 @@ mod tests {
     fn test_example_2() {
         let path = NbtPath(vec![
             NbtPathNode::Named("Items".to_string(), None),
-            NbtPathNode::Index(Some(snbt_string("1"))),
-            NbtPathNode::Named(
-                "components.minecraft:written_book_content.pages".to_string(),
-                None,
-            ),
-            NbtPathNode::Index(Some(snbt_string("3"))),
+            NbtPathNode::Index(Some(SNBT::Integer(1))),
+            NbtPathNode::Named("components".to_string(), None),
+            NbtPathNode::Named("minecraft:written_book_content".to_string(), None),
+            NbtPathNode::Named("pages".to_string(), None),
+            NbtPathNode::Index(Some(SNBT::Integer(3))),
             NbtPathNode::Named("raw".to_string(), None),
         ]);
 
@@ -171,5 +168,23 @@ mod tests {
         ]);
 
         assert_eq!(path.to_string(), r#"foo.bar[].baz"#);
+    }
+
+    #[test]
+    fn test_complex_escaping_with_new_rules() {
+        let path_with_quotes = NbtPath(vec![NbtPathNode::Named(
+            "key with \"quotes\"".to_string(),
+            None,
+        )]);
+        assert_eq!(path_with_quotes.to_string(), r#""key with \"quotes\"""#);
+
+        let path_with_dot = NbtPath(vec![NbtPathNode::Named("key.with.dot".to_string(), None)]);
+        assert_eq!(path_with_dot.to_string(), r#""key.with.dot""#);
+
+        let path_with_slash = NbtPath(vec![NbtPathNode::Named(
+            "key with \\ backslash".to_string(),
+            None,
+        )]);
+        assert_eq!(path_with_slash.to_string(), r#""key with \\ backslash""#);
     }
 }
