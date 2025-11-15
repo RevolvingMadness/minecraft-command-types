@@ -1,13 +1,15 @@
 pub mod advancement;
 pub mod attribute;
 pub mod bossbar;
-mod clone;
+pub mod clone;
+pub mod damage;
 pub mod permission_level;
 
 use crate::command::advancement::AdvancementCommand;
 use crate::command::attribute::AttributeCommand;
 use crate::command::bossbar::BossbarCommand;
 use crate::command::clone::CloneMaskMode;
+use crate::command::damage::DamageType;
 use crate::command::permission_level::PermissionLevel;
 use crate::coordinate::Coordinates;
 use crate::entity_selector::EntitySelector;
@@ -18,6 +20,7 @@ use crate::has_macro::HasMacro;
 use crate::item::ItemPredicate;
 use crate::resource_location::ResourceLocation;
 use minecraft_command_types_proc_macros::HasMacro;
+use ordered_float::NotNan;
 use std::fmt::{Display, Formatter};
 
 #[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
@@ -39,6 +42,12 @@ pub enum Command {
         mask_mode: CloneMaskMode,
         clone_mode: CloneMode,
     },
+    Damage(
+        EntitySelector,
+        NotNan<f32>,
+        Option<ResourceLocation>,
+        Option<DamageType>,
+    ),
 }
 
 impl Command {
@@ -48,7 +57,8 @@ impl Command {
             | Command::Attribute(..)
             | Command::Bossbar(..)
             | Command::Clear(..)
-            | Command::Clone { .. } => PermissionLevel::try_from(2).unwrap(),
+            | Command::Clone { .. }
+            | Command::Damage(..) => PermissionLevel::try_from(2).unwrap(),
             Command::Ban(..) | Command::BanIP(..) | Command::Banlist(..) => {
                 PermissionLevel::try_from(3).unwrap()
             }
@@ -146,6 +156,19 @@ impl Display for Command {
                 }
 
                 write!(f, " {} {}", mask_mode, clone_mode)
+            }
+            Command::Damage(target, amount, type_, command_type) => {
+                write!(f, "damage {} {}", target, amount)?;
+
+                if let Some(type_) = type_ {
+                    write!(f, " {}", type_)?;
+
+                    if let Some(command_type) = command_type {
+                        write!(f, " {}", command_type)?;
+                    }
+                }
+
+                Ok(())
             }
         }
     }
