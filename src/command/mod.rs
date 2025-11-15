@@ -24,6 +24,7 @@ use crate::entity_selector::EntitySelector;
 use crate::enums::advancement_type::AdvancementType;
 use crate::enums::banlist_type::BanlistType;
 use crate::enums::clone_mode::CloneMode;
+use crate::enums::difficulty::Difficulty;
 use crate::enums::gamemode::Gamemode;
 use crate::has_macro::HasMacro;
 use crate::item::ItemPredicate;
@@ -63,6 +64,7 @@ pub enum Command {
     DefaultGamemode(Gamemode),
     Deop(EntitySelector),
     Dialog(DialogCommand),
+    Difficulty(Difficulty),
 }
 
 impl Command {
@@ -77,7 +79,8 @@ impl Command {
             | Command::Data(..)
             | Command::Datapack(..)
             | Command::DefaultGamemode(..)
-            | Command::Dialog(..) => PermissionLevel::try_from(2).unwrap(),
+            | Command::Dialog(..)
+            | Command::Difficulty(..) => PermissionLevel::try_from(2).unwrap(),
             Command::Ban(..)
             | Command::BanIP(..)
             | Command::Banlist(..)
@@ -199,6 +202,7 @@ impl Display for Command {
             Command::DefaultGamemode(gamemode) => write!(f, "defaultgamemode {}", gamemode),
             Command::Deop(selector) => write!(f, "deop {}", selector),
             Command::Dialog(dialog_command) => write!(f, "dialog {}", dialog_command),
+            Command::Difficulty(difficulty) => write!(f, "difficulty {}", difficulty),
         }
     }
 }
