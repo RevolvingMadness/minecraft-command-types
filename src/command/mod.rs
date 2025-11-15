@@ -5,6 +5,7 @@ pub mod clone;
 pub mod damage;
 pub mod data;
 pub mod datapack;
+pub mod debug;
 pub mod permission_level;
 
 use crate::command::advancement::AdvancementCommand;
@@ -14,6 +15,7 @@ use crate::command::clone::CloneMaskMode;
 use crate::command::damage::DamageType;
 use crate::command::data::DataCommand;
 use crate::command::datapack::DatapackCommand;
+use crate::command::debug::DebugCommandType;
 use crate::command::permission_level::PermissionLevel;
 use crate::coordinate::Coordinates;
 use crate::entity_selector::EntitySelector;
@@ -54,6 +56,7 @@ pub enum Command {
     ),
     Data(DataCommand),
     Datapack(DatapackCommand),
+    Debug(DebugCommandType),
 }
 
 impl Command {
@@ -67,7 +70,7 @@ impl Command {
             | Command::Damage(..)
             | Command::Data(..)
             | Command::Datapack(..) => PermissionLevel::try_from(2).unwrap(),
-            Command::Ban(..) | Command::BanIP(..) | Command::Banlist(..) => {
+            Command::Ban(..) | Command::BanIP(..) | Command::Banlist(..) | Command::Debug(..) => {
                 PermissionLevel::try_from(3).unwrap()
             }
         }
@@ -180,6 +183,7 @@ impl Display for Command {
             }
             Command::Data(data_command) => write!(f, "data {}", data_command),
             Command::Datapack(datapack_command) => write!(f, "datapack {},", datapack_command),
+            Command::Debug(debug_type) => write!(f, "debug {}", debug_type),
         }
     }
 }
