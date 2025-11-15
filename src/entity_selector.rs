@@ -1,14 +1,16 @@
 use crate::enums::gamemode::Gamemode;
 use crate::enums::sort::Sort;
+use crate::has_macro::HasMacro;
 use crate::range::{FloatRange, IntegerRange};
 use crate::resource_location::ResourceLocation;
 use crate::snbt::SNBT;
+use minecraft_command_types_proc_macros::HasMacro;
 use ordered_float::NotNan;
 use std::collections::BTreeMap;
 use std::fmt;
 use std::fmt::{Display, Formatter};
 
-#[derive(Debug, Clone, Eq, PartialEq, Hash)]
+#[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
 pub enum EntitySelectorVariable {
     /// Selects the nearest player from the command's execution. If there are multiple nearest players, caused by them being precisely the same distance away, the player who most recently joined the server is selected.
     P,
@@ -58,7 +60,7 @@ fn fmt_b_tree_map<K: Display, V: Display>(
     write!(f, "}}")
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, Hash)]
+#[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
 pub enum AdvancementChoiceType {
     Boolean(bool),
     Criterion(BTreeMap<String, bool>),
@@ -85,7 +87,7 @@ impl Display for AdvancementChoiceType {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, Hash)]
+#[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
 pub enum EntitySelectorOption {
     X(NotNan<f32>),
     Y(NotNan<f32>),
@@ -194,7 +196,7 @@ impl Display for EntitySelectorOption {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, Hash)]
+#[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
 pub enum EntitySelector {
     Variable(EntitySelectorVariable, Vec<EntitySelectorOption>),
     Name(String),

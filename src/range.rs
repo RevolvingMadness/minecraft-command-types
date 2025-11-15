@@ -1,8 +1,10 @@
+use crate::has_macro::HasMacro;
+use minecraft_command_types_proc_macros::HasMacro;
 use ordered_float::NotNan;
 use std::fmt::{Display, Formatter};
 use std::ops::Range;
 
-#[derive(Debug, Clone, Eq, PartialEq, Hash)]
+#[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
 pub struct IntegerRange {
     pub min: Option<i32>,
     pub max: Option<i32>,
@@ -99,7 +101,7 @@ impl From<Range<Option<i32>>> for IntegerRange {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, Hash)]
+#[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
 pub struct FloatRange {
     pub min: Option<NotNan<f32>>,
     pub max: Option<NotNan<f32>>,

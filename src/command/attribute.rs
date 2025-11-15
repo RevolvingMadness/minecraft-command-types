@@ -1,11 +1,13 @@
 use crate::enums::attribute::AttributeAddModifier;
+use crate::has_macro::HasMacro;
 use crate::resource_location::ResourceLocation;
+use minecraft_command_types_proc_macros::HasMacro;
 use ordered_float::NotNan;
 use std::fmt::{Display, Formatter};
 
 type F32 = NotNan<f32>;
 
-#[derive(Debug, Clone, Eq, PartialEq, Hash)]
+#[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
 pub enum BaseAttributeCommand {
     /// Returns the base value of the specified attribute.
     Get(Option<F32>),
@@ -33,7 +35,7 @@ impl Display for BaseAttributeCommand {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, Hash)]
+#[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
 pub enum ModifierAttributeCommand {
     /// Adds an attribute modifier with the specified properties if no modifier with the same ID already existed.
     Add(ResourceLocation, F32, AttributeAddModifier),
@@ -65,7 +67,7 @@ impl Display for ModifierAttributeCommand {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, Hash)]
+#[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
 pub enum AttributeCommand {
     /// Returns the total value of the specified attribute.
     Get(Option<F32>),

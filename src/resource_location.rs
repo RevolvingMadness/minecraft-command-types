@@ -1,8 +1,10 @@
+use crate::has_macro::HasMacro;
 use itertools::Itertools;
+use minecraft_command_types_proc_macros::HasMacro;
 use nonempty::{nonempty, NonEmpty};
 use std::fmt::{Display, Formatter};
 
-#[derive(Debug, Clone, Eq, PartialEq, Hash, Ord, PartialOrd)]
+#[derive(Debug, Clone, Eq, PartialEq, Hash, Ord, PartialOrd, HasMacro)]
 pub struct ResourceLocation {
     pub is_tag: bool,
     pub namespace: Option<String>,

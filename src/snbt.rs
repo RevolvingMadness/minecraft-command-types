@@ -24,6 +24,7 @@ pub enum SNBT {
     ByteArray(Vec<i8>),
     IntegerArray(Vec<i32>),
     LongArray(Vec<i64>),
+    Macro(String),
 }
 
 impl SNBT {
@@ -40,6 +41,15 @@ impl SNBT {
             compound.get(key)
         } else {
             None
+        }
+    }
+
+    pub fn has_macro(&self) -> bool {
+        match self {
+            SNBT::Macro(_) => true,
+            SNBT::List(list) => list.iter().any(|v| v.has_macro()),
+            SNBT::Compound(compound) => compound.values().any(|v| v.has_macro()),
+            _ => false,
         }
     }
 }
@@ -124,6 +134,7 @@ impl Display for SNBT {
 
                 write!(f, "]")
             }
+            SNBT::Macro(name) => write!(f, "$({})", name),
         }
     }
 }
@@ -148,6 +159,7 @@ impl Serialize for SNBT {
             SNBT::ByteArray(v) => v.serialize(serializer),
             SNBT::IntegerArray(v) => v.serialize(serializer),
             SNBT::LongArray(v) => v.serialize(serializer),
+            SNBT::Macro(v) => format!("<macro {}>", v).serialize(serializer),
         }
     }
 }
@@ -462,6 +474,63 @@ mod tests {
         fn test_deserialize_nan_double_fails() {
             let result: Result<SNBT, _> = serde_json::from_str("NaN");
             assert!(result.is_err());
+        }
+    }
+
+    #[cfg(test)]
+    mod has_macro_tests {
+        use super::*;
+        use std::collections::BTreeMap;
+
+        #[test]
+        fn test_has_macro_direct() {
+            let snbt = SNBT::Macro("test".to_string());
+            assert!(snbt.has_macro());
+        }
+
+        #[test]
+        fn test_has_macro_in_list() {
+            let snbt = SNBT::List(vec![
+                SNBT::Integer(1),
+                SNBT::Macro("test".to_string()),
+                SNBT::Integer(2),
+            ]);
+            assert!(snbt.has_macro());
+        }
+
+        #[test]
+        fn test_has_macro_in_compound() {
+            let mut map = BTreeMap::new();
+            map.insert("a".to_string(), SNBT::Integer(1));
+            map.insert("b".to_string(), SNBT::Macro("test".to_string()));
+            let snbt = SNBT::Compound(map);
+            assert!(snbt.has_macro());
+        }
+
+        #[test]
+        fn test_has_macro_nested() {
+            let mut inner_map = BTreeMap::new();
+            inner_map.insert("c".to_string(), SNBT::Macro("test".to_string()));
+            let mut map = BTreeMap::new();
+            map.insert("a".to_string(), SNBT::Integer(1));
+            map.insert("b".to_string(), SNBT::Compound(inner_map));
+            let snbt = SNBT::Compound(map);
+            assert!(snbt.has_macro());
+        }
+
+        #[test]
+        fn test_no_macro() {
+            let snbt = SNBT::List(vec![SNBT::Integer(1), SNBT::Integer(2)]);
+            assert!(!snbt.has_macro());
+        }
+
+        #[test]
+        fn test_no_macro_in_compound() {
+            let mut map = BTreeMap::new();
+            map.insert("a".to_string(), SNBT::Integer(1));
+            map.insert("b".to_string(), SNBT::String("test".to_string()));
+            let snbt = SNBT::Compound(map);
+            assert!(!snbt.has_macro());
         }
     }
 }

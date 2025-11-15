@@ -1,8 +1,10 @@
+use crate::has_macro::HasMacro;
 use crate::resource_location::ResourceLocation;
 use crate::snbt::SNBT;
+use minecraft_command_types_proc_macros::HasMacro;
 use std::fmt::{Display, Formatter};
 
-#[derive(Debug, Clone, Eq, PartialEq, Hash)]
+#[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
 pub enum ItemTest {
     Component(ResourceLocation),
     ComponentMatches(ResourceLocation, SNBT),
@@ -19,7 +21,7 @@ impl Display for ItemTest {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, Hash)]
+#[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
 pub enum ItemType {
     ResourceLocation(ResourceLocation),
     Wildcard,
@@ -34,7 +36,7 @@ impl Display for ItemType {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, Hash)]
+#[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
 pub struct NegatedTest(pub bool, pub ItemTest);
 
 impl Display for NegatedTest {
@@ -46,7 +48,7 @@ impl Display for NegatedTest {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, Hash)]
+#[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
 pub struct OrGroup(pub Vec<NegatedTest>);
 
 impl Display for OrGroup {
@@ -56,7 +58,7 @@ impl Display for OrGroup {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, Hash)]
+#[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
 pub struct ItemPredicate {
     id: ItemType,
     tests: Vec<OrGroup>,

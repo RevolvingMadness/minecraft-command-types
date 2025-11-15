@@ -10,11 +10,13 @@ use crate::command::permission_level::PermissionLevel;
 use crate::entity_selector::EntitySelector;
 use crate::enums::advancement_type::AdvancementType;
 use crate::enums::banlist_type::BanlistType;
+use crate::has_macro::HasMacro;
 use crate::item::ItemPredicate;
 use crate::resource_location::ResourceLocation;
+use minecraft_command_types_proc_macros::HasMacro;
 use std::fmt::{Display, Formatter};
 
-#[derive(Debug, Clone, Eq, PartialEq, Hash)]
+#[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
 pub enum Command {
     Advancement(AdvancementType, EntitySelector, AdvancementCommand),
     Attribute(EntitySelector, ResourceLocation, AttributeCommand),

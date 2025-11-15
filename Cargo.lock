@@ -46,11 +46,20 @@ name = "minecraft-command-types"
 version = "0.1.0"
 dependencies = [
  "itertools",
+ "minecraft-command-types_proc-macros",
  "nonempty",
  "ordered-float",
  "serde",
  "serde_json",
  "strum",
+]
+
+[[package]]
+name = "minecraft-command-types_proc-macros"
+version = "0.1.0"
+dependencies = [
+ "quote",
+ "syn",
 ]
 
 [[package]]
