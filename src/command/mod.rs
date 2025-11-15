@@ -22,6 +22,7 @@ use crate::entity_selector::EntitySelector;
 use crate::enums::advancement_type::AdvancementType;
 use crate::enums::banlist_type::BanlistType;
 use crate::enums::clone_mode::CloneMode;
+use crate::enums::gamemode::Gamemode;
 use crate::has_macro::HasMacro;
 use crate::item::ItemPredicate;
 use crate::resource_location::ResourceLocation;
@@ -57,6 +58,7 @@ pub enum Command {
     Data(DataCommand),
     Datapack(DatapackCommand),
     Debug(DebugCommandType),
+    DefaultGamemode(Gamemode),
 }
 
 impl Command {
@@ -69,7 +71,8 @@ impl Command {
             | Command::Clone { .. }
             | Command::Damage(..)
             | Command::Data(..)
-            | Command::Datapack(..) => PermissionLevel::try_from(2).unwrap(),
+            | Command::Datapack(..)
+            | Command::DefaultGamemode(..) => PermissionLevel::try_from(2).unwrap(),
             Command::Ban(..) | Command::BanIP(..) | Command::Banlist(..) | Command::Debug(..) => {
                 PermissionLevel::try_from(3).unwrap()
             }
@@ -184,6 +187,7 @@ impl Display for Command {
             Command::Data(data_command) => write!(f, "data {}", data_command),
             Command::Datapack(datapack_command) => write!(f, "datapack {},", datapack_command),
             Command::Debug(debug_type) => write!(f, "debug {}", debug_type),
+            Command::DefaultGamemode(gamemode) => write!(f, "defaultgamemode {}", gamemode),
         }
     }
 }
