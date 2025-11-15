@@ -6,6 +6,7 @@ pub mod damage;
 pub mod data;
 pub mod datapack;
 pub mod debug;
+pub mod dialog;
 pub mod permission_level;
 
 use crate::command::advancement::AdvancementCommand;
@@ -16,6 +17,7 @@ use crate::command::damage::DamageType;
 use crate::command::data::DataCommand;
 use crate::command::datapack::DatapackCommand;
 use crate::command::debug::DebugCommandType;
+use crate::command::dialog::DialogCommand;
 use crate::command::permission_level::PermissionLevel;
 use crate::coordinate::Coordinates;
 use crate::entity_selector::EntitySelector;
@@ -60,6 +62,7 @@ pub enum Command {
     Debug(DebugCommandType),
     DefaultGamemode(Gamemode),
     Deop(EntitySelector),
+    Dialog(DialogCommand),
 }
 
 impl Command {
@@ -73,7 +76,8 @@ impl Command {
             | Command::Damage(..)
             | Command::Data(..)
             | Command::Datapack(..)
-            | Command::DefaultGamemode(..) => PermissionLevel::try_from(2).unwrap(),
+            | Command::DefaultGamemode(..)
+            | Command::Dialog(..) => PermissionLevel::try_from(2).unwrap(),
             Command::Ban(..)
             | Command::BanIP(..)
             | Command::Banlist(..)
@@ -194,6 +198,7 @@ impl Display for Command {
             Command::Debug(debug_type) => write!(f, "debug {}", debug_type),
             Command::DefaultGamemode(gamemode) => write!(f, "defaultgamemode {}", gamemode),
             Command::Deop(selector) => write!(f, "deop {}", selector),
+            Command::Dialog(dialog_command) => write!(f, "dialog {}", dialog_command),
         }
     }
 }
