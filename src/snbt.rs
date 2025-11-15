@@ -1,3 +1,4 @@
+use crate::has_macro::HasMacro;
 use ordered_float::NotNan;
 #[cfg(feature = "serde")]
 use serde::de;
@@ -43,8 +44,10 @@ impl SNBT {
             None
         }
     }
+}
 
-    pub fn has_macro(&self) -> bool {
+impl HasMacro for SNBT {
+    fn has_macro(&self) -> bool {
         match self {
             SNBT::Macro(_) => true,
             SNBT::List(list) => list.iter().any(|v| v.has_macro()),

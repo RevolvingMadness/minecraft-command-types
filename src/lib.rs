@@ -4,6 +4,7 @@ pub mod entity_selector;
 pub mod enums;
 pub mod has_macro;
 pub mod item;
+pub mod nbt_path;
 pub mod range;
 pub mod resource_location;
 pub mod snbt;

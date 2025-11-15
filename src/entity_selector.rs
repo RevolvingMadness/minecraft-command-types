@@ -7,7 +7,6 @@ use crate::snbt::SNBT;
 use minecraft_command_types_proc_macros::HasMacro;
 use ordered_float::NotNan;
 use std::collections::BTreeMap;
-use std::fmt;
 use std::fmt::{Display, Formatter};
 
 #[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
@@ -43,7 +42,7 @@ impl Display for EntitySelectorVariable {
 fn fmt_b_tree_map<K: Display, V: Display>(
     f: &mut Formatter<'_>,
     input: &BTreeMap<K, V>,
-) -> fmt::Result {
+) -> std::fmt::Result {
     write!(f, "{{")?;
     let mut first = true;
 
@@ -79,7 +78,7 @@ impl From<BTreeMap<String, bool>> for AdvancementChoiceType {
 }
 
 impl Display for AdvancementChoiceType {
-    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
             AdvancementChoiceType::Boolean(bool) => bool.fmt(f),
             AdvancementChoiceType::Criterion(map) => fmt_b_tree_map(f, map),
@@ -143,7 +142,7 @@ macro_rules! write_entity_selector_option {
 }
 
 impl Display for EntitySelectorOption {
-    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
             EntitySelectorOption::X(x) => write_entity_selector_option!(f, "x", x),
             EntitySelectorOption::Y(y) => write_entity_selector_option!(f, "y", y),
@@ -289,7 +288,7 @@ impl Default for EntitySelector {
 }
 
 impl Display for EntitySelector {
-    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
             EntitySelector::Variable(variable, options) => {
                 write!(f, "@{}", variable)?;
