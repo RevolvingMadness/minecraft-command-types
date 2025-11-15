@@ -59,6 +59,7 @@ pub enum Command {
     Datapack(DatapackCommand),
     Debug(DebugCommandType),
     DefaultGamemode(Gamemode),
+    Deop(EntitySelector),
 }
 
 impl Command {
@@ -73,15 +74,19 @@ impl Command {
             | Command::Data(..)
             | Command::Datapack(..)
             | Command::DefaultGamemode(..) => PermissionLevel::try_from(2).unwrap(),
-            Command::Ban(..) | Command::BanIP(..) | Command::Banlist(..) | Command::Debug(..) => {
-                PermissionLevel::try_from(3).unwrap()
-            }
+            Command::Ban(..)
+            | Command::BanIP(..)
+            | Command::Banlist(..)
+            | Command::Debug(..)
+            | Command::Deop(..) => PermissionLevel::try_from(3).unwrap(),
         }
     }
 
     pub fn is_multiplayer_only(&self) -> bool {
         match self {
-            Command::Ban(..) | Command::BanIP(..) | Command::Banlist(..) => true,
+            Command::Ban(..) | Command::BanIP(..) | Command::Banlist(..) | Command::Deop(..) => {
+                true
+            }
             _ => false,
         }
     }
@@ -188,6 +193,7 @@ impl Display for Command {
             Command::Datapack(datapack_command) => write!(f, "datapack {},", datapack_command),
             Command::Debug(debug_type) => write!(f, "debug {}", debug_type),
             Command::DefaultGamemode(gamemode) => write!(f, "defaultgamemode {}", gamemode),
+            Command::Deop(selector) => write!(f, "deop {}", selector),
         }
     }
 }
