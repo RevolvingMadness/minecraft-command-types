@@ -7,6 +7,7 @@ pub mod data;
 pub mod datapack;
 pub mod debug;
 pub mod dialog;
+pub mod effect;
 pub mod permission_level;
 
 use crate::command::advancement::AdvancementCommand;
@@ -18,6 +19,7 @@ use crate::command::data::DataCommand;
 use crate::command::datapack::DatapackCommand;
 use crate::command::debug::DebugCommandType;
 use crate::command::dialog::DialogCommand;
+use crate::command::effect::EffectCommand;
 use crate::command::permission_level::PermissionLevel;
 use crate::coordinate::Coordinates;
 use crate::entity_selector::EntitySelector;
@@ -65,6 +67,7 @@ pub enum Command {
     Deop(EntitySelector),
     Dialog(DialogCommand),
     Difficulty(Difficulty),
+    Effect(EffectCommand),
 }
 
 impl Command {
@@ -80,7 +83,8 @@ impl Command {
             | Command::Datapack(..)
             | Command::DefaultGamemode(..)
             | Command::Dialog(..)
-            | Command::Difficulty(..) => PermissionLevel::try_from(2).unwrap(),
+            | Command::Difficulty(..)
+            | Command::Effect(..) => PermissionLevel::try_from(2).unwrap(),
             Command::Ban(..)
             | Command::BanIP(..)
             | Command::Banlist(..)
@@ -203,6 +207,7 @@ impl Display for Command {
             Command::Deop(selector) => write!(f, "deop {}", selector),
             Command::Dialog(dialog_command) => write!(f, "dialog {}", dialog_command),
             Command::Difficulty(difficulty) => write!(f, "difficulty {}", difficulty),
+            Command::Effect(effect_command) => write!(f, "effect {}", effect_command),
         }
     }
 }
