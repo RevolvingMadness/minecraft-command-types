@@ -1,15 +1,19 @@
 pub mod advancement;
 pub mod attribute;
 pub mod bossbar;
+mod clone;
 pub mod permission_level;
 
 use crate::command::advancement::AdvancementCommand;
 use crate::command::attribute::AttributeCommand;
 use crate::command::bossbar::BossbarCommand;
+use crate::command::clone::CloneMaskMode;
 use crate::command::permission_level::PermissionLevel;
+use crate::coordinate::Coordinates;
 use crate::entity_selector::EntitySelector;
 use crate::enums::advancement_type::AdvancementType;
 use crate::enums::banlist_type::BanlistType;
+use crate::enums::clone_mode::CloneMode;
 use crate::has_macro::HasMacro;
 use crate::item::ItemPredicate;
 use crate::resource_location::ResourceLocation;
@@ -25,6 +29,16 @@ pub enum Command {
     Banlist(Option<BanlistType>),
     Bossbar(BossbarCommand),
     Clear(Option<EntitySelector>, Option<ItemPredicate>, Option<i32>),
+    Clone {
+        source_dimension: Option<ResourceLocation>,
+        begin: Coordinates,
+        end: Coordinates,
+        target_dimension: Option<ResourceLocation>,
+        destination: Coordinates,
+        strict: bool,
+        mask_mode: CloneMaskMode,
+        clone_mode: CloneMode,
+    },
 }
 
 impl Command {
@@ -33,7 +47,8 @@ impl Command {
             Command::Advancement(..)
             | Command::Attribute(..)
             | Command::Bossbar(..)
-            | Command::Clear(..) => PermissionLevel::try_from(2).unwrap(),
+            | Command::Clear(..)
+            | Command::Clone { .. } => PermissionLevel::try_from(2).unwrap(),
             Command::Ban(..) | Command::BanIP(..) | Command::Banlist(..) => {
                 PermissionLevel::try_from(3).unwrap()
             }
@@ -101,6 +116,36 @@ impl Display for Command {
                 }
 
                 Ok(())
+            }
+            Command::Clone {
+                source_dimension,
+                begin,
+                end,
+                target_dimension,
+                destination,
+                strict,
+                mask_mode,
+                clone_mode,
+            } => {
+                write!(f, "clone")?;
+
+                if let Some(source_dimension) = source_dimension {
+                    write!(f, " from {}", source_dimension)?;
+                }
+
+                write!(f, " {} {}", begin, end)?;
+
+                if let Some(target_dimension) = target_dimension {
+                    write!(f, " to {}", target_dimension)?;
+                }
+
+                write!(f, " {}", destination)?;
+
+                if *strict {
+                    write!(f, " strict")?;
+                }
+
+                write!(f, " {} {}", mask_mode, clone_mode)
             }
         }
     }

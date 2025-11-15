@@ -1,7 +1,9 @@
+use crate::has_macro::HasMacro;
+use minecraft_command_types_proc_macros::HasMacro;
 use ordered_float::NotNan;
 use std::fmt::{Display, Formatter};
 
-#[derive(Debug, Clone, Eq, PartialEq, Hash)]
+#[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
 pub struct WorldCoordinate {
     relative: bool,
     value: Option<NotNan<f32>>,
@@ -69,7 +71,8 @@ impl Display for WorldCoordinate {
     }
 }
 
-pub enum Coordinate {
+#[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
+pub enum Coordinates {
     World(WorldCoordinate, WorldCoordinate, WorldCoordinate),
     Local(
         Option<NotNan<f64>>,
@@ -78,11 +81,11 @@ pub enum Coordinate {
     ),
 }
 
-impl Coordinate {
+impl Coordinates {
     #[inline]
     #[must_use]
     pub fn new_world(x: WorldCoordinate, y: WorldCoordinate, z: WorldCoordinate) -> Self {
-        Coordinate::World(x, y, z)
+        Coordinates::World(x, y, z)
     }
 
     #[inline]
@@ -102,7 +105,7 @@ impl Coordinate {
         y: Option<NotNan<f64>>,
         z: Option<NotNan<f64>>,
     ) -> Self {
-        Coordinate::Local(x, y, z)
+        Coordinates::Local(x, y, z)
     }
 
     #[inline]
@@ -112,13 +115,13 @@ impl Coordinate {
     }
 }
 
-impl Display for Coordinate {
+impl Display for Coordinates {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            Coordinate::World(x, y, z) => {
+            Coordinates::World(x, y, z) => {
                 write!(f, "{} {} {}", x, y, z)
             }
-            Coordinate::Local(x, y, z) => {
+            Coordinates::Local(x, y, z) => {
                 "^".fmt(f)?;
 
                 if let Some(x) = x {
