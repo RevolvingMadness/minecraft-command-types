@@ -4,6 +4,7 @@ pub mod bossbar;
 pub mod clone;
 pub mod damage;
 pub mod data;
+pub mod datapack;
 pub mod permission_level;
 
 use crate::command::advancement::AdvancementCommand;
@@ -12,6 +13,7 @@ use crate::command::bossbar::BossbarCommand;
 use crate::command::clone::CloneMaskMode;
 use crate::command::damage::DamageType;
 use crate::command::data::DataCommand;
+use crate::command::datapack::DatapackCommand;
 use crate::command::permission_level::PermissionLevel;
 use crate::coordinate::Coordinates;
 use crate::entity_selector::EntitySelector;
@@ -51,6 +53,7 @@ pub enum Command {
         Option<DamageType>,
     ),
     Data(DataCommand),
+    Datapack(DatapackCommand),
 }
 
 impl Command {
@@ -62,7 +65,8 @@ impl Command {
             | Command::Clear(..)
             | Command::Clone { .. }
             | Command::Damage(..)
-            | Command::Data(..) => PermissionLevel::try_from(2).unwrap(),
+            | Command::Data(..)
+            | Command::Datapack(..) => PermissionLevel::try_from(2).unwrap(),
             Command::Ban(..) | Command::BanIP(..) | Command::Banlist(..) => {
                 PermissionLevel::try_from(3).unwrap()
             }
@@ -174,7 +178,8 @@ impl Display for Command {
 
                 Ok(())
             }
-            Command::Data(data_command) => data_command.fmt(f),
+            Command::Data(data_command) => write!(f, "data {}", data_command),
+            Command::Datapack(datapack_command) => write!(f, "datapack {},", datapack_command),
         }
     }
 }
