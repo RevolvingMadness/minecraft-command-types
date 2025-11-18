@@ -10,6 +10,7 @@ pub mod dialog;
 pub mod effect;
 pub mod execute;
 pub mod experience;
+pub mod fetch_profiel;
 pub mod permission_level;
 
 use crate::command::advancement::AdvancementCommand;
@@ -24,6 +25,7 @@ use crate::command::dialog::DialogCommand;
 use crate::command::effect::EffectCommand;
 use crate::command::execute::ExecuteSubcommand;
 use crate::command::experience::ExperienceCommand;
+use crate::command::fetch_profiel::FetchProfileCommand;
 use crate::command::permission_level::PermissionLevel;
 use crate::coordinate::Coordinates;
 use crate::entity_selector::EntitySelector;
@@ -87,6 +89,7 @@ pub enum Command {
     Enchant(EntitySelector, ResourceLocation, Option<i32>),
     Execute(ExecuteSubcommand),
     Experience(ExperienceCommand),
+    FetchProfile(FetchProfileCommand),
 }
 
 impl Command {
@@ -106,7 +109,8 @@ impl Command {
             | Command::Effect(..)
             | Command::Enchant(..)
             | Command::Execute(..)
-            | Command::Experience(..) => PermissionLevel::try_from(2).unwrap(),
+            | Command::Experience(..)
+            | Command::FetchProfile(..) => PermissionLevel::try_from(2).unwrap(),
             Command::Ban(..)
             | Command::BanIP(..)
             | Command::Banlist(..)
@@ -241,6 +245,7 @@ impl Display for Command {
             }
             Command::Execute(subcommand) => write!(f, "execute {}", subcommand),
             Command::Experience(command) => write!(f, "experience {}", command),
+            Command::FetchProfile(command) => write!(f, "fetchprofile {}", command),
         }
     }
 }
