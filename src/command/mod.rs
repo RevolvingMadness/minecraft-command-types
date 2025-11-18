@@ -8,6 +8,7 @@ pub mod datapack;
 pub mod debug;
 pub mod dialog;
 pub mod effect;
+pub mod execute;
 pub mod permission_level;
 
 use crate::command::advancement::AdvancementCommand;
@@ -20,6 +21,7 @@ use crate::command::datapack::DatapackCommand;
 use crate::command::debug::DebugCommandType;
 use crate::command::dialog::DialogCommand;
 use crate::command::effect::EffectCommand;
+use crate::command::execute::ExecuteSubcommand;
 use crate::command::permission_level::PermissionLevel;
 use crate::coordinate::Coordinates;
 use crate::entity_selector::EntitySelector;
@@ -34,6 +36,18 @@ use crate::resource_location::ResourceLocation;
 use minecraft_command_types_proc_macros::HasMacro;
 use ordered_float::NotNan;
 use std::fmt::{Display, Formatter};
+
+#[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
+pub struct PlayerScore {
+    selector: EntitySelector,
+    objective: String,
+}
+
+impl Display for PlayerScore {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{} {}", self.selector, self.objective)
+    }
+}
 
 #[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
 pub enum Command {
@@ -69,6 +83,7 @@ pub enum Command {
     Difficulty(Difficulty),
     Effect(EffectCommand),
     Enchant(EntitySelector, ResourceLocation, Option<i32>),
+    Execute(ExecuteSubcommand),
 }
 
 impl Command {
@@ -86,7 +101,8 @@ impl Command {
             | Command::Dialog(..)
             | Command::Difficulty(..)
             | Command::Effect(..)
-            | Command::Enchant(..) => PermissionLevel::try_from(2).unwrap(),
+            | Command::Enchant(..)
+            | Command::Execute(..) => PermissionLevel::try_from(2).unwrap(),
             Command::Ban(..)
             | Command::BanIP(..)
             | Command::Banlist(..)
@@ -219,6 +235,7 @@ impl Display for Command {
 
                 Ok(())
             }
+            Command::Execute(subcommand) => write!(f, "execute {}", subcommand),
         }
     }
 }

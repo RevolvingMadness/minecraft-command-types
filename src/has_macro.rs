@@ -1,5 +1,5 @@
 use nonempty::NonEmpty;
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, BTreeSet};
 
 pub trait HasMacro {
     fn has_macro(&self) -> bool;
@@ -55,5 +55,11 @@ impl<T: HasMacro> HasMacro for Box<T> {
 impl<K, V: HasMacro> HasMacro for BTreeMap<K, V> {
     fn has_macro(&self) -> bool {
         self.values().any(|t| t.has_macro())
+    }
+}
+
+impl<T: HasMacro> HasMacro for BTreeSet<T> {
+    fn has_macro(&self) -> bool {
+        self.iter().any(|t| t.has_macro())
     }
 }
