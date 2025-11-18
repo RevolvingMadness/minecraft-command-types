@@ -31,13 +31,10 @@ macro_rules! create_enum {
     ) => {
         use crate::has_macro::HasMacro;
         use minecraft_command_types_proc_macros::HasMacro;
-        #[cfg(feature = "serde")]
         use serde::{Deserialize, Serialize};
         use strum::{Display, EnumString};
 
-        #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-        #[cfg_attr(feature = "serde", serde(rename_all = "snake_case"))]
-        #[derive(Debug, Clone, Eq, PartialEq, Hash, Display, EnumString, HasMacro, $($custom_derives),*)]
+        #[derive(Debug, Clone, Eq, PartialEq, Hash, Display, EnumString, HasMacro, Serialize, Deserialize, $($custom_derives),*)]
         #[strum(serialize_all = "snake_case")]
         pub enum $name {
             $($(#[$variant_attr])* $variant,)*

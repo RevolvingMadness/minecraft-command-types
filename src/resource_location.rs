@@ -1,8 +1,11 @@
 use crate::has_macro::HasMacro;
 use itertools::Itertools;
 use minecraft_command_types_proc_macros::HasMacro;
-use nonempty::{nonempty, NonEmpty};
+use nonempty::{NonEmpty, nonempty};
+use serde::de::Visitor;
+use serde::{Deserialize, Deserializer, Serialize, Serializer, de};
 use std::fmt::{Display, Formatter};
+use std::str::FromStr;
 
 #[derive(Debug, Clone, Eq, PartialEq, Hash, Ord, PartialOrd, HasMacro)]
 pub struct ResourceLocation {
@@ -60,5 +63,125 @@ impl Display for ResourceLocation {
         }
 
         self.paths.iter().join("/").fmt(f)
+    }
+}
+
+#[derive(Debug)]
+pub enum ResourceLocationParseError {
+    EmptyString,
+    InvalidFormat(String),
+}
+
+impl Display for ResourceLocationParseError {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        match self {
+            ResourceLocationParseError::EmptyString => {
+                write!(f, "Resource location string cannot be empty")
+            }
+            ResourceLocationParseError::InvalidFormat(msg) => {
+                write!(f, "Invalid resource location format: {}", msg)
+            }
+        }
+    }
+}
+
+impl std::error::Error for ResourceLocationParseError {}
+
+impl FromStr for ResourceLocation {
+    type Err = ResourceLocationParseError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        if s.is_empty() {
+            return Err(ResourceLocationParseError::EmptyString);
+        }
+
+        let mut remaining = s;
+        let mut is_tag = false;
+
+        if remaining.starts_with('#') {
+            is_tag = true;
+            remaining = &remaining[1..];
+        }
+
+        let parts: Vec<&str> = remaining.split(':').collect();
+
+        let (namespace_raw, path_raw) = match parts.len() {
+            1 => (None, parts[0]),
+            2 => {
+                if parts[0].is_empty() {
+                    return Err(ResourceLocationParseError::InvalidFormat(
+                        "Namespace component cannot be empty".to_string(),
+                    ));
+                }
+                (Some(parts[0]), parts[1])
+            }
+            _ => {
+                return Err(ResourceLocationParseError::InvalidFormat(
+                    "Too many ':' separators".to_string(),
+                ));
+            }
+        };
+
+        if path_raw.is_empty() {
+            return Err(ResourceLocationParseError::InvalidFormat(
+                "Path component cannot be empty".to_string(),
+            ));
+        }
+
+        let path_components: Vec<String> = path_raw.split('/').map(|s| s.to_owned()).collect();
+
+        let paths = NonEmpty::from_vec(path_components)
+            .expect("Path component check guarantees paths are not empty");
+
+        let namespace = namespace_raw.map(|s| s.to_string());
+
+        Ok(ResourceLocation {
+            is_tag,
+            namespace,
+            paths,
+        })
+    }
+}
+
+impl Serialize for ResourceLocation {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        serializer.collect_str(self)
+    }
+}
+
+struct ResourceLocationVisitor;
+
+impl<'de> Visitor<'de> for ResourceLocationVisitor {
+    type Value = ResourceLocation;
+
+    fn expecting(&self, formatter: &mut Formatter) -> std::fmt::Result {
+        formatter.write_str("a string representing a Minecraft resource location (e.g., 'minecraft:stone', 'stone', or '#forge:ingots/iron')")
+    }
+
+    fn visit_str<E>(self, v: &str) -> Result<Self::Value, E>
+    where
+        E: de::Error,
+    {
+        v.parse()
+            .map_err(|e| E::custom(format!("failed to parse resource location: {}", e)))
+    }
+
+    fn visit_string<E>(self, v: String) -> Result<Self::Value, E>
+    where
+        E: de::Error,
+    {
+        self.visit_str(&v)
+    }
+}
+
+impl<'de> Deserialize<'de> for ResourceLocation {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        deserializer.deserialize_string(ResourceLocationVisitor)
     }
 }

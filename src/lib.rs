@@ -1,8 +1,8 @@
 pub mod block;
 pub mod command;
 pub mod coordinate;
+pub mod datapack;
 pub mod entity_selector;
-pub mod enums;
 pub mod has_macro;
 pub mod item;
 pub mod nbt_path;

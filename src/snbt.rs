@@ -1,11 +1,7 @@
 use crate::has_macro::HasMacro;
 use ordered_float::NotNan;
-#[cfg(feature = "serde")]
-use serde::de;
-#[cfg(feature = "serde")]
 use serde::de::{Deserialize, Deserializer, MapAccess, SeqAccess, Visitor};
-#[cfg(feature = "serde")]
-use serde::{Serialize, Serializer};
+use serde::{Serialize, Serializer, de};
 use std::collections::BTreeMap;
 use std::fmt::Display;
 use std::fmt::Formatter;
@@ -142,7 +138,6 @@ impl Display for SNBT {
     }
 }
 
-#[cfg(feature = "serde")]
 impl Serialize for SNBT {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
@@ -167,7 +162,6 @@ impl Serialize for SNBT {
     }
 }
 
-#[cfg(feature = "serde")]
 impl<'de> Deserialize<'de> for SNBT {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
@@ -177,10 +171,8 @@ impl<'de> Deserialize<'de> for SNBT {
     }
 }
 
-#[cfg(feature = "serde")]
 struct SNBTVisitor;
 
-#[cfg(feature = "serde")]
 impl<'de> Visitor<'de> for SNBTVisitor {
     type Value = SNBT;
 
@@ -384,7 +376,6 @@ mod tests {
         assert_eq!(SNBT::from(vec![1, 2, 3]), SNBT::IntegerArray(vec![1, 2, 3]));
     }
 
-    #[cfg(feature = "serde")]
     mod serde_tests {
         use super::*;
         use serde_json;

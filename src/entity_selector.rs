@@ -1,5 +1,5 @@
-use crate::enums::gamemode::Gamemode;
-use crate::enums::sort::Sort;
+use crate::command::enums::gamemode::Gamemode;
+use crate::command::enums::sort::Sort;
 use crate::has_macro::HasMacro;
 use crate::range::{FloatRange, IntegerRange};
 use crate::resource_location::ResourceLocation;

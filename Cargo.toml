@@ -8,10 +8,6 @@ nonempty = "0.12.0"
 itertools = "0.14.0"
 ordered-float = "5.1.0"
 strum = { version = "0.27.2", features = ["derive"] }
-serde = { version = "1.0.228", features = ["derive"], optional = true }
-serde_json = { version = "1.0.145", optional = true }
+serde = { version = "1.0.228", features = ["derive"] }
+serde_json = { version = "1.0.145" }
 minecraft-command-types_proc-macros = { path = "minecraft-command-types_proc-macros" }
-
-[features]
-default = []
-serde = ["dep:serde", "serde_json", "ordered-float/serde"]
