@@ -11,6 +11,8 @@ pub mod datapack_list_type;
 pub mod difficulty;
 pub mod entity_anchor;
 pub mod experience_type;
+pub mod fill_mode;
+pub mod fill_replace_mode;
 pub mod gamemode;
 pub mod heightmap;
 pub mod if_blocks_mode;

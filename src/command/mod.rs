@@ -11,8 +11,10 @@ pub mod effect;
 pub mod execute;
 pub mod experience;
 pub mod fetch_profiel;
+pub mod fill;
 pub mod permission_level;
 
+use crate::block::BlockState;
 use crate::command::advancement::AdvancementCommand;
 use crate::command::attribute::AttributeCommand;
 use crate::command::bossbar::BossbarCommand;
@@ -26,6 +28,7 @@ use crate::command::effect::EffectCommand;
 use crate::command::execute::ExecuteSubcommand;
 use crate::command::experience::ExperienceCommand;
 use crate::command::fetch_profiel::FetchProfileCommand;
+use crate::command::fill::FillCommand;
 use crate::command::permission_level::PermissionLevel;
 use crate::coordinate::Coordinates;
 use crate::entity_selector::EntitySelector;
@@ -90,6 +93,7 @@ pub enum Command {
     Execute(ExecuteSubcommand),
     Experience(ExperienceCommand),
     FetchProfile(FetchProfileCommand),
+    Fill(Coordinates, Coordinates, BlockState, Option<FillCommand>),
 }
 
 impl Command {
@@ -110,7 +114,8 @@ impl Command {
             | Command::Enchant(..)
             | Command::Execute(..)
             | Command::Experience(..)
-            | Command::FetchProfile(..) => PermissionLevel::try_from(2).unwrap(),
+            | Command::FetchProfile(..)
+            | Command::Fill(..) => PermissionLevel::try_from(2).unwrap(),
             Command::Ban(..)
             | Command::BanIP(..)
             | Command::Banlist(..)
@@ -246,6 +251,15 @@ impl Display for Command {
             Command::Execute(subcommand) => write!(f, "execute {}", subcommand),
             Command::Experience(command) => write!(f, "experience {}", command),
             Command::FetchProfile(command) => write!(f, "fetchprofile {}", command),
+            Command::Fill(from, to, block_state, command) => {
+                write!(f, "fill {} {} {}", from, to, block_state)?;
+
+                if let Some(command) = command {
+                    write!(f, " {}", command)?;
+                }
+
+                Ok(())
+            }
         }
     }
 }

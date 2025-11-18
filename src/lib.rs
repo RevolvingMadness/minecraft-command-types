@@ -1,3 +1,4 @@
+pub mod block;
 pub mod command;
 pub mod coordinate;
 pub mod entity_selector;
