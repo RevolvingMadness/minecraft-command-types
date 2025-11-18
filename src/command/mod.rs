@@ -94,6 +94,12 @@ pub enum Command {
     Experience(ExperienceCommand),
     FetchProfile(FetchProfileCommand),
     Fill(Coordinates, Coordinates, BlockState, Option<FillCommand>),
+    FillBiome(
+        Coordinates,
+        Coordinates,
+        ResourceLocation,
+        Option<ResourceLocation>,
+    ),
 }
 
 impl Command {
@@ -115,7 +121,8 @@ impl Command {
             | Command::Execute(..)
             | Command::Experience(..)
             | Command::FetchProfile(..)
-            | Command::Fill(..) => PermissionLevel::try_from(2).unwrap(),
+            | Command::Fill(..)
+            | Command::FillBiome(..) => PermissionLevel::try_from(2).unwrap(),
             Command::Ban(..)
             | Command::BanIP(..)
             | Command::Banlist(..)
@@ -256,6 +263,15 @@ impl Display for Command {
 
                 if let Some(command) = command {
                     write!(f, " {}", command)?;
+                }
+
+                Ok(())
+            }
+            Command::FillBiome(from, to, biome, filter) => {
+                write!(f, "fillbiome {} {} {}", from, to, biome)?;
+
+                if let Some(filter) = filter {
+                    write!(f, " {}", filter)?;
                 }
 
                 Ok(())
