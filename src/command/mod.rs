@@ -9,6 +9,7 @@ pub mod debug;
 pub mod dialog;
 pub mod effect;
 pub mod execute;
+pub mod experience;
 pub mod permission_level;
 
 use crate::command::advancement::AdvancementCommand;
@@ -22,6 +23,7 @@ use crate::command::debug::DebugCommandType;
 use crate::command::dialog::DialogCommand;
 use crate::command::effect::EffectCommand;
 use crate::command::execute::ExecuteSubcommand;
+use crate::command::experience::ExperienceCommand;
 use crate::command::permission_level::PermissionLevel;
 use crate::coordinate::Coordinates;
 use crate::entity_selector::EntitySelector;
@@ -84,6 +86,7 @@ pub enum Command {
     Effect(EffectCommand),
     Enchant(EntitySelector, ResourceLocation, Option<i32>),
     Execute(ExecuteSubcommand),
+    Experience(ExperienceCommand),
 }
 
 impl Command {
@@ -102,7 +105,8 @@ impl Command {
             | Command::Difficulty(..)
             | Command::Effect(..)
             | Command::Enchant(..)
-            | Command::Execute(..) => PermissionLevel::try_from(2).unwrap(),
+            | Command::Execute(..)
+            | Command::Experience(..) => PermissionLevel::try_from(2).unwrap(),
             Command::Ban(..)
             | Command::BanIP(..)
             | Command::Banlist(..)
@@ -236,6 +240,7 @@ impl Display for Command {
                 Ok(())
             }
             Command::Execute(subcommand) => write!(f, "execute {}", subcommand),
+            Command::Experience(command) => write!(f, "experience {}", command),
         }
     }
 }

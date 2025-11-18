@@ -10,6 +10,7 @@ pub mod clone_mode;
 pub mod datapack_list_type;
 pub mod difficulty;
 pub mod entity_anchor;
+pub mod experience_type;
 pub mod gamemode;
 pub mod heightmap;
 pub mod if_blocks_mode;
