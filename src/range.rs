@@ -108,6 +108,7 @@ pub struct FloatRange {
 }
 
 impl FloatRange {
+    #[must_use]
     pub fn new(min: Option<NotNan<f32>>, max: Option<NotNan<f32>>) -> FloatRange {
         if min.is_none() && max.is_none() {
             panic!("min and/or max must be Some")
@@ -122,18 +123,26 @@ impl FloatRange {
         FloatRange { min, max }
     }
 
+    #[inline]
+    #[must_use]
     pub fn new_min(min: NotNan<f32>) -> FloatRange {
         Self::new(Some(min), None)
     }
 
+    #[inline]
+    #[must_use]
     pub fn new_max(max: NotNan<f32>) -> FloatRange {
         Self::new(None, Some(max))
     }
 
+    #[inline]
+    #[must_use]
     pub fn new_min_max(min: NotNan<f32>, max: NotNan<f32>) -> FloatRange {
         Self::new(Some(min), Some(max))
     }
 
+    #[inline]
+    #[must_use]
     pub fn new_single(value: NotNan<f32>) -> FloatRange {
         Self::new(Some(value.clone()), Some(value))
     }

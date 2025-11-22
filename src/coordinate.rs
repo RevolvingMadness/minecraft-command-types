@@ -5,8 +5,8 @@ use std::fmt::{Display, Formatter};
 
 #[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
 pub struct WorldCoordinate {
-    relative: bool,
-    value: Option<NotNan<f32>>,
+    pub relative: bool,
+    pub value: Option<NotNan<f32>>,
 }
 
 impl WorldCoordinate {
@@ -75,9 +75,9 @@ impl Display for WorldCoordinate {
 pub enum Coordinates {
     World(WorldCoordinate, WorldCoordinate, WorldCoordinate),
     Local(
-        Option<NotNan<f64>>,
-        Option<NotNan<f64>>,
-        Option<NotNan<f64>>,
+        Option<NotNan<f32>>,
+        Option<NotNan<f32>>,
+        Option<NotNan<f32>>,
     ),
 }
 
@@ -101,9 +101,9 @@ impl Coordinates {
     #[inline]
     #[must_use]
     pub fn new_local(
-        x: Option<NotNan<f64>>,
-        y: Option<NotNan<f64>>,
-        z: Option<NotNan<f64>>,
+        x: Option<NotNan<f32>>,
+        y: Option<NotNan<f32>>,
+        z: Option<NotNan<f32>>,
     ) -> Self {
         Coordinates::Local(x, y, z)
     }

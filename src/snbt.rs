@@ -9,7 +9,6 @@ use std::fmt::Formatter;
 #[derive(Debug, Clone, Eq, PartialEq, Hash)]
 pub enum SNBT {
     Byte(i8),
-    Boolean(bool),
     Short(i16),
     Integer(i32),
     Long(i64),
@@ -57,7 +56,6 @@ impl Display for SNBT {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
             SNBT::Byte(v) => write!(f, "{}b", v),
-            SNBT::Boolean(v) => v.fmt(f),
             SNBT::Short(v) => write!(f, "{}s", v),
             SNBT::Integer(v) => write!(f, "{}", v),
             SNBT::Long(v) => write!(f, "{}l", v),
@@ -145,7 +143,6 @@ impl Serialize for SNBT {
     {
         match self {
             SNBT::Byte(v) => serializer.serialize_i8(*v),
-            SNBT::Boolean(v) => serializer.serialize_bool(*v),
             SNBT::Short(v) => serializer.serialize_i16(*v),
             SNBT::Integer(v) => serializer.serialize_i32(*v),
             SNBT::Long(v) => serializer.serialize_i64(*v),
@@ -178,10 +175,6 @@ impl<'de> Visitor<'de> for SNBTVisitor {
 
     fn expecting(&self, formatter: &mut Formatter) -> std::fmt::Result {
         formatter.write_str("any valid SNBT value")
-    }
-
-    fn visit_bool<E>(self, value: bool) -> Result<Self::Value, E> {
-        Ok(SNBT::Boolean(value))
     }
 
     fn visit_i64<E>(self, value: i64) -> Result<Self::Value, E> {
@@ -238,12 +231,6 @@ impl<'de> Visitor<'de> for SNBTVisitor {
 impl From<i8> for SNBT {
     fn from(i: i8) -> Self {
         SNBT::Byte(i)
-    }
-}
-
-impl From<bool> for SNBT {
-    fn from(b: bool) -> Self {
-        SNBT::Boolean(b)
     }
 }
 
@@ -356,7 +343,6 @@ mod tests {
     #[test]
     fn test_from_implementations() {
         assert_eq!(SNBT::from(10i8), SNBT::Byte(10));
-        assert_eq!(SNBT::from(true), SNBT::Boolean(true));
         assert_eq!(SNBT::from(1000i16), SNBT::Short(1000));
         assert_eq!(SNBT::from(100000i32), SNBT::Integer(100000));
         assert_eq!(SNBT::from(10000000000i64), SNBT::Long(10000000000));
@@ -390,7 +376,6 @@ mod tests {
 
         #[test]
         fn test_serde_primitives() {
-            assert_roundtrip(&SNBT::Boolean(true), "true");
             assert_roundtrip(&SNBT::Long(9223372036854775807), "9223372036854775807");
             assert_roundtrip(&SNBT::Double(nnf64(-1.5e10)), "-15000000000.0");
             assert_roundtrip(
@@ -401,12 +386,8 @@ mod tests {
 
         #[test]
         fn test_serde_list() {
-            let list = SNBT::List(vec![
-                SNBT::Long(1),
-                SNBT::String("two".to_string()),
-                SNBT::Boolean(false),
-            ]);
-            let json = "[1,\"two\",false]";
+            let list = SNBT::List(vec![SNBT::Long(1), SNBT::String("two".to_string())]);
+            let json = "[1,\"two\"]";
             assert_roundtrip(&list, json);
         }
 
@@ -436,13 +417,12 @@ mod tests {
                     SNBT::Compound({
                         let mut item2 = BTreeMap::new();
                         item2.insert("type".to_string(), SNBT::String("B".to_string()));
-                        item2.insert("active".to_string(), SNBT::Boolean(true));
                         item2
                     }),
                 ]),
             );
             let snbt = SNBT::Compound(root);
-            let json = r#"{"data":[{"coords":[1,2,3],"type":"A"},{"active":true,"type":"B"}],"id":123456789}"#;
+            let json = r#"{"data":[{"coords":[1,2,3],"type":"A"},{"type":"B"}],"id":123456789}"#;
             assert_roundtrip(&snbt, json);
         }
 
