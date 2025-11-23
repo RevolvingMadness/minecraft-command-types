@@ -1,11 +1,11 @@
 pub mod pack;
 pub mod tag;
 
-use crate::datapack::pack::Pack;
 use crate::datapack::pack::feature::Features;
 use crate::datapack::pack::filter::Filter;
 use crate::datapack::pack::language::Language;
 use crate::datapack::pack::overlay::Overlays;
+use crate::datapack::pack::Pack;
 use crate::datapack::tag::{Tag, TagType, Worldgen};
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
@@ -31,6 +31,20 @@ pub struct PackMCMeta {
 pub enum FilePathNode<T> {
     Directory(String, Vec<FilePathNode<T>>),
     File(String, T),
+}
+
+impl<T> FilePathNode<T> {
+    pub fn from_str(path: &str, value: T) -> Self {
+        let mut parts = path.split('/').rev();
+        let file_name = parts.next().expect("Path cannot be empty");
+        let mut current_node = FilePathNode::File(file_name.to_string(), value);
+
+        for part in parts {
+            current_node = FilePathNode::Directory(part.to_string(), vec![current_node]);
+        }
+
+        current_node
+    }
 }
 
 pub type MCFunction = String;
@@ -184,6 +198,26 @@ pub struct Datapack {
 }
 
 impl Datapack {
+    #[inline]
+    #[must_use]
+    pub fn new(pack_format: i32, description: Value) -> Datapack {
+        Datapack {
+            pack: PackMCMeta {
+                pack: Pack {
+                    pack_format: Some(pack_format),
+                    description,
+                    max_format: None,
+                    min_format: None,
+                    supported_formats: None,
+                },
+                features: None,
+                filter: None,
+                overlays: None,
+                language: None,
+            },
+            namespaces: BTreeMap::new(),
+        }
+    }
     pub fn write(&self, root_path: &Path) -> io::Result<()> {
         fs::create_dir_all(root_path)?;
 
@@ -200,5 +234,11 @@ impl Datapack {
         }
 
         Ok(())
+    }
+
+    pub fn get_namespace_mut(&mut self, name: &str) -> &mut Namespace {
+        self.namespaces
+            .entry(name.to_string())
+            .or_insert_with(Namespace::default)
     }
 }

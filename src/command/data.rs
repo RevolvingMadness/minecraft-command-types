@@ -75,10 +75,36 @@ impl Display for DataCommandModification {
 }
 
 #[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
+pub enum DataCommandModificationMode {
+    Append,
+    Prepend,
+    Insert(i32),
+    Merge,
+    Set,
+}
+
+impl Display for DataCommandModificationMode {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        match self {
+            DataCommandModificationMode::Append => "append".fmt(f),
+            DataCommandModificationMode::Prepend => "prepend".fmt(f),
+            DataCommandModificationMode::Insert(index) => write!(f, "insert {}", index),
+            DataCommandModificationMode::Merge => "merge".fmt(f),
+            DataCommandModificationMode::Set => "set".fmt(f),
+        }
+    }
+}
+
+#[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
 pub enum DataCommand {
     Get(DataTarget, Option<NbtPath>, Option<NotNan<f32>>),
     Merge(DataTarget, SNBT),
-    Modify(DataTarget, NbtPath, DataCommandModification),
+    Modify(
+        DataTarget,
+        NbtPath,
+        DataCommandModificationMode,
+        DataCommandModification,
+    ),
     Remove(DataTarget, NbtPath),
 }
 
@@ -101,8 +127,12 @@ impl Display for DataCommand {
             DataCommand::Merge(target, nbt) => {
                 write!(f, "merge {} {}", target, nbt)
             }
-            DataCommand::Modify(target, path, modification_command) => {
-                write!(f, "modify {} {} {}", target, path, modification_command)
+            DataCommand::Modify(target, path, modification_mode, modification_command) => {
+                write!(
+                    f,
+                    "modify {} {} {} {}",
+                    target, path, modification_mode, modification_command
+                )
             }
             DataCommand::Remove(target, path) => {
                 write!(f, "remove {} {}", target, path)

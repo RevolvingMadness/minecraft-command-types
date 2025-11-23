@@ -27,7 +27,7 @@ pub enum NbtPathNode {
 }
 
 #[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
-pub struct NbtPath(Vec<NbtPathNode>);
+pub struct NbtPath(pub Vec<NbtPathNode>);
 
 impl Display for NbtPathNode {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
