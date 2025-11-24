@@ -1,11 +1,11 @@
 pub mod pack;
 pub mod tag;
 
+use crate::datapack::pack::Pack;
 use crate::datapack::pack::feature::Features;
 use crate::datapack::pack::filter::Filter;
 use crate::datapack::pack::language::Language;
 use crate::datapack::pack::overlay::Overlays;
-use crate::datapack::pack::Pack;
 use crate::datapack::tag::{Tag, TagType, Worldgen};
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
@@ -47,11 +47,9 @@ impl<T> FilePathNode<T> {
     }
 }
 
-pub type MCFunction = String;
-
 #[derive(Clone, Default)]
 pub struct Namespace {
-    pub functions: Vec<FilePathNode<MCFunction>>,
+    pub functions: Vec<FilePathNode<String>>,
     pub tags: BTreeMap<TagType, Vec<FilePathNode<Tag>>>,
 
     pub advancements: Vec<FilePathNode<Value>>,

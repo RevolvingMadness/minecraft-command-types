@@ -1,4 +1,5 @@
 pub mod block;
+pub mod column_position;
 pub mod command;
 pub mod coordinate;
 pub mod datapack;

@@ -11,8 +11,9 @@ pub mod effect;
 pub mod enums;
 pub mod execute;
 pub mod experience;
-pub mod fetch_profiel;
+pub mod fetch_profile;
 pub mod fill;
+pub mod forceload;
 pub mod permission_level;
 
 use crate::block::BlockState;
@@ -28,8 +29,9 @@ use crate::command::dialog::DialogCommand;
 use crate::command::effect::EffectCommand;
 use crate::command::execute::ExecuteSubcommand;
 use crate::command::experience::ExperienceCommand;
-use crate::command::fetch_profiel::FetchProfileCommand;
+use crate::command::fetch_profile::FetchProfileCommand;
 use crate::command::fill::FillCommand;
+use crate::command::forceload::ForceloadCommand;
 use crate::command::permission_level::PermissionLevel;
 use crate::coordinate::Coordinates;
 use crate::entity_selector::EntitySelector;
@@ -101,6 +103,7 @@ pub enum Command {
         ResourceLocation,
         Option<ResourceLocation>,
     ),
+    Forceload(ForceloadCommand),
 }
 
 impl Command {
@@ -123,7 +126,8 @@ impl Command {
             | Command::Experience(..)
             | Command::FetchProfile(..)
             | Command::Fill(..)
-            | Command::FillBiome(..) => PermissionLevel::try_from(2).unwrap(),
+            | Command::FillBiome(..)
+            | Command::Forceload(..) => PermissionLevel::try_from(2).unwrap(),
             Command::Ban(..)
             | Command::BanIP(..)
             | Command::Banlist(..)
@@ -277,6 +281,7 @@ impl Display for Command {
 
                 Ok(())
             }
+            Command::Forceload(command) => write!(f, "forceload {}", command),
         }
     }
 }
