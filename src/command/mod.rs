@@ -14,6 +14,7 @@ pub mod experience;
 pub mod fetch_profile;
 pub mod fill;
 pub mod forceload;
+pub mod function;
 pub mod permission_level;
 
 use crate::block::BlockState;
@@ -32,6 +33,7 @@ use crate::command::experience::ExperienceCommand;
 use crate::command::fetch_profile::FetchProfileCommand;
 use crate::command::fill::FillCommand;
 use crate::command::forceload::ForceloadCommand;
+use crate::command::function::FunctionCommandArguments;
 use crate::command::permission_level::PermissionLevel;
 use crate::coordinate::Coordinates;
 use crate::entity_selector::EntitySelector;
@@ -104,6 +106,7 @@ pub enum Command {
         Option<ResourceLocation>,
     ),
     Forceload(ForceloadCommand),
+    Function(ResourceLocation, Option<FunctionCommandArguments>),
 }
 
 impl Command {
@@ -127,7 +130,8 @@ impl Command {
             | Command::FetchProfile(..)
             | Command::Fill(..)
             | Command::FillBiome(..)
-            | Command::Forceload(..) => PermissionLevel::try_from(2).unwrap(),
+            | Command::Forceload(..)
+            | Command::Function(..) => PermissionLevel::try_from(2).unwrap(),
             Command::Ban(..)
             | Command::BanIP(..)
             | Command::Banlist(..)
@@ -282,6 +286,15 @@ impl Display for Command {
                 Ok(())
             }
             Command::Forceload(command) => write!(f, "forceload {}", command),
+            Command::Function(function, arguments) => {
+                write!(f, "function {}", function)?;
+
+                if let Some(arguments) = arguments {
+                    write!(f, " {}", arguments)?;
+                }
+
+                Ok(())
+            }
         }
     }
 }
