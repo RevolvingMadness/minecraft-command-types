@@ -7,6 +7,7 @@ use crate::datapack::pack::filter::Filter;
 use crate::datapack::pack::language::Language;
 use crate::datapack::pack::overlay::Overlays;
 use crate::datapack::tag::{Tag, TagType, Worldgen};
+use nonempty::NonEmpty;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use std::collections::BTreeMap;
@@ -40,6 +41,19 @@ impl<T> FilePathNode<T> {
         let mut current_node = FilePathNode::File(file_name.to_string(), value);
 
         for part in parts {
+            current_node = FilePathNode::Directory(part.to_string(), vec![current_node]);
+        }
+
+        current_node
+    }
+
+    pub fn from_nonempty_vec_string(vec: &NonEmpty<String>, value: T) -> Self {
+        let mut vec = vec.iter().rev();
+
+        let file_name = vec.next().expect("Path cannot be empty");
+        let mut current_node = FilePathNode::File(file_name.to_string(), value);
+
+        for part in vec {
             current_node = FilePathNode::Directory(part.to_string(), vec![current_node]);
         }
 
@@ -216,15 +230,15 @@ impl Datapack {
             namespaces: BTreeMap::new(),
         }
     }
-    pub fn write(&self, root_path: &Path) -> io::Result<()> {
-        fs::create_dir_all(root_path)?;
+    pub fn write(&self, datapack_directory: &Path) -> io::Result<()> {
+        fs::create_dir_all(datapack_directory)?;
 
-        let mcmeta_path = root_path.join("pack.mcmeta");
+        let mcmeta_path = datapack_directory.join("pack.mcmeta");
         let mcmeta_content = serde_json::to_string_pretty(&self.pack)
             .map_err(|e| io::Error::new(io::ErrorKind::Other, e))?;
         fs::write(mcmeta_path, mcmeta_content)?;
 
-        let data_path = root_path.join("data");
+        let data_path = datapack_directory.join("data");
 
         for (name, namespace) in &self.namespaces {
             let namespace_path = data_path.join(name);
@@ -238,5 +252,9 @@ impl Datapack {
         self.namespaces
             .entry(name.to_string())
             .or_insert_with(Namespace::default)
+    }
+
+    pub fn add_namespace(&mut self, name: String, namespace: Namespace) {
+        self.namespaces.insert(name, namespace);
     }
 }

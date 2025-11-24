@@ -1,3 +1,5 @@
+use crate::block::BlockState;
+use crate::column_position::ColumnPosition;
 use crate::command::data::DataTarget;
 use crate::command::enums::axis::Axis;
 use crate::command::enums::bossbar_store_type::BossbarStoreType;
@@ -121,11 +123,7 @@ pub enum ExecuteIfSubcommand {
         ResourceLocation,
         Option<Box<ExecuteSubcommand>>,
     ),
-    Block(
-        Coordinates,
-        ResourceLocation,
-        Option<Box<ExecuteSubcommand>>,
-    ),
+    Block(Coordinates, BlockState, Option<Box<ExecuteSubcommand>>),
     Blocks(
         Coordinates,
         Coordinates,
@@ -143,7 +141,7 @@ pub enum ExecuteIfSubcommand {
         ItemPredicate,
         Option<Box<ExecuteSubcommand>>,
     ),
-    Loaded(Coordinates, Option<Box<ExecuteSubcommand>>),
+    Loaded(ColumnPosition, Option<Box<ExecuteSubcommand>>),
     Predicate(ResourceLocation, Option<Box<ExecuteSubcommand>>),
     Score(PlayerScore, ScoreComparison, Option<Box<ExecuteSubcommand>>),
 }
@@ -160,8 +158,8 @@ impl Display for ExecuteIfSubcommand {
 
                 Ok(())
             }
-            ExecuteIfSubcommand::Block(coords, id, next) => {
-                write!(f, "block {} {}", coords, id)?;
+            ExecuteIfSubcommand::Block(coords, predicate, next) => {
+                write!(f, "block {} {}", coords, predicate)?;
 
                 if let Some(next_sub) = next {
                     write!(f, " {}", next_sub)?;
@@ -252,27 +250,23 @@ pub enum ExecuteStoreSubcommand {
         NbtPath,
         NumericSNBTType,
         NotNan<f32>,
-        Option<Box<ExecuteSubcommand>>,
+        Box<ExecuteSubcommand>,
     ),
-    Bossbar(
-        ResourceLocation,
-        BossbarStoreType,
-        Option<Box<ExecuteSubcommand>>,
-    ),
+    Bossbar(ResourceLocation, BossbarStoreType, Box<ExecuteSubcommand>),
     Entity(
         EntitySelector,
         NbtPath,
         NumericSNBTType,
         NotNan<f32>,
-        Option<Box<ExecuteSubcommand>>,
+        Box<ExecuteSubcommand>,
     ),
-    Score(PlayerScore, Option<Box<ExecuteSubcommand>>),
+    Score(PlayerScore, Box<ExecuteSubcommand>),
     Storage(
         ResourceLocation,
         NbtPath,
         NumericSNBTType,
         NotNan<f32>,
-        Option<Box<ExecuteSubcommand>>,
+        Box<ExecuteSubcommand>,
     ),
 }
 
@@ -280,45 +274,35 @@ impl Display for ExecuteStoreSubcommand {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
             ExecuteStoreSubcommand::Block(coords, path, num_type, scale, next) => {
-                write!(f, "block {} {} {} {}", coords, path, num_type, scale)?;
-                if let Some(next_sub) = next {
-                    write!(f, " {}", next_sub)?;
-                }
+                write!(
+                    f,
+                    "block {} {} {} {} {}",
+                    coords, path, num_type, scale, next
+                )?;
 
                 Ok(())
             }
             ExecuteStoreSubcommand::Bossbar(id, store_type, next) => {
-                write!(f, "bossbar {} {}", id, store_type)?;
-                if let Some(next_sub) = next {
-                    write!(f, " {}", next_sub)?;
-                }
+                write!(f, "bossbar {} {} {}", id, store_type, next)?;
 
                 Ok(())
             }
             ExecuteStoreSubcommand::Entity(selector, path, num_type, scale, next) => {
-                write!(f, "entity {} {} {} {}", selector, path, num_type, scale)?;
-
-                if let Some(next_sub) = next {
-                    write!(f, " {}", next_sub)?;
-                }
+                write!(
+                    f,
+                    "entity {} {} {} {} {}",
+                    selector, path, num_type, scale, next
+                )?;
 
                 Ok(())
             }
             ExecuteStoreSubcommand::Score(score, next) => {
-                write!(f, "score {}", score)?;
-
-                if let Some(next_sub) = next {
-                    write!(f, " {}", next_sub)?;
-                }
+                write!(f, "score {} {}", score, next)?;
 
                 Ok(())
             }
             ExecuteStoreSubcommand::Storage(id, path, num_type, scale, next) => {
-                write!(f, "storage {} {} {} {}", id, path, num_type, scale)?;
-
-                if let Some(next_sub) = next {
-                    write!(f, " {}", next_sub)?;
-                }
+                write!(f, "storage {} {} {} {} {}", id, path, num_type, scale, next)?;
 
                 Ok(())
             }
@@ -328,16 +312,16 @@ impl Display for ExecuteStoreSubcommand {
 
 #[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
 pub enum ExecuteSubcommand {
-    Align(BTreeSet<Axis>, Option<Box<ExecuteSubcommand>>),
-    Anchored(EntityAnchor, Option<Box<ExecuteSubcommand>>),
-    As(EntitySelector, Option<Box<ExecuteSubcommand>>),
-    At(EntitySelector, Option<Box<ExecuteSubcommand>>),
-    Facing(Facing, Option<Box<ExecuteSubcommand>>),
-    In(ResourceLocation, Option<Box<ExecuteSubcommand>>),
-    On(Relation, Option<Box<ExecuteSubcommand>>),
-    Positioned(Positioned, Option<Box<ExecuteSubcommand>>),
-    Rotated(Rotated, Option<Box<ExecuteSubcommand>>),
-    Summon(ResourceLocation, Option<Box<ExecuteSubcommand>>),
+    Align(BTreeSet<Axis>, Box<ExecuteSubcommand>),
+    Anchored(EntityAnchor, Box<ExecuteSubcommand>),
+    As(EntitySelector, Box<ExecuteSubcommand>),
+    At(EntitySelector, Box<ExecuteSubcommand>),
+    Facing(Facing, Box<ExecuteSubcommand>),
+    In(ResourceLocation, Box<ExecuteSubcommand>),
+    On(Relation, Box<ExecuteSubcommand>),
+    Positioned(Positioned, Box<ExecuteSubcommand>),
+    Rotated(Rotated, Box<ExecuteSubcommand>),
+    Summon(ResourceLocation, Box<ExecuteSubcommand>),
     If(bool, ExecuteIfSubcommand),
     Store(StoreType, ExecuteStoreSubcommand),
     Run(Box<Command>),
@@ -348,97 +332,57 @@ impl Display for ExecuteSubcommand {
         match self {
             ExecuteSubcommand::Align(axes, next) => {
                 let axes_str: String = axes.iter().map(|a| a.to_string()).collect();
-                write!(f, "align {}", axes_str)?;
-
-                if let Some(next_sub) = next {
-                    write!(f, " {}", next_sub)?;
-                }
+                write!(f, "align {} {}", axes_str, next)?;
 
                 Ok(())
             }
             ExecuteSubcommand::Anchored(anchor, next) => {
-                write!(f, "anchored {}", anchor)?;
-
-                if let Some(next_sub) = next {
-                    write!(f, " {}", next_sub)?;
-                }
+                write!(f, "anchored {} {}", anchor, next)?;
 
                 Ok(())
             }
             ExecuteSubcommand::As(selector, next) => {
-                write!(f, "as {}", selector)?;
-
-                if let Some(next_sub) = next {
-                    write!(f, " {}", next_sub)?;
-                }
+                write!(f, "as {} {}", selector, next)?;
 
                 Ok(())
             }
             ExecuteSubcommand::At(selector, next) => {
-                write!(f, "at {}", selector)?;
-
-                if let Some(next_sub) = next {
-                    write!(f, " {}", next_sub)?;
-                }
+                write!(f, "at {} {}", selector, next)?;
 
                 Ok(())
             }
             ExecuteSubcommand::Facing(facing, next) => {
-                write!(f, "facing {}", facing)?;
-
-                if let Some(next_sub) = next {
-                    write!(f, " {}", next_sub)?;
-                }
+                write!(f, "facing {} {}", facing, next)?;
 
                 Ok(())
             }
             ExecuteSubcommand::In(dimension, next) => {
-                write!(f, "in {}", dimension)?;
-
-                if let Some(next_sub) = next {
-                    write!(f, " {}", next_sub)?;
-                }
+                write!(f, "in {} {}", dimension, next)?;
 
                 Ok(())
             }
             ExecuteSubcommand::On(relation, next) => {
-                write!(f, "on {}", relation)?;
-
-                if let Some(next_sub) = next {
-                    write!(f, " {}", next_sub)?;
-                }
+                write!(f, "on {} {}", relation, next)?;
 
                 Ok(())
             }
             ExecuteSubcommand::Positioned(positioned, next) => {
-                write!(f, "positioned {}", positioned)?;
-
-                if let Some(next_sub) = next {
-                    write!(f, " {}", next_sub)?;
-                }
+                write!(f, "positioned {} {}", positioned, next)?;
 
                 Ok(())
             }
             ExecuteSubcommand::Rotated(rotated, next) => {
-                write!(f, "rotated {}", rotated)?;
-
-                if let Some(next_sub) = next {
-                    write!(f, " {}", next_sub)?;
-                }
+                write!(f, "rotated {} {}", rotated, next)?;
 
                 Ok(())
             }
             ExecuteSubcommand::Summon(entity_id, next) => {
-                write!(f, "summon {}", entity_id)?;
-
-                if let Some(next_sub) = next {
-                    write!(f, " {}", next_sub)?;
-                }
+                write!(f, "summon {} {}", entity_id, next)?;
 
                 Ok(())
             }
-            ExecuteSubcommand::If(is_if, subcommand) => {
-                let keyword = if *is_if { "if" } else { "unless" };
+            ExecuteSubcommand::If(is_inverted, subcommand) => {
+                let keyword = if *is_inverted { "unless" } else { "if" };
 
                 write!(f, "{} {}", keyword, subcommand)
             }

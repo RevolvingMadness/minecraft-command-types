@@ -1,4 +1,4 @@
-use crate::block::BlockPredicate;
+use crate::block::BlockState;
 use crate::command::enums::fill_mode::FillMode;
 use crate::command::enums::fill_replace_mode::FillReplaceMode;
 use crate::has_macro::HasMacro;
@@ -8,7 +8,7 @@ use std::fmt::{Display, Formatter};
 #[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
 pub enum FillCommand {
     Mode(FillMode),
-    Replace(BlockPredicate, Option<FillReplaceMode>),
+    Replace(BlockState, Option<FillReplaceMode>),
 }
 
 impl Display for FillCommand {

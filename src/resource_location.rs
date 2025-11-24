@@ -48,6 +48,10 @@ impl ResourceLocation {
     pub fn new_path<T: ToString>(path: T) -> Self {
         Self::new_paths(nonempty![path])
     }
+
+    pub fn paths_string(&self) -> String {
+        self.paths.iter().join("/")
+    }
 }
 
 impl Display for ResourceLocation {
