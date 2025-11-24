@@ -1,4 +1,5 @@
 use crate::has_macro::HasMacro;
+use crate::nbt_path::SNBTCompound;
 use ordered_float::NotNan;
 use serde::de::{Deserialize, Deserializer, MapAccess, SeqAccess, Visitor};
 use serde::{Serialize, Serializer, de};
@@ -52,6 +53,20 @@ impl HasMacro for SNBT {
     }
 }
 
+pub fn fmt_snbt_compound(f: &mut Formatter<'_>, compound: &SNBTCompound) -> std::fmt::Result {
+    write!(f, "{{")?;
+
+    for (i, (k, v)) in compound.iter().enumerate() {
+        if i > 0 {
+            write!(f, ", ")?;
+        }
+
+        write!(f, "{}:{}", k, v)?;
+    }
+
+    write!(f, "}}")
+}
+
 impl Display for SNBT {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
@@ -79,19 +94,7 @@ impl Display for SNBT {
 
                 write!(f, "]")
             }
-            SNBT::Compound(map) => {
-                write!(f, "{{")?;
-
-                for (i, (k, v)) in map.iter().enumerate() {
-                    if i > 0 {
-                        write!(f, ", ")?;
-                    }
-
-                    write!(f, "{}:{}", k, v)?;
-                }
-
-                write!(f, "}}")
-            }
+            SNBT::Compound(map) => fmt_snbt_compound(f, map),
             SNBT::ByteArray(arr) => {
                 write!(f, "[B; ")?;
 

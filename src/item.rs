@@ -37,31 +37,29 @@ impl Display for ItemType {
 }
 
 #[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
-pub struct NegatedTest(pub bool, pub ItemTest);
-
-impl Display for NegatedTest {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        if self.0 {
-            write!(f, "!")?;
-        }
-        self.1.fmt(f)
-    }
-}
-
-#[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
-pub struct OrGroup(pub Vec<NegatedTest>);
+pub struct OrGroup(pub Vec<(bool, ItemTest)>);
 
 impl Display for OrGroup {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        let parts: Vec<String> = self.0.iter().map(|t| t.to_string()).collect();
+        let parts: Vec<String> = self
+            .0
+            .iter()
+            .map(|(negated, test)| {
+                if *negated {
+                    format!("!{}", test)
+                } else {
+                    test.to_string()
+                }
+            })
+            .collect();
         write!(f, "{}", parts.join("|"))
     }
 }
 
 #[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
 pub struct ItemPredicate {
-    id: ItemType,
-    tests: Vec<OrGroup>,
+    pub id: ItemType,
+    pub tests: Vec<OrGroup>,
 }
 
 impl Display for ItemPredicate {
@@ -93,8 +91,7 @@ impl ItemPredicate {
     }
 
     pub fn with_test(self, negated: bool, test: ItemTest) -> Self {
-        let negated_test = NegatedTest(negated, test);
-        let group = OrGroup(vec![negated_test]);
+        let group = OrGroup(vec![(negated, test)]);
         self.with_test_group(group)
     }
 }

@@ -1,15 +1,16 @@
 use crate::has_macro::HasMacro;
+use crate::nbt_path::SNBTCompound;
 use crate::resource_location::ResourceLocation;
-use crate::snbt::SNBT;
+use crate::snbt::{SNBT, fmt_snbt_compound};
 use minecraft_command_types_proc_macros::HasMacro;
 use std::collections::BTreeMap;
 use std::fmt::{Display, Formatter};
 
 #[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
 pub struct BlockPredicate {
-    id: ResourceLocation,
-    block_states: BTreeMap<String, String>,
-    data_tags: Option<SNBT>,
+    pub id: ResourceLocation,
+    pub block_states: BTreeMap<String, String>,
+    pub data_tags: Option<SNBTCompound>,
 }
 
 impl Display for BlockPredicate {
@@ -25,8 +26,8 @@ impl Display for BlockPredicate {
             write!(f, "[{}]", states.join(", "))?;
         }
 
-        if let Some(snbt) = &self.data_tags {
-            snbt.fmt(f)?;
+        if let Some(data_tags) = &self.data_tags {
+            fmt_snbt_compound(f, data_tags)?;
         }
 
         Ok(())

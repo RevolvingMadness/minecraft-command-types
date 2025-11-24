@@ -266,7 +266,7 @@ pub enum ExecuteStoreSubcommand {
         NotNan<f32>,
         Option<Box<ExecuteSubcommand>>,
     ),
-    Score(EntitySelector, String, Option<Box<ExecuteSubcommand>>),
+    Score(PlayerScore, Option<Box<ExecuteSubcommand>>),
     Storage(
         ResourceLocation,
         NbtPath,
@@ -304,8 +304,8 @@ impl Display for ExecuteStoreSubcommand {
 
                 Ok(())
             }
-            ExecuteStoreSubcommand::Score(selector, objective, next) => {
-                write!(f, "score {} {}", selector, objective)?;
+            ExecuteStoreSubcommand::Score(score, next) => {
+                write!(f, "score {}", score)?;
 
                 if let Some(next_sub) = next {
                     write!(f, " {}", next_sub)?;

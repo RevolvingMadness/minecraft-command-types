@@ -4,7 +4,7 @@ use minecraft_command_types_proc_macros::HasMacro;
 use std::collections::BTreeMap;
 use std::fmt::{Display, Formatter};
 
-type Compound = BTreeMap<String, SNBT>;
+pub type SNBTCompound = BTreeMap<String, SNBT>;
 
 fn escape_nbt_path_key(name: &str) -> String {
     let needs_quotes = name
@@ -21,8 +21,8 @@ fn escape_nbt_path_key(name: &str) -> String {
 
 #[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
 pub enum NbtPathNode {
-    RootCompound(Compound),
-    Named(String, Option<Compound>),
+    RootCompound(SNBTCompound),
+    Named(String, Option<SNBTCompound>),
     Index(Option<SNBT>),
 }
 
@@ -99,7 +99,7 @@ mod tests {
         SNBT::String(s.to_string())
     }
 
-    fn compound(pairs: Vec<(&str, SNBT)>) -> Compound {
+    fn compound(pairs: Vec<(&str, SNBT)>) -> SNBTCompound {
         let mut map = BTreeMap::new();
         for (k, v) in pairs {
             map.insert(k.to_string(), v);

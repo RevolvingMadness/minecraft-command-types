@@ -47,8 +47,8 @@ use std::fmt::{Display, Formatter};
 
 #[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
 pub struct PlayerScore {
-    selector: EntitySelector,
-    objective: String,
+    pub selector: EntitySelector,
+    pub objective: String,
 }
 
 impl Display for PlayerScore {

@@ -40,6 +40,12 @@ impl<T: HasMacro> HasMacro for Vec<T> {
     }
 }
 
+impl<A, B: HasMacro> HasMacro for Vec<(A, B)> {
+    fn has_macro(&self) -> bool {
+        self.iter().any(|(_, b)| b.has_macro())
+    }
+}
+
 impl<T: HasMacro> HasMacro for NonEmpty<T> {
     fn has_macro(&self) -> bool {
         self.iter().any(|t| t.has_macro())
