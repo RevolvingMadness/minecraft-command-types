@@ -19,6 +19,7 @@ pub mod gamerule;
 pub mod item;
 pub mod item_source;
 pub mod locate;
+pub mod loot;
 pub mod permission_level;
 
 use crate::block::BlockState;
@@ -42,6 +43,7 @@ use crate::command::gamerule::GameruleValue;
 use crate::command::item::ItemCommand;
 use crate::command::item_source::ItemSource;
 use crate::command::locate::LocateType;
+use crate::command::loot::{LootSource, LootTarget};
 use crate::command::permission_level::PermissionLevel;
 use crate::coordinate::Coordinates;
 use crate::entity_selector::EntitySelector;
@@ -125,6 +127,7 @@ pub enum Command {
     Kill(Option<EntitySelector>),
     List(bool),
     Locate(LocateType, ResourceLocation),
+    Loot(LootTarget, LootSource),
 }
 
 impl Command {
@@ -156,7 +159,8 @@ impl Command {
             | Command::Give(..)
             | Command::Item(..)
             | Command::Kick(..)
-            | Command::Locate(..) => PermissionLevel::try_from(2).unwrap(),
+            | Command::Locate(..)
+            | Command::Loot(..) => PermissionLevel::try_from(2).unwrap(),
             Command::Ban(..)
             | Command::BanIP(..)
             | Command::Banlist(..)
@@ -401,6 +405,9 @@ impl Display for Command {
             }
             Command::Locate(locate_type, id) => {
                 write!(f, "locate {} {}", locate_type, id)
+            }
+            Command::Loot(target, source) => {
+                write!(f, "loot {} {}", target, source)
             }
         }
     }
