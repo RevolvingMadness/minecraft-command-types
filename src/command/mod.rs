@@ -119,6 +119,7 @@ pub enum Command {
     Help(Option<String>),
     Item(ItemSource, String, ItemCommand),
     JFR(bool),
+    Kick(EntitySelector, Option<String>),
 }
 
 impl Command {
@@ -153,7 +154,8 @@ impl Command {
             | Command::BanIP(..)
             | Command::Banlist(..)
             | Command::Debug(..)
-            | Command::Deop(..) => PermissionLevel::try_from(3).unwrap(),
+            | Command::Deop(..)
+            | Command::Kick(..) => PermissionLevel::try_from(3).unwrap(),
             Command::JFR(..) => PermissionLevel::try_from(4).unwrap(),
         }
     }
@@ -359,6 +361,15 @@ impl Display for Command {
                     write!(f, "start")?;
                 } else {
                     write!(f, "stop")?;
+                }
+
+                Ok(())
+            }
+            Command::Kick(selector, reason) => {
+                write!(f, "kick {}", selector)?;
+
+                if let Some(reason) = reason {
+                    write!(f, " {}", reason)?;
                 }
 
                 Ok(())
