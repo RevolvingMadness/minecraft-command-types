@@ -128,12 +128,16 @@ pub enum Command {
     List(bool),
     Locate(LocateType, ResourceLocation),
     Loot(LootTarget, LootSource),
+    Me(String),
+    Message(EntitySelector, String),
 }
 
 impl Command {
     pub fn get_permission_level(&self) -> PermissionLevel {
         match self {
-            Command::Help(..) | Command::List(..) => PermissionLevel::try_from(0).unwrap(),
+            Command::Help(..) | Command::List(..) | Command::Me(..) | Command::Message(..) => {
+                PermissionLevel::try_from(0).unwrap()
+            }
             Command::Advancement(..)
             | Command::Attribute(..)
             | Command::Bossbar(..)
@@ -408,6 +412,12 @@ impl Display for Command {
             }
             Command::Loot(target, source) => {
                 write!(f, "loot {} {}", target, source)
+            }
+            Command::Me(message) => {
+                write!(f, "me {}", message)
+            }
+            Command::Message(selector, message) => {
+                write!(f, "msg {} {}", selector, message)
             }
         }
     }
