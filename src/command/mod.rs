@@ -120,6 +120,7 @@ pub enum Command {
     Item(ItemSource, String, ItemCommand),
     JFR(bool),
     Kick(EntitySelector, Option<String>),
+    Kill(Option<EntitySelector>),
 }
 
 impl Command {
@@ -149,13 +150,14 @@ impl Command {
             | Command::Gamemode(..)
             | Command::Gamerule(..)
             | Command::Give(..)
-            | Command::Item(..) => PermissionLevel::try_from(2).unwrap(),
+            | Command::Item(..)
+            | Command::Kick(..) => PermissionLevel::try_from(2).unwrap(),
             Command::Ban(..)
             | Command::BanIP(..)
             | Command::Banlist(..)
             | Command::Debug(..)
             | Command::Deop(..)
-            | Command::Kick(..) => PermissionLevel::try_from(3).unwrap(),
+            | Command::Kill(..) => PermissionLevel::try_from(3).unwrap(),
             Command::JFR(..) => PermissionLevel::try_from(4).unwrap(),
         }
     }
@@ -370,6 +372,15 @@ impl Display for Command {
 
                 if let Some(reason) = reason {
                     write!(f, " {}", reason)?;
+                }
+
+                Ok(())
+            }
+            Command::Kill(selector) => {
+                "kill".fmt(f)?;
+
+                if let Some(selector) = selector {
+                    write!(f, " {}", selector)?;
                 }
 
                 Ok(())
