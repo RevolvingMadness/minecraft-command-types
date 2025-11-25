@@ -118,6 +118,7 @@ pub enum Command {
     Give(EntitySelector, ItemStack, Option<i32>),
     Help(Option<String>),
     Item(ItemSource, String, ItemCommand),
+    JFR(bool),
 }
 
 impl Command {
@@ -153,6 +154,7 @@ impl Command {
             | Command::Banlist(..)
             | Command::Debug(..)
             | Command::Deop(..) => PermissionLevel::try_from(3).unwrap(),
+            Command::JFR(..) => PermissionLevel::try_from(4).unwrap(),
         }
     }
 
@@ -349,6 +351,17 @@ impl Display for Command {
             }
             Command::Item(source, slot, command) => {
                 write!(f, "item {} {} {}", source, slot, command)
+            }
+            Command::JFR(start) => {
+                "jfr ".fmt(f)?;
+
+                if *start {
+                    write!(f, "start")?;
+                } else {
+                    write!(f, "stop")?;
+                }
+
+                Ok(())
             }
         }
     }
