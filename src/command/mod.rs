@@ -16,6 +16,8 @@ pub mod fill;
 pub mod forceload;
 pub mod function;
 mod gamerule;
+pub mod item;
+mod item_source;
 pub mod permission_level;
 
 use crate::block::BlockState;
@@ -36,6 +38,8 @@ use crate::command::fill::FillCommand;
 use crate::command::forceload::ForceloadCommand;
 use crate::command::function::FunctionCommandArguments;
 use crate::command::gamerule::GameruleValue;
+use crate::command::item::ItemCommand;
+use crate::command::item_source::ItemSource;
 use crate::command::permission_level::PermissionLevel;
 use crate::coordinate::Coordinates;
 use crate::entity_selector::EntitySelector;
@@ -113,6 +117,7 @@ pub enum Command {
     Gamerule(String, Option<GameruleValue>),
     Give(EntitySelector, ItemStack, Option<i32>),
     Help(Option<String>),
+    Item(ItemSource, String, ItemCommand),
 }
 
 impl Command {
@@ -141,7 +146,8 @@ impl Command {
             | Command::Function(..)
             | Command::Gamemode(..)
             | Command::Gamerule(..)
-            | Command::Give(..) => PermissionLevel::try_from(2).unwrap(),
+            | Command::Give(..)
+            | Command::Item(..) => PermissionLevel::try_from(2).unwrap(),
             Command::Ban(..)
             | Command::BanIP(..)
             | Command::Banlist(..)
@@ -340,6 +346,9 @@ impl Display for Command {
                 }
 
                 Ok(())
+            }
+            Command::Item(source, slot, command) => {
+                write!(f, "item {} {} {}", source, slot, command)
             }
         }
     }

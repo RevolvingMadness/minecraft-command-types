@@ -9,6 +9,7 @@ use crate::command::enums::if_blocks_mode::IfBlocksMode;
 use crate::command::enums::numeric_snbt_type::NumericSNBTType;
 use crate::command::enums::relation::Relation;
 use crate::command::enums::store_type::StoreType;
+use crate::command::item_source::ItemSource;
 use crate::command::{Command, PlayerScore};
 use crate::coordinate::Coordinates;
 use crate::entity_selector::EntitySelector;
@@ -70,21 +71,6 @@ impl Display for Rotated {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
-pub enum ExecuteIfItemsSubcommandSource {
-    Block(Coordinates),
-    Entity(EntitySelector),
-}
-
-impl Display for ExecuteIfItemsSubcommandSource {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        match self {
-            ExecuteIfItemsSubcommandSource::Block(coords) => write!(f, "block {}", coords),
-            ExecuteIfItemsSubcommandSource::Entity(selector) => write!(f, "entity {}", selector),
-        }
-    }
-}
-
 #[derive(Display, Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
 pub enum ScoreComparisonOperator {
     #[strum(serialize = "<")]
@@ -136,7 +122,7 @@ pub enum ExecuteIfSubcommand {
     Entity(EntitySelector, Option<Box<ExecuteSubcommand>>),
     Function(ResourceLocation, Box<ExecuteSubcommand>),
     Items(
-        ExecuteIfItemsSubcommandSource,
+        ItemSource,
         String,
         ItemPredicate,
         Option<Box<ExecuteSubcommand>>,
