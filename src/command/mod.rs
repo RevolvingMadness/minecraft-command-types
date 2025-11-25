@@ -15,6 +15,7 @@ pub mod fetch_profile;
 pub mod fill;
 pub mod forceload;
 pub mod function;
+mod gamerule;
 pub mod permission_level;
 
 use crate::block::BlockState;
@@ -34,6 +35,7 @@ use crate::command::fetch_profile::FetchProfileCommand;
 use crate::command::fill::FillCommand;
 use crate::command::forceload::ForceloadCommand;
 use crate::command::function::FunctionCommandArguments;
+use crate::command::gamerule::GameruleValue;
 use crate::command::permission_level::PermissionLevel;
 use crate::coordinate::Coordinates;
 use crate::entity_selector::EntitySelector;
@@ -107,6 +109,8 @@ pub enum Command {
     ),
     Forceload(ForceloadCommand),
     Function(ResourceLocation, Option<FunctionCommandArguments>),
+    Gamemode(Gamemode, Option<EntitySelector>),
+    Gamerule(String, Option<GameruleValue>),
 }
 
 impl Command {
@@ -131,7 +135,9 @@ impl Command {
             | Command::Fill(..)
             | Command::FillBiome(..)
             | Command::Forceload(..)
-            | Command::Function(..) => PermissionLevel::try_from(2).unwrap(),
+            | Command::Function(..)
+            | Command::Gamemode(..)
+            | Command::Gamerule(..) => PermissionLevel::try_from(2).unwrap(),
             Command::Ban(..)
             | Command::BanIP(..)
             | Command::Banlist(..)
@@ -291,6 +297,24 @@ impl Display for Command {
 
                 if let Some(arguments) = arguments {
                     write!(f, " {}", arguments)?;
+                }
+
+                Ok(())
+            }
+            Command::Gamemode(gamemode, selector) => {
+                write!(f, "gamemode {}", gamemode)?;
+
+                if let Some(selector) = selector {
+                    write!(f, " {}", selector)?;
+                }
+
+                Ok(())
+            }
+            Command::Gamerule(name, value) => {
+                write!(f, "gamerule {}", name)?;
+
+                if let Some(value) = value {
+                    write!(f, " {}", value)?;
                 }
 
                 Ok(())
