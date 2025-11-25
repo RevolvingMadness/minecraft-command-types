@@ -112,11 +112,13 @@ pub enum Command {
     Gamemode(Gamemode, Option<EntitySelector>),
     Gamerule(String, Option<GameruleValue>),
     Give(EntitySelector, ItemStack, Option<i32>),
+    Help(Option<String>),
 }
 
 impl Command {
     pub fn get_permission_level(&self) -> PermissionLevel {
         match self {
+            Command::Help(..) => PermissionLevel::try_from(0).unwrap(),
             Command::Advancement(..)
             | Command::Attribute(..)
             | Command::Bossbar(..)
@@ -326,6 +328,15 @@ impl Display for Command {
 
                 if let Some(count) = count {
                     write!(f, " {}", count)?;
+                }
+
+                Ok(())
+            }
+            Command::Help(command) => {
+                "help".fmt(f)?;
+
+                if let Some(command) = command {
+                    write!(f, " {}", command)?;
                 }
 
                 Ok(())
