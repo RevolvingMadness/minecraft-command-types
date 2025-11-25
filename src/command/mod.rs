@@ -50,6 +50,7 @@ use crate::entity_selector::EntitySelector;
 use crate::has_macro::HasMacro;
 use crate::item::{ItemPredicate, ItemStack};
 use crate::resource_location::ResourceLocation;
+use crate::snbt::SNBT;
 use enums::advancement_type::AdvancementType;
 use enums::banlist_type::BanlistType;
 use enums::clone_mode::CloneMode;
@@ -130,12 +131,71 @@ pub enum Command {
     Loot(LootTarget, LootSource),
     Me(String),
     Message(EntitySelector, String),
+    // Op,
+    // Pardon,
+    // PardonIp,
+    // Particle,
+    // Perf,
+    // Place,
+    // Playsound,
+    // Publish,
+    // Random,
+    // Recipe,
+    // Reload,
+    // Return,
+    // Ride,
+    // Rotate,
+    // SaveAll,
+    // SaveOff,
+    // SaveOn,
+    // Say,
+    // Schedule,
+    // Scoreboard,
+    // Seed,
+    // Setblock,
+    // SetIdleTimeout,
+    // SetWorldSpawn,
+    // Spawnpoint,
+    // Spectate,
+    // SpreadPlayers,
+    // Stop,
+    // StopSound,
+    // Summon,
+    // Tag,
+    // Team,
+    // TeamMessage,
+    // Teleport,
+    // Tell,
+    Tellraw(EntitySelector, SNBT),
+    // Test,
+    // Tick,
+    // Time,
+    // Title,
+    // Tm,
+    // Tp,
+    // Transfer,
+    // Trigger,
+    // Version,
+    // W,
+    // Waypoint,
+    // Weather,
+    // Whitelist,
+    // Worldborder,
+    // Xp,
 }
 
 impl Command {
     pub fn get_permission_level(&self) -> PermissionLevel {
         match self {
-            Command::Help(..) | Command::List(..) | Command::Me(..) | Command::Message(..) => {
+            Command::Help(..) | Command::List(..) | Command::Me(..) | Command::Message(..)
+            // | Command::Random(..)
+            // | Command::Seed(..)
+            // | Command::TeamMessage(..)
+            // | Command::Tell(..)
+            // | Command::Tm(..)
+            // | Command::Trigger(..)
+            // | Command::W(..)
+            => {
                 PermissionLevel::try_from(0).unwrap()
             }
             Command::Advancement(..)
@@ -162,16 +222,65 @@ impl Command {
             | Command::Gamerule(..)
             | Command::Give(..)
             | Command::Item(..)
-            | Command::Kick(..)
+            | Command::Kill(..)
             | Command::Locate(..)
-            | Command::Loot(..) => PermissionLevel::try_from(2).unwrap(),
+            | Command::Loot(..)
+            // | Command::Particle(..)
+            // | Command::Place(..)
+            // | Command::Playsound(..)
+            // | Command::Random(..)
+            // | Command::Recipe(..)
+            // | Command::Reload(..)
+            // | Command::Return(..)
+            // | Command::Ride(..)
+            // | Command::Rotate(..)
+            // | Command::Say(..)
+            // | Command::Schedule(..)
+            // | Command::Scoreboard(..)
+            // | Command::Seed(..)
+            // | Command::Setblock(..)
+            // | Command::SetWorldSpawn(..)
+            // | Command::SpawnPoint(..)
+            // | Command::Spectate(..)
+            // | Command::SpreadPlayers(..)
+            // | Command::Stopsound(..)
+            // | Command::Summon(..)
+            // | Command::Tag(..)
+            // | Command::Team(..)
+            // | Command::Teleport(..)
+            | Command::Tellraw(..)
+            // | Command::Test(..)
+            // | Command::Time(..)
+            // | Command::Title(..)
+            // | Command::Tp(..)
+            // | Command::Version(..)
+            // | Command::Waypoint(..)
+            // | Command::Weather(..)
+            // | Command::Worldborder(..)
+            // | Command::Xp(..)
+            => PermissionLevel::try_from(2).unwrap(),
             Command::Ban(..)
             | Command::BanIP(..)
             | Command::Banlist(..)
             | Command::Debug(..)
             | Command::Deop(..)
-            | Command::Kill(..) => PermissionLevel::try_from(3).unwrap(),
-            Command::JFR(..) => PermissionLevel::try_from(4).unwrap(),
+            | Command::Kick(..)
+            // | Command::Op(..)
+            // | Command::Pardon(..)
+            // | Command::PardonIP(..)
+            // | Command::SetIdleTimeout(..)
+            // | Command::Tick(..)
+            // | Command::Transfer(..)
+            // | Command::Whitelist(..)
+            => PermissionLevel::try_from(3).unwrap(),
+            Command::JFR(..)
+            // | Command::Perf(..)
+            // | Command::Publish(..)
+            // | Command::SaveAll(..)
+            // | Command::SaveOff(..)
+            // | Command::SaveOn(..)
+            // | Command::Stop(..)
+            => PermissionLevel::try_from(4).unwrap(),
         }
     }
 
@@ -419,6 +528,58 @@ impl Display for Command {
             Command::Message(selector, message) => {
                 write!(f, "msg {} {}", selector, message)
             }
+            // Command::Op() => {}
+            // Command::Pardon() => {}
+            // Command::PardonIp() => {}
+            // Command::Particle() => {}
+            // Command::Perf() => {}
+            // Command::Place() => {}
+            // Command::Playsound() => {}
+            // Command::Publish() => {}
+            // Command::Random() => {}
+            // Command::Recipe() => {}
+            // Command::Reload() => {}
+            // Command::Return() => {}
+            // Command::Ride() => {}
+            // Command::Rotate() => {}
+            // Command::SaveAll() => {}
+            // Command::SaveOff() => {}
+            // Command::SaveOn() => {}
+            // Command::Say() => {}
+            // Command::Schedule() => {}
+            // Command::Scoreboard() => {}
+            // Command::Seed() => {}
+            // Command::Setblock() => {}
+            // Command::SetIdleTimeout() => {}
+            // Command::SetWorldSpawn() => {}
+            // Command::Spawnpoint() => {}
+            // Command::Spectate() => {}
+            // Command::SpreadPlayers() => {}
+            // Command::Stop() => {}
+            // Command::StopSound() => {}
+            // Command::Summon() => {}
+            // Command::Tag() => {}
+            // Command::Team() => {}
+            // Command::TeamMessage() => {}
+            // Command::Teleport() => {}
+            // Command::Tell() => {}
+            Command::Tellraw(selector, message) => {
+                write!(f, "tellraw {} {}", selector, message)
+            } // Command::Test() => {}
+              // Command::Tick() => {}
+              // Command::Time() => {}
+              // Command::Title() => {}
+              // Command::Tm() => {}
+              // Command::Tp() => {}
+              // Command::Transfer() => {}
+              // Command::Trigger() => {}
+              // Command::Version() => {}
+              // Command::W() => {}
+              // Command::Waypoint() => {}
+              // Command::Weather() => {}
+              // Command::Whitelist() => {}
+              // Command::Worldborder() => {}
+              // Command::Xp() => {}
         }
     }
 }
