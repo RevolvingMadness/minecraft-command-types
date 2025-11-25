@@ -121,12 +121,13 @@ pub enum Command {
     JFR(bool),
     Kick(EntitySelector, Option<String>),
     Kill(Option<EntitySelector>),
+    List(bool),
 }
 
 impl Command {
     pub fn get_permission_level(&self) -> PermissionLevel {
         match self {
-            Command::Help(..) => PermissionLevel::try_from(0).unwrap(),
+            Command::Help(..) | Command::List(..) => PermissionLevel::try_from(0).unwrap(),
             Command::Advancement(..)
             | Command::Attribute(..)
             | Command::Bossbar(..)
@@ -381,6 +382,15 @@ impl Display for Command {
 
                 if let Some(selector) = selector {
                     write!(f, " {}", selector)?;
+                }
+
+                Ok(())
+            }
+            Command::List(show_uuids) => {
+                "list".fmt(f)?;
+
+                if *show_uuids {
+                    " uuids".fmt(f)?;
                 }
 
                 Ok(())
