@@ -40,7 +40,7 @@ use crate::command::permission_level::PermissionLevel;
 use crate::coordinate::Coordinates;
 use crate::entity_selector::EntitySelector;
 use crate::has_macro::HasMacro;
-use crate::item::ItemPredicate;
+use crate::item::{ItemPredicate, ItemStack};
 use crate::resource_location::ResourceLocation;
 use enums::advancement_type::AdvancementType;
 use enums::banlist_type::BanlistType;
@@ -111,6 +111,7 @@ pub enum Command {
     Function(ResourceLocation, Option<FunctionCommandArguments>),
     Gamemode(Gamemode, Option<EntitySelector>),
     Gamerule(String, Option<GameruleValue>),
+    Give(EntitySelector, ItemStack, Option<i32>),
 }
 
 impl Command {
@@ -137,7 +138,8 @@ impl Command {
             | Command::Forceload(..)
             | Command::Function(..)
             | Command::Gamemode(..)
-            | Command::Gamerule(..) => PermissionLevel::try_from(2).unwrap(),
+            | Command::Gamerule(..)
+            | Command::Give(..) => PermissionLevel::try_from(2).unwrap(),
             Command::Ban(..)
             | Command::BanIP(..)
             | Command::Banlist(..)
@@ -315,6 +317,15 @@ impl Display for Command {
 
                 if let Some(value) = value {
                     write!(f, " {}", value)?;
+                }
+
+                Ok(())
+            }
+            Command::Give(selector, item, count) => {
+                write!(f, "give {} {}", selector, item)?;
+
+                if let Some(count) = count {
+                    write!(f, " {}", count)?;
                 }
 
                 Ok(())

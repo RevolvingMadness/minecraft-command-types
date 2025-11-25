@@ -95,3 +95,51 @@ impl ItemPredicate {
         self.with_test_group(group)
     }
 }
+
+#[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
+pub enum ItemComponent {
+    KeyValue(ResourceLocation, SNBT),
+    Remove(ResourceLocation),
+}
+
+impl Display for ItemComponent {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        match self {
+            ItemComponent::KeyValue(component, value) => {
+                write!(f, "{}={}", component, value)
+            }
+            ItemComponent::Remove(component) => write!(f, "!{}", component),
+        }
+    }
+}
+
+#[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
+pub struct ItemStack {
+    pub id: ItemType,
+    pub components: Vec<ItemComponent>,
+}
+
+impl Display for ItemStack {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        self.id.fmt(f)?;
+
+        if !self.components.is_empty() {
+            write!(f, "[")?;
+            let mut first = true;
+
+            for component in &self.components {
+                if !first {
+                    write!(f, ", ")?;
+                }
+
+                write!(f, "{}", component)?;
+
+                first = false;
+            }
+
+            write!(f, "]")?;
+        }
+
+        Ok(())
+    }
+}
