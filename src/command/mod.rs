@@ -137,7 +137,7 @@ pub enum Command {
     Pardon(EntitySelector),
     PardonIp(String),
     Particle(ParticleCommand),
-    // Perf,
+    Perf(bool),
     // Place,
     // Playsound,
     // Publish,
@@ -276,7 +276,7 @@ impl Command {
             // | Command::Whitelist(..)
             => PermissionLevel::try_from(3).unwrap(),
             Command::JFR(..)
-            // | Command::Perf(..)
+            | Command::Perf(..)
             // | Command::Publish(..)
             // | Command::SaveAll(..)
             // | Command::SaveOff(..)
@@ -546,7 +546,17 @@ impl Display for Command {
             Command::Particle(command) => {
                 write!(f, "particle {}", command)
             }
-            // Command::Perf() => {}
+            Command::Perf(start) => {
+                write!(f, "perf ")?;
+
+                if *start {
+                    write!(f, "start")?;
+                } else {
+                    write!(f, "stop")?;
+                }
+
+                Ok(())
+            }
             // Command::Place() => {}
             // Command::Playsound() => {}
             // Command::Publish() => {}
