@@ -22,6 +22,7 @@ pub mod locate;
 pub mod loot;
 pub mod particle;
 pub mod permission_level;
+pub mod place;
 
 use crate::block::BlockState;
 use crate::command::advancement::AdvancementCommand;
@@ -47,6 +48,7 @@ use crate::command::locate::LocateType;
 use crate::command::loot::{LootSource, LootTarget};
 use crate::command::particle::ParticleCommand;
 use crate::command::permission_level::PermissionLevel;
+use crate::command::place::PlaceCommand;
 use crate::coordinate::Coordinates;
 use crate::entity_selector::EntitySelector;
 use crate::has_macro::HasMacro;
@@ -138,7 +140,7 @@ pub enum Command {
     PardonIp(String),
     Particle(ParticleCommand),
     Perf(bool),
-    // Place,
+    Place(PlaceCommand),
     // Playsound,
     // Publish,
     // Random,
@@ -228,7 +230,7 @@ impl Command {
             | Command::Locate(..)
             | Command::Loot(..)
             | Command::Particle(..)
-            // | Command::Place(..)
+            | Command::Place(..)
             // | Command::Playsound(..)
             // | Command::Random(..)
             // | Command::Recipe(..)
@@ -557,7 +559,9 @@ impl Display for Command {
 
                 Ok(())
             }
-            // Command::Place() => {}
+            Command::Place(command) => {
+                write!(f, "place {}", command)
+            }
             // Command::Playsound() => {}
             // Command::Publish() => {}
             // Command::Random() => {}

@@ -21,6 +21,8 @@ pub mod particle_display_type;
 pub mod relation;
 pub mod sort;
 pub mod store_type;
+pub mod template_mirror;
+pub mod template_rotation;
 
 #[macro_export]
 macro_rules! create_enum {
