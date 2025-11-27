@@ -17,6 +17,7 @@ pub mod gamemode;
 pub mod heightmap;
 pub mod if_blocks_mode;
 pub mod numeric_snbt_type;
+pub mod particle_display_type;
 pub mod relation;
 pub mod sort;
 pub mod store_type;
