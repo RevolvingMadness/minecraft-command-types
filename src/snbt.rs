@@ -61,10 +61,14 @@ pub fn fmt_snbt_compound(f: &mut Formatter<'_>, compound: &SNBTCompound) -> std:
             write!(f, ", ")?;
         }
 
-        write!(f, "{}:{}", k, v)?;
+        write!(f, "\"{}\":{}", escape(k), v)?;
     }
 
     write!(f, "}}")
+}
+
+fn escape(input: &str) -> String {
+    input.replace('\\', "\\\\").replace('"', "\\\"")
 }
 
 impl Display for SNBT {
@@ -77,9 +81,7 @@ impl Display for SNBT {
             SNBT::Float(v) => write!(f, "{}f", v),
             SNBT::Double(v) => write!(f, "{}d", v),
             SNBT::String(s) => {
-                let escaped = s.replace('\\', "\\\\").replace('"', "\\\"");
-
-                write!(f, "\"{}\"", escaped)
+                write!(f, "\"{}\"", escape(s))
             }
             SNBT::List(values) => {
                 write!(f, "[")?;
