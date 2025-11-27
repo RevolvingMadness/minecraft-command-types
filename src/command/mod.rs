@@ -132,8 +132,8 @@ pub enum Command {
     Me(String),
     Message(EntitySelector, String),
     Op(EntitySelector),
-    // Pardon,
-    // PardonIp,
+    Pardon(EntitySelector),
+    PardonIp(String),
     // Particle,
     // Perf,
     // Place,
@@ -266,8 +266,8 @@ impl Command {
             | Command::Deop(..)
             | Command::Kick(..)
             | Command::Op(..)
-            // | Command::Pardon(..)
-            // | Command::PardonIP(..)
+            | Command::Pardon(..)
+            | Command::PardonIp(..)
             // | Command::SetIdleTimeout(..)
             // | Command::Tick(..)
             // | Command::Transfer(..)
@@ -290,7 +290,9 @@ impl Command {
             | Command::BanIP(..)
             | Command::Banlist(..)
             | Command::Deop(..)
-            | Command::Op(..) => true,
+            | Command::Op(..)
+            | Command::Pardon(..)
+            | Command::PardonIp(..) => true,
             _ => false,
         }
     }
@@ -533,8 +535,12 @@ impl Display for Command {
             Command::Op(selector) => {
                 write!(f, "op {}", selector)
             }
-            // Command::Pardon() => {}
-            // Command::PardonIp() => {}
+            Command::Pardon(selector) => {
+                write!(f, "pardon {}", selector)
+            }
+            Command::PardonIp(selector) => {
+                write!(f, "pardon-ip {}", selector)
+            }
             // Command::Particle() => {}
             // Command::Perf() => {}
             // Command::Place() => {}
