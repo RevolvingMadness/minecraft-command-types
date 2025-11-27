@@ -131,7 +131,7 @@ pub enum Command {
     Loot(LootTarget, LootSource),
     Me(String),
     Message(EntitySelector, String),
-    // Op,
+    Op(EntitySelector),
     // Pardon,
     // PardonIp,
     // Particle,
@@ -265,7 +265,7 @@ impl Command {
             | Command::Debug(..)
             | Command::Deop(..)
             | Command::Kick(..)
-            // | Command::Op(..)
+            | Command::Op(..)
             // | Command::Pardon(..)
             // | Command::PardonIP(..)
             // | Command::SetIdleTimeout(..)
@@ -286,9 +286,11 @@ impl Command {
 
     pub fn is_multiplayer_only(&self) -> bool {
         match self {
-            Command::Ban(..) | Command::BanIP(..) | Command::Banlist(..) | Command::Deop(..) => {
-                true
-            }
+            Command::Ban(..)
+            | Command::BanIP(..)
+            | Command::Banlist(..)
+            | Command::Deop(..)
+            | Command::Op(..) => true,
             _ => false,
         }
     }
@@ -528,7 +530,9 @@ impl Display for Command {
             Command::Message(selector, message) => {
                 write!(f, "msg {} {}", selector, message)
             }
-            // Command::Op() => {}
+            Command::Op(selector) => {
+                write!(f, "op {}", selector)
+            }
             // Command::Pardon() => {}
             // Command::PardonIp() => {}
             // Command::Particle() => {}
