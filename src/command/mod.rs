@@ -23,6 +23,7 @@ pub mod loot;
 pub mod particle;
 pub mod permission_level;
 pub mod place;
+pub mod random;
 
 use crate::block::BlockState;
 use crate::command::advancement::AdvancementCommand;
@@ -50,6 +51,7 @@ use crate::command::loot::{LootSource, LootTarget};
 use crate::command::particle::ParticleCommand;
 use crate::command::permission_level::PermissionLevel;
 use crate::command::place::PlaceCommand;
+use crate::command::random::RandomCommand;
 use crate::coordinate::{Coordinates, WorldCoordinate};
 use crate::entity_selector::EntitySelector;
 use crate::has_macro::HasMacro;
@@ -152,7 +154,7 @@ pub enum Command {
         Option<NotNan<f32>>,
     ),
     Publish(Option<bool>, Option<Gamemode>, Option<i32>),
-    // Random,
+    Random(RandomCommand),
     // Recipe,
     // Reload,
     // Return,
@@ -201,7 +203,8 @@ impl Command {
     pub fn get_permission_level(&self) -> PermissionLevel {
         match self {
             Command::Help(..) | Command::List(..) | Command::Me(..) | Command::Message(..)
-            // | Command::Random(..)
+            | Command::Random(RandomCommand::ValueRoll(_, _, None))
+            | Command::Random(RandomCommand::Reset(..))
             // | Command::Seed(..)
             // | Command::TeamMessage(..)
             // | Command::Tell(..)
@@ -241,7 +244,7 @@ impl Command {
             | Command::Particle(..)
             | Command::Place(..)
             | Command::Playsound(..)
-            // | Command::Random(..)
+            | Command::Random(RandomCommand::ValueRoll(_, _, Some(_)))
             // | Command::Recipe(..)
             // | Command::Reload(..)
             // | Command::Return(..)
@@ -617,7 +620,9 @@ impl Display for Command {
 
                 Ok(())
             }
-            // Command::Random() => {}
+            Command::Random(command) => {
+                write!(f, "random {}", command)
+            }
             // Command::Recipe() => {}
             // Command::Reload() => {}
             // Command::Return() => {}
