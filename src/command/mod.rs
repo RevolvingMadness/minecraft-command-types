@@ -179,7 +179,7 @@ pub enum Command {
     Say(String),
     Schedule(ScheduleCommand),
     Scoreboard(ScoreboardCommand),
-    // Seed,
+    Seed,
     // Setblock,
     // SetIdleTimeout,
     // SetWorldSpawn,
@@ -213,12 +213,11 @@ pub enum Command {
 }
 
 impl Command {
-    pub fn get_permission_level(&self) -> PermissionLevel {
+    pub fn get_permission_level(&self, is_multiplayer: bool) -> PermissionLevel {
         match self {
             Command::Help(..) | Command::List(..) | Command::Me(..) | Command::Message(..)
             | Command::Random(RandomCommand::ValueRoll(_, _, None))
             | Command::Random(RandomCommand::Reset(..))
-            // | Command::Seed(..)
             // | Command::TeamMessage(..)
             // | Command::Tell(..)
             // | Command::Tm(..)
@@ -266,7 +265,6 @@ impl Command {
             | Command::Say(..)
             | Command::Schedule(..)
             | Command::Scoreboard(..)
-            // | Command::Seed(..)
             // | Command::Setblock(..)
             // | Command::SetWorldSpawn(..)
             // | Command::SpawnPoint(..)
@@ -310,6 +308,10 @@ impl Command {
             | Command::SaveOn
             // | Command::Stop(..)
             => PermissionLevel::try_from(4).unwrap(),
+            Command::Seed => {
+                let level = if is_multiplayer {2 } else { 0 };
+                PermissionLevel::try_from(level).unwrap()
+            }
         }
     }
 
@@ -681,7 +683,7 @@ impl Display for Command {
             Command::Scoreboard(command) => {
                 write!(f, "scoreboard {}", command)
             }
-            // Command::Seed() => {}
+            Command::Seed => "seed".fmt(f),
             // Command::Setblock() => {}
             // Command::SetIdleTimeout() => {}
             // Command::SetWorldSpawn() => {}
