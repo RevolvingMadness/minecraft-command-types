@@ -31,6 +31,8 @@ pub mod store_type;
 pub mod team_color;
 pub mod template_mirror;
 pub mod template_rotation;
+pub mod team_visibility;
+pub mod team_collision_rule;
 
 #[macro_export]
 macro_rules! create_enum {
