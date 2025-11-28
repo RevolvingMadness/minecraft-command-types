@@ -32,6 +32,7 @@ pub mod schedule;
 pub mod scoreboard;
 
 use crate::block::BlockState;
+use crate::column_position::ColumnPosition;
 use crate::command::advancement::AdvancementCommand;
 use crate::command::attribute::AttributeCommand;
 use crate::command::bossbar::BossbarCommand;
@@ -190,7 +191,14 @@ pub enum Command {
         Option<NotNan<f32>>,
     ),
     Spectate(Option<EntitySelector>, Option<EntitySelector>),
-    // SpreadPlayers,
+    SpreadPlayers(
+        ColumnPosition,
+        NotNan<f32>,
+        NotNan<f32>,
+        Option<i32>,
+        bool,
+        EntitySelector,
+    ),
     // Stop,
     // StopSound,
     // Summon,
@@ -274,7 +282,7 @@ impl Command {
             | Command::SetWorldSpawn(..)
             | Command::Spawnpoint(..)
             | Command::Spectate(..)
-            // | Command::SpreadPlayers(..)
+            | Command::SpreadPlayers(..)
             // | Command::Stopsound(..)
             // | Command::Summon(..)
             // | Command::Tag(..)
@@ -744,7 +752,26 @@ impl Display for Command {
 
                 Ok(())
             }
-            // Command::SpreadPlayers() => {}
+            Command::SpreadPlayers(
+                center,
+                spread_distance,
+                max_range,
+                max_height,
+                respect_teams,
+                targets,
+            ) => {
+                write!(
+                    f,
+                    "spreadplayers {} {} {} ",
+                    center, spread_distance, max_range
+                )?;
+
+                if let Some(max_height) = max_height {
+                    write!(f, "under {} ", max_height)?;
+                }
+
+                write!(f, "{} {}", respect_teams, targets)
+            }
             // Command::Stop() => {}
             // Command::StopSound() => {}
             // Command::Summon() => {}
