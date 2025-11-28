@@ -151,7 +151,7 @@ pub enum Command {
         Option<NotNan<f32>>,
         Option<NotNan<f32>>,
     ),
-    // Publish,
+    Publish(Option<bool>, Option<Gamemode>, Option<i32>),
     // Random,
     // Recipe,
     // Reload,
@@ -288,7 +288,7 @@ impl Command {
             => PermissionLevel::try_from(3).unwrap(),
             Command::JFR(..)
             | Command::Perf(..)
-            // | Command::Publish(..)
+            | Command::Publish(..)
             // | Command::SaveAll(..)
             // | Command::SaveOff(..)
             // | Command::SaveOn(..)
@@ -600,7 +600,23 @@ impl Display for Command {
 
                 Ok(())
             }
-            // Command::Publish() => {}
+            Command::Publish(allow_commands, gamemode, port) => {
+                "playsound".fmt(f)?;
+
+                if let Some(allow_commands) = allow_commands {
+                    write!(f, " {}", allow_commands)?;
+
+                    if let Some(gamemode) = gamemode {
+                        write!(f, " {}", gamemode)?;
+
+                        if let Some(port) = port {
+                            write!(f, " {}", port)?;
+                        }
+                    }
+                }
+
+                Ok(())
+            }
             // Command::Random() => {}
             // Command::Recipe() => {}
             // Command::Reload() => {}
