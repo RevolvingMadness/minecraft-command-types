@@ -28,6 +28,7 @@ pub mod recipe;
 pub mod r#return;
 pub mod ride;
 pub mod rotate;
+pub mod schedule;
 
 use crate::block::BlockState;
 use crate::command::advancement::AdvancementCommand;
@@ -60,6 +61,7 @@ use crate::command::random::RandomCommand;
 use crate::command::recipe::RecipeType;
 use crate::command::ride::RideCommand;
 use crate::command::rotate::RotateCommand;
+use crate::command::schedule::ScheduleCommand;
 use crate::coordinate::{Coordinates, WorldCoordinate};
 use crate::entity_selector::EntitySelector;
 use crate::has_macro::HasMacro;
@@ -173,7 +175,7 @@ pub enum Command {
     SaveOff,
     SaveOn,
     Say(String),
-    // Schedule,
+    Schedule(ScheduleCommand),
     // Scoreboard,
     // Seed,
     // Setblock,
@@ -260,7 +262,7 @@ impl Command {
             | Command::Ride(..)
             | Command::Rotate(..)
             | Command::Say(..)
-            // | Command::Schedule(..)
+            | Command::Schedule(..)
             // | Command::Scoreboard(..)
             // | Command::Seed(..)
             // | Command::Setblock(..)
@@ -671,7 +673,9 @@ impl Display for Command {
             Command::Say(message) => {
                 write!(f, "say {}", message)
             }
-            // Command::Schedule() => {}
+            Command::Schedule(command) => {
+                write!(f, "schedule {}", command)
+            }
             // Command::Scoreboard() => {}
             // Command::Seed() => {}
             // Command::Setblock() => {}
