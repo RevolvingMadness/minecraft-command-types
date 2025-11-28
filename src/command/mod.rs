@@ -199,7 +199,7 @@ pub enum Command {
         bool,
         EntitySelector,
     ),
-    // Stop,
+    Stop,
     // StopSound,
     // Summon,
     // Tag,
@@ -319,7 +319,7 @@ impl Command {
             | Command::SaveAll(..)
             | Command::SaveOff
             | Command::SaveOn
-            // | Command::Stop(..)
+            | Command::Stop
             => PermissionLevel::try_from(4).unwrap(),
             Command::Seed => {
                 let level = if is_multiplayer {2 } else { 0 };
@@ -341,7 +341,8 @@ impl Command {
             | Command::SaveAll(..)
             | Command::SaveOff
             | Command::SaveOn
-            | Command::SetIdleTimeout(..) => true,
+            | Command::SetIdleTimeout(..)
+            | Command::Stop => true,
             _ => false,
         }
     }
@@ -772,7 +773,7 @@ impl Display for Command {
 
                 write!(f, "{} {}", respect_teams, targets)
             }
-            // Command::Stop() => {}
+            Command::Stop => "stop".fmt(f),
             // Command::StopSound() => {}
             // Command::Summon() => {}
             // Command::Tag() => {}
