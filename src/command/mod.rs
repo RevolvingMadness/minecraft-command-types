@@ -203,7 +203,7 @@ pub enum Command {
         Option<StopSoundSource>,
         Option<ResourceLocation>,
     ),
-    // Summon,
+    Summon(EntitySelector, Option<Coordinates>, Option<SNBT>),
     // Tag,
     // Team,
     // TeamMessage,
@@ -286,7 +286,7 @@ impl Command {
             | Command::Spectate(..)
             | Command::SpreadPlayers(..)
             | Command::StopSound(..)
-            // | Command::Summon(..)
+            | Command::Summon(..)
             // | Command::Tag(..)
             // | Command::Team(..)
             // | Command::Teleport(..)
@@ -789,7 +789,19 @@ impl Display for Command {
 
                 Ok(())
             }
-            // Command::Summon() => {}
+            Command::Summon(location, coordinates, snbt) => {
+                write!(f, "summon {}", location)?;
+
+                if let Some(coordinates) = coordinates {
+                    write!(f, " {}", coordinates)?;
+
+                    if let Some(snbt) = snbt {
+                        write!(f, " {}", snbt)?;
+                    }
+                }
+
+                Ok(())
+            }
             // Command::Tag() => {}
             // Command::Team() => {}
             // Command::TeamMessage() => {}
