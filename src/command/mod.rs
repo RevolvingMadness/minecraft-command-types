@@ -159,7 +159,7 @@ pub enum Command {
     Publish(Option<bool>, Option<Gamemode>, Option<i32>),
     Random(RandomCommand),
     Recipe(bool, EntitySelector, RecipeType),
-    // Reload,
+    Reload,
     // Return,
     // Ride,
     // Rotate,
@@ -249,7 +249,7 @@ impl Command {
             | Command::Playsound(..)
             | Command::Random(RandomCommand::ValueRoll(_, _, Some(_)))
             | Command::Recipe(..)
-            // | Command::Reload(..)
+            | Command::Reload
             // | Command::Return(..)
             // | Command::Ride(..)
             // | Command::Rotate(..)
@@ -637,7 +637,7 @@ impl Display for Command {
 
                 write!(f, " {} {}", selector, recipe_type)
             }
-            // Command::Reload() => {}
+            Command::Reload => "reload".fmt(f),
             // Command::Return() => {}
             // Command::Ride() => {}
             // Command::Rotate() => {}
