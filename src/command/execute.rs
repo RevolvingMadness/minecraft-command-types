@@ -18,6 +18,7 @@ use crate::item::ItemPredicate;
 use crate::nbt_path::NbtPath;
 use crate::range::IntegerRange;
 use crate::resource_location::ResourceLocation;
+use crate::rotation::Rotation;
 use minecraft_command_types_proc_macros::HasMacro;
 use ordered_float::NotNan;
 use std::collections::BTreeSet;
@@ -58,14 +59,14 @@ impl Display for Positioned {
 
 #[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
 pub enum Rotated {
-    YawPitch(NotNan<f32>, NotNan<f32>),
+    Rotation(Rotation),
     As(EntitySelector),
 }
 
 impl Display for Rotated {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            Rotated::YawPitch(yaw, pitch) => write!(f, "{} {}", yaw, pitch),
+            Rotated::Rotation(rotation) => rotation.fmt(f),
             Rotated::As(selector) => write!(f, "as {}", selector),
         }
     }

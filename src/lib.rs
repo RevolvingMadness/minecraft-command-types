@@ -9,4 +9,5 @@ pub mod item;
 pub mod nbt_path;
 pub mod range;
 pub mod resource_location;
+pub mod rotation;
 pub mod snbt;

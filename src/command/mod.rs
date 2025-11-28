@@ -27,6 +27,7 @@ pub mod random;
 pub mod recipe;
 pub mod r#return;
 pub mod ride;
+pub mod rotate;
 
 use crate::block::BlockState;
 use crate::command::advancement::AdvancementCommand;
@@ -58,6 +59,7 @@ use crate::command::r#return::ReturnCommand;
 use crate::command::random::RandomCommand;
 use crate::command::recipe::RecipeType;
 use crate::command::ride::RideCommand;
+use crate::command::rotate::RotateCommand;
 use crate::coordinate::{Coordinates, WorldCoordinate};
 use crate::entity_selector::EntitySelector;
 use crate::has_macro::HasMacro;
@@ -166,7 +168,7 @@ pub enum Command {
     Reload,
     Return(ReturnCommand),
     Ride(EntitySelector, RideCommand),
-    // Rotate,
+    Rotate(EntitySelector, RotateCommand),
     // SaveAll,
     // SaveOff,
     // SaveOn,
@@ -256,7 +258,7 @@ impl Command {
             | Command::Reload
             | Command::Return(..)
             | Command::Ride(..)
-            // | Command::Rotate(..)
+            | Command::Rotate(..)
             // | Command::Say(..)
             // | Command::Schedule(..)
             // | Command::Scoreboard(..)
@@ -648,7 +650,9 @@ impl Display for Command {
             Command::Ride(selector, command) => {
                 write!(f, "ride {} {}", selector, command)
             }
-            // Command::Rotate() => {}
+            Command::Rotate(selector, command) => {
+                write!(f, "rotate {} {}", selector, command)
+            }
             // Command::SaveAll() => {}
             // Command::SaveOff() => {}
             // Command::SaveOn() => {}
