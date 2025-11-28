@@ -184,7 +184,11 @@ pub enum Command {
     Setblock(Coordinates, BlockState, Option<SetblockMode>),
     SetIdleTimeout(i32),
     SetWorldSpawn(Option<Coordinates>, Option<NotNan<f32>>),
-    // Spawnpoint,
+    Spawnpoint(
+        Option<EntitySelector>,
+        Option<Coordinates>,
+        Option<NotNan<f32>>,
+    ),
     // Spectate,
     // SpreadPlayers,
     // Stop,
@@ -268,7 +272,7 @@ impl Command {
             | Command::Scoreboard(..)
             | Command::Setblock(..)
             | Command::SetWorldSpawn(..)
-            // | Command::SpawnPoint(..)
+            | Command::Spawnpoint(..)
             // | Command::Spectate(..)
             // | Command::SpreadPlayers(..)
             // | Command::Stopsound(..)
@@ -711,7 +715,22 @@ impl Display for Command {
 
                 Ok(())
             }
-            // Command::Spawnpoint() => {}
+            Command::Spawnpoint(selector, coordinates, angle) => {
+                "spawnpoint".fmt(f)?;
+
+                if let Some(selector) = selector {
+                    write!(f, " {}", selector)?;
+                    if let Some(coordinates) = coordinates {
+                        write!(f, " {}", coordinates)?;
+
+                        if let Some(angle) = angle {
+                            write!(f, " {}", angle)?;
+                        }
+                    }
+                }
+
+                Ok(())
+            }
             // Command::Spectate() => {}
             // Command::SpreadPlayers() => {}
             // Command::Stop() => {}
