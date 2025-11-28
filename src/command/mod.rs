@@ -182,7 +182,7 @@ pub enum Command {
     Scoreboard(ScoreboardCommand),
     Seed,
     Setblock(Coordinates, BlockState, Option<SetblockMode>),
-    // SetIdleTimeout,
+    SetIdleTimeout(i32),
     // SetWorldSpawn,
     // Spawnpoint,
     // Spectate,
@@ -296,7 +296,7 @@ impl Command {
             | Command::Op(..)
             | Command::Pardon(..)
             | Command::PardonIp(..)
-            // | Command::SetIdleTimeout(..)
+            | Command::SetIdleTimeout(..)
             // | Command::Tick(..)
             // | Command::Transfer(..)
             // | Command::Whitelist(..)
@@ -328,7 +328,8 @@ impl Command {
             | Command::Perf(..)
             | Command::SaveAll(..)
             | Command::SaveOff
-            | Command::SaveOn => true,
+            | Command::SaveOn
+            | Command::SetIdleTimeout(..) => true,
             _ => false,
         }
     }
@@ -694,7 +695,9 @@ impl Display for Command {
 
                 Ok(())
             }
-            // Command::SetIdleTimeout() => {}
+            Command::SetIdleTimeout(minutes) => {
+                write!(f, "setidletimeout {}", minutes)
+            }
             // Command::SetWorldSpawn() => {}
             // Command::Spawnpoint() => {}
             // Command::Spectate() => {}
