@@ -21,9 +21,13 @@ pub mod particle_display_type;
 pub mod random_type;
 pub mod relation;
 pub mod schedule_mode;
+pub mod score_operation_operator;
+pub mod scoreboard_criterion;
+pub mod scoreboard_render_type;
 pub mod sort;
 pub mod sound_source;
 pub mod store_type;
+pub mod team_color;
 pub mod template_mirror;
 pub mod template_rotation;
 
@@ -42,6 +46,25 @@ macro_rules! create_enum {
 
         #[derive(Debug, Clone, Eq, PartialEq, Hash, Display, EnumString, HasMacro, Serialize, Deserialize, $($custom_derives),*)]
         #[strum(serialize_all = "snake_case")]
+        pub enum $name {
+            $($(#[$variant_attr])* $variant,)*
+        }
+    };
+
+    (
+        $serialize_all:expr,
+        $name:ident,
+        [ $($custom_derives:ident),* ],
+        $($(#[$variant_attr:meta])* $variant:ident),+
+        $(,)?
+    ) => {
+        use crate::has_macro::HasMacro;
+        use minecraft_command_types_proc_macros::HasMacro;
+        use serde::{Deserialize, Serialize};
+        use strum::{Display, EnumString};
+
+        #[derive(Debug, Clone, Eq, PartialEq, Hash, Display, EnumString, HasMacro, Serialize, Deserialize, $($custom_derives),*)]
+        #[strum(serialize_all = $serialize_all)]
         pub enum $name {
             $($(#[$variant_attr])* $variant,)*
         }

@@ -29,6 +29,7 @@ pub mod r#return;
 pub mod ride;
 pub mod rotate;
 pub mod schedule;
+pub mod scoreboard;
 
 use crate::block::BlockState;
 use crate::command::advancement::AdvancementCommand;
@@ -62,6 +63,7 @@ use crate::command::recipe::RecipeType;
 use crate::command::ride::RideCommand;
 use crate::command::rotate::RotateCommand;
 use crate::command::schedule::ScheduleCommand;
+use crate::command::scoreboard::ScoreboardCommand;
 use crate::coordinate::{Coordinates, WorldCoordinate};
 use crate::entity_selector::EntitySelector;
 use crate::has_macro::HasMacro;
@@ -176,7 +178,7 @@ pub enum Command {
     SaveOn,
     Say(String),
     Schedule(ScheduleCommand),
-    // Scoreboard,
+    Scoreboard(ScoreboardCommand),
     // Seed,
     // Setblock,
     // SetIdleTimeout,
@@ -263,7 +265,7 @@ impl Command {
             | Command::Rotate(..)
             | Command::Say(..)
             | Command::Schedule(..)
-            // | Command::Scoreboard(..)
+            | Command::Scoreboard(..)
             // | Command::Seed(..)
             // | Command::Setblock(..)
             // | Command::SetWorldSpawn(..)
@@ -676,7 +678,9 @@ impl Display for Command {
             Command::Schedule(command) => {
                 write!(f, "schedule {}", command)
             }
-            // Command::Scoreboard() => {}
+            Command::Scoreboard(command) => {
+                write!(f, "scoreboard {}", command)
+            }
             // Command::Seed() => {}
             // Command::Setblock() => {}
             // Command::SetIdleTimeout() => {}
