@@ -35,6 +35,7 @@ use crate::command::datapack::DatapackCommand;
 use crate::command::debug::DebugCommandType;
 use crate::command::dialog::DialogCommand;
 use crate::command::effect::EffectCommand;
+use crate::command::enums::sound_source::SoundSource;
 use crate::command::execute::ExecuteSubcommand;
 use crate::command::experience::ExperienceCommand;
 use crate::command::fetch_profile::FetchProfileCommand;
@@ -49,7 +50,7 @@ use crate::command::loot::{LootSource, LootTarget};
 use crate::command::particle::ParticleCommand;
 use crate::command::permission_level::PermissionLevel;
 use crate::command::place::PlaceCommand;
-use crate::coordinate::Coordinates;
+use crate::coordinate::{Coordinates, WorldCoordinate};
 use crate::entity_selector::EntitySelector;
 use crate::has_macro::HasMacro;
 use crate::item::{ItemPredicate, ItemStack};
@@ -141,7 +142,15 @@ pub enum Command {
     Particle(ParticleCommand),
     Perf(bool),
     Place(PlaceCommand),
-    // Playsound,
+    Playsound(
+        ResourceLocation,
+        Option<SoundSource>,
+        Option<EntitySelector>,
+        Option<WorldCoordinate>,
+        Option<NotNan<f32>>,
+        Option<NotNan<f32>>,
+        Option<NotNan<f32>>,
+    ),
     // Publish,
     // Random,
     // Recipe,
@@ -231,7 +240,7 @@ impl Command {
             | Command::Loot(..)
             | Command::Particle(..)
             | Command::Place(..)
-            // | Command::Playsound(..)
+            | Command::Playsound(..)
             // | Command::Random(..)
             // | Command::Recipe(..)
             // | Command::Reload(..)
@@ -562,7 +571,35 @@ impl Display for Command {
             Command::Place(command) => {
                 write!(f, "place {}", command)
             }
-            // Command::Playsound() => {}
+            Command::Playsound(sound, source, selector, pos, volume, pitch, minimum_volume) => {
+                write!(f, "playsound {}", sound)?;
+
+                if let Some(source) = source {
+                    write!(f, " {}", source)?;
+
+                    if let Some(selector) = selector {
+                        write!(f, " {}", selector)?;
+
+                        if let Some(pos) = pos {
+                            write!(f, " {}", pos)?;
+
+                            if let Some(volume) = volume {
+                                write!(f, " {}", volume)?;
+
+                                if let Some(pitch) = pitch {
+                                    write!(f, " {}", pitch)?;
+
+                                    if let Some(minimum_volume) = minimum_volume {
+                                        write!(f, " {}", minimum_volume)?;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                Ok(())
+            }
             // Command::Publish() => {}
             // Command::Random() => {}
             // Command::Recipe() => {}

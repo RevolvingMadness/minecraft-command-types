@@ -20,6 +20,7 @@ pub mod numeric_snbt_type;
 pub mod particle_display_type;
 pub mod relation;
 pub mod sort;
+pub mod sound_source;
 pub mod store_type;
 pub mod template_mirror;
 pub mod template_rotation;
