@@ -24,6 +24,7 @@ pub mod particle;
 pub mod permission_level;
 pub mod place;
 pub mod random;
+pub mod recipe;
 
 use crate::block::BlockState;
 use crate::command::advancement::AdvancementCommand;
@@ -52,6 +53,7 @@ use crate::command::particle::ParticleCommand;
 use crate::command::permission_level::PermissionLevel;
 use crate::command::place::PlaceCommand;
 use crate::command::random::RandomCommand;
+use crate::command::recipe::RecipeType;
 use crate::coordinate::{Coordinates, WorldCoordinate};
 use crate::entity_selector::EntitySelector;
 use crate::has_macro::HasMacro;
@@ -65,6 +67,7 @@ use enums::difficulty::Difficulty;
 use enums::gamemode::Gamemode;
 use minecraft_command_types_proc_macros::HasMacro;
 use ordered_float::NotNan;
+use serde::de::Expected;
 use std::fmt::{Display, Formatter};
 
 #[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
@@ -155,7 +158,7 @@ pub enum Command {
     ),
     Publish(Option<bool>, Option<Gamemode>, Option<i32>),
     Random(RandomCommand),
-    // Recipe,
+    Recipe(bool, EntitySelector, RecipeType),
     // Reload,
     // Return,
     // Ride,
@@ -245,7 +248,7 @@ impl Command {
             | Command::Place(..)
             | Command::Playsound(..)
             | Command::Random(RandomCommand::ValueRoll(_, _, Some(_)))
-            // | Command::Recipe(..)
+            | Command::Recipe(..)
             // | Command::Reload(..)
             // | Command::Return(..)
             // | Command::Ride(..)
@@ -623,7 +626,17 @@ impl Display for Command {
             Command::Random(command) => {
                 write!(f, "random {}", command)
             }
-            // Command::Recipe() => {}
+            Command::Recipe(give, selector, recipe_type) => {
+                "recipe ".fmt(f)?;
+
+                if *give {
+                    "give".fmt(f)?;
+                } else {
+                    "take".fmt(f)?;
+                }
+
+                write!(f, " {} {}", selector, recipe_type)
+            }
             // Command::Reload() => {}
             // Command::Return() => {}
             // Command::Ride() => {}
