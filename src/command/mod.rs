@@ -30,6 +30,7 @@ pub mod ride;
 pub mod rotate;
 pub mod schedule;
 pub mod scoreboard;
+pub mod tag;
 
 use crate::block::BlockState;
 use crate::column_position::ColumnPosition;
@@ -66,6 +67,7 @@ use crate::command::ride::RideCommand;
 use crate::command::rotate::RotateCommand;
 use crate::command::schedule::ScheduleCommand;
 use crate::command::scoreboard::ScoreboardCommand;
+use crate::command::tag::TagCommand;
 use crate::coordinate::{Coordinates, WorldCoordinate};
 use crate::entity_selector::EntitySelector;
 use crate::item::{ItemPredicate, ItemStack};
@@ -204,7 +206,7 @@ pub enum Command {
         Option<ResourceLocation>,
     ),
     Summon(EntitySelector, Option<Coordinates>, Option<SNBT>),
-    // Tag,
+    Tag(EntitySelector, TagCommand),
     // Team,
     // TeamMessage,
     // Teleport,
@@ -287,7 +289,7 @@ impl Command {
             | Command::SpreadPlayers(..)
             | Command::StopSound(..)
             | Command::Summon(..)
-            // | Command::Tag(..)
+            | Command::Tag(..)
             // | Command::Team(..)
             // | Command::Teleport(..)
             | Command::Tellraw(..)
@@ -802,7 +804,9 @@ impl Display for Command {
 
                 Ok(())
             }
-            // Command::Tag() => {}
+            Command::Tag(selector, command) => {
+                write!(f, "tag {} {}", selector, command)
+            }
             // Command::Team() => {}
             // Command::TeamMessage() => {}
             // Command::Teleport() => {}
