@@ -210,7 +210,7 @@ pub enum Command {
     Summon(EntitySelector, Option<Coordinates>, Option<SNBT>),
     Tag(EntitySelector, TagCommand),
     Team(TeamCommand),
-    // TeamMessage,
+    TeamMessage(String),
     // Teleport,
     // Tell,
     Tellraw(EntitySelector, SNBT),
@@ -237,7 +237,7 @@ impl Command {
             Command::Help(..) | Command::List(..) | Command::Me(..) | Command::Message(..)
             | Command::Random(RandomCommand::ValueRoll(_, _, None))
             | Command::Random(RandomCommand::Reset(..))
-            // | Command::TeamMessage(..)
+            | Command::TeamMessage(..)
             // | Command::Tell(..)
             // | Command::Tm(..)
             // | Command::Trigger(..)
@@ -812,7 +812,9 @@ impl Display for Command {
             Command::Team(command) => {
                 write!(f, "team {}", command)
             }
-            // Command::TeamMessage() => {}
+            Command::TeamMessage(message) => {
+                write!(f, "teammsg {}", message)
+            }
             // Command::Teleport() => {}
             // Command::Tell() => {}
             Command::Tellraw(selector, message) => {
@@ -821,7 +823,6 @@ impl Display for Command {
               // Command::Tick() => {}
               // Command::Time() => {}
               // Command::Title() => {}
-              // Command::Tm() => {}
               // Command::Tp() => {}
               // Command::Transfer() => {}
               // Command::Trigger() => {}
