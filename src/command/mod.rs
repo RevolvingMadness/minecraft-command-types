@@ -189,7 +189,7 @@ pub enum Command {
         Option<Coordinates>,
         Option<NotNan<f32>>,
     ),
-    // Spectate,
+    Spectate(Option<EntitySelector>, Option<EntitySelector>),
     // SpreadPlayers,
     // Stop,
     // StopSound,
@@ -273,7 +273,7 @@ impl Command {
             | Command::Setblock(..)
             | Command::SetWorldSpawn(..)
             | Command::Spawnpoint(..)
-            // | Command::Spectate(..)
+            | Command::Spectate(..)
             // | Command::SpreadPlayers(..)
             // | Command::Stopsound(..)
             // | Command::Summon(..)
@@ -731,7 +731,19 @@ impl Display for Command {
 
                 Ok(())
             }
-            // Command::Spectate() => {}
+            Command::Spectate(selector1, selector2) => {
+                "spectate".fmt(f)?;
+
+                if let Some(selector1) = selector1 {
+                    write!(f, " {}", selector1)?;
+
+                    if let Some(selector2) = selector2 {
+                        write!(f, " {}", selector2)?;
+                    }
+                }
+
+                Ok(())
+            }
             // Command::SpreadPlayers() => {}
             // Command::Stop() => {}
             // Command::StopSound() => {}
