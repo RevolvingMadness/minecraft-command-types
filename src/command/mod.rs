@@ -32,6 +32,7 @@ pub mod schedule;
 pub mod scoreboard;
 pub mod tag;
 pub mod team;
+pub mod teleport;
 
 use crate::block::BlockState;
 use crate::column_position::ColumnPosition;
@@ -70,6 +71,7 @@ use crate::command::schedule::ScheduleCommand;
 use crate::command::scoreboard::ScoreboardCommand;
 use crate::command::tag::TagCommand;
 use crate::command::team::TeamCommand;
+use crate::command::teleport::TeleportCommand;
 use crate::coordinate::{Coordinates, WorldCoordinate};
 use crate::entity_selector::EntitySelector;
 use crate::item::{ItemPredicate, ItemStack};
@@ -211,7 +213,7 @@ pub enum Command {
     Tag(EntitySelector, TagCommand),
     Team(TeamCommand),
     TeamMessage(String),
-    // Teleport,
+    Teleport(TeleportCommand),
     // Tell,
     Tellraw(EntitySelector, SNBT),
     // Test,
@@ -293,7 +295,7 @@ impl Command {
             | Command::Summon(..)
             | Command::Tag(..)
             | Command::Team(..)
-            // | Command::Teleport(..)
+            | Command::Teleport(..)
             | Command::Tellraw(..)
             // | Command::Test(..)
             // | Command::Time(..)
@@ -815,7 +817,9 @@ impl Display for Command {
             Command::TeamMessage(message) => {
                 write!(f, "teammsg {}", message)
             }
-            // Command::Teleport() => {}
+            Command::Teleport(command) => {
+                write!(f, "teleport {}", command)
+            }
             // Command::Tell() => {}
             Command::Tellraw(selector, message) => {
                 write!(f, "tellraw {} {}", selector, message)
