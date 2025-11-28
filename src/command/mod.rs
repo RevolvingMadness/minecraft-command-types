@@ -172,7 +172,7 @@ pub enum Command {
     SaveAll(bool),
     SaveOff,
     SaveOn,
-    // Say,
+    Say(String),
     // Schedule,
     // Scoreboard,
     // Seed,
@@ -259,7 +259,7 @@ impl Command {
             | Command::Return(..)
             | Command::Ride(..)
             | Command::Rotate(..)
-            // | Command::Say(..)
+            | Command::Say(..)
             // | Command::Schedule(..)
             // | Command::Scoreboard(..)
             // | Command::Seed(..)
@@ -668,7 +668,9 @@ impl Display for Command {
             }
             Command::SaveOff => "save-off".fmt(f),
             Command::SaveOn => "save-on".fmt(f),
-            // Command::Say() => {}
+            Command::Say(message) => {
+                write!(f, "say {}", message)
+            }
             // Command::Schedule() => {}
             // Command::Scoreboard() => {}
             // Command::Seed() => {}
