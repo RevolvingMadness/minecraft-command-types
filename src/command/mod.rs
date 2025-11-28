@@ -169,9 +169,9 @@ pub enum Command {
     Return(ReturnCommand),
     Ride(EntitySelector, RideCommand),
     Rotate(EntitySelector, RotateCommand),
-    // SaveAll,
-    // SaveOff,
-    // SaveOn,
+    SaveAll(bool),
+    SaveOff,
+    SaveOn,
     // Say,
     // Schedule,
     // Scoreboard,
@@ -301,9 +301,9 @@ impl Command {
             Command::JFR(..)
             | Command::Perf(..)
             | Command::Publish(..)
-            // | Command::SaveAll(..)
-            // | Command::SaveOff(..)
-            // | Command::SaveOn(..)
+            | Command::SaveAll(..)
+            | Command::SaveOff
+            | Command::SaveOn
             // | Command::Stop(..)
             => PermissionLevel::try_from(4).unwrap(),
         }
@@ -317,7 +317,11 @@ impl Command {
             | Command::Deop(..)
             | Command::Op(..)
             | Command::Pardon(..)
-            | Command::PardonIp(..) => true,
+            | Command::PardonIp(..)
+            | Command::Perf(..)
+            | Command::SaveAll(..)
+            | Command::SaveOff
+            | Command::SaveOn => true,
             _ => false,
         }
     }
@@ -653,9 +657,17 @@ impl Display for Command {
             Command::Rotate(selector, command) => {
                 write!(f, "rotate {} {}", selector, command)
             }
-            // Command::SaveAll() => {}
-            // Command::SaveOff() => {}
-            // Command::SaveOn() => {}
+            Command::SaveAll(should_flush) => {
+                "save-all".fmt(f)?;
+
+                if *should_flush {
+                    " flush".fmt(f)?;
+                }
+
+                Ok(())
+            }
+            Command::SaveOff => "save-off".fmt(f),
+            Command::SaveOn => "save-on".fmt(f),
             // Command::Say() => {}
             // Command::Schedule() => {}
             // Command::Scoreboard() => {}
