@@ -25,6 +25,7 @@ pub mod permission_level;
 pub mod place;
 pub mod random;
 pub mod recipe;
+pub mod r#return;
 
 use crate::block::BlockState;
 use crate::command::advancement::AdvancementCommand;
@@ -52,6 +53,7 @@ use crate::command::loot::{LootSource, LootTarget};
 use crate::command::particle::ParticleCommand;
 use crate::command::permission_level::PermissionLevel;
 use crate::command::place::PlaceCommand;
+use crate::command::r#return::ReturnCommand;
 use crate::command::random::RandomCommand;
 use crate::command::recipe::RecipeType;
 use crate::coordinate::{Coordinates, WorldCoordinate};
@@ -160,7 +162,7 @@ pub enum Command {
     Random(RandomCommand),
     Recipe(bool, EntitySelector, RecipeType),
     Reload,
-    // Return,
+    Return(ReturnCommand),
     // Ride,
     // Rotate,
     // SaveAll,
@@ -250,7 +252,7 @@ impl Command {
             | Command::Random(RandomCommand::ValueRoll(_, _, Some(_)))
             | Command::Recipe(..)
             | Command::Reload
-            // | Command::Return(..)
+            | Command::Return(..)
             // | Command::Ride(..)
             // | Command::Rotate(..)
             // | Command::Say(..)
@@ -638,7 +640,9 @@ impl Display for Command {
                 write!(f, " {} {}", selector, recipe_type)
             }
             Command::Reload => "reload".fmt(f),
-            // Command::Return() => {}
+            Command::Return(command) => {
+                write!(f, "return {}", command)
+            }
             // Command::Ride() => {}
             // Command::Rotate() => {}
             // Command::SaveAll() => {}
