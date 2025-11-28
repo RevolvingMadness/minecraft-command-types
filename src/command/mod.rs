@@ -42,6 +42,7 @@ use crate::command::datapack::DatapackCommand;
 use crate::command::debug::DebugCommandType;
 use crate::command::dialog::DialogCommand;
 use crate::command::effect::EffectCommand;
+use crate::command::enums::setblock_mode::SetblockMode;
 use crate::command::enums::sound_source::SoundSource;
 use crate::command::execute::ExecuteSubcommand;
 use crate::command::experience::ExperienceCommand;
@@ -180,7 +181,7 @@ pub enum Command {
     Schedule(ScheduleCommand),
     Scoreboard(ScoreboardCommand),
     Seed,
-    // Setblock,
+    Setblock(Coordinates, BlockState, Option<SetblockMode>),
     // SetIdleTimeout,
     // SetWorldSpawn,
     // Spawnpoint,
@@ -265,7 +266,7 @@ impl Command {
             | Command::Say(..)
             | Command::Schedule(..)
             | Command::Scoreboard(..)
-            // | Command::Setblock(..)
+            | Command::Setblock(..)
             // | Command::SetWorldSpawn(..)
             // | Command::SpawnPoint(..)
             // | Command::Spectate(..)
@@ -684,7 +685,15 @@ impl Display for Command {
                 write!(f, "scoreboard {}", command)
             }
             Command::Seed => "seed".fmt(f),
-            // Command::Setblock() => {}
+            Command::Setblock(coordinates, block, mode) => {
+                write!(f, "setblock {} {}", coordinates, block)?;
+
+                if let Some(mode) = mode {
+                    write!(f, " {}", mode)?;
+                }
+
+                Ok(())
+            }
             // Command::SetIdleTimeout() => {}
             // Command::SetWorldSpawn() => {}
             // Command::Spawnpoint() => {}
