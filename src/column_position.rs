@@ -1,5 +1,4 @@
 use crate::coordinate::WorldCoordinate;
-use crate::has_macro::HasMacro;
 use minecraft_command_types_proc_macros::HasMacro;
 use std::fmt::{Display, Formatter};
 

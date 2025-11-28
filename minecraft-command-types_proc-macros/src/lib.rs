@@ -72,7 +72,7 @@ pub fn has_macro_derive(input: TokenStream) -> TokenStream {
     };
 
     let expanded = quote! {
-        impl HasMacro for #name {
+        impl crate::has_macro::HasMacro for #name {
             fn has_macro(&self) -> bool {
                 #body
             }

@@ -1,6 +1,5 @@
 use crate::coordinate::Coordinates;
 use crate::entity_selector::EntitySelector;
-use crate::has_macro::HasMacro;
 use crate::nbt_path::NbtPath;
 use crate::resource_location::ResourceLocation;
 use crate::snbt::SNBT;

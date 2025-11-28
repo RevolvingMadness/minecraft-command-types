@@ -13,7 +13,6 @@ use crate::command::item_source::ItemSource;
 use crate::command::{Command, PlayerScore};
 use crate::coordinate::Coordinates;
 use crate::entity_selector::EntitySelector;
-use crate::has_macro::HasMacro;
 use crate::item::ItemPredicate;
 use crate::nbt_path::NbtPath;
 use crate::range::IntegerRange;

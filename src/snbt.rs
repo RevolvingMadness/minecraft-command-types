@@ -2,7 +2,7 @@ use crate::has_macro::HasMacro;
 use crate::nbt_path::SNBTCompound;
 use ordered_float::NotNan;
 use serde::de::{Deserialize, Deserializer, MapAccess, SeqAccess, Visitor};
-use serde::{Serialize, Serializer, de};
+use serde::{de, Serialize, Serializer};
 use std::collections::BTreeMap;
 use std::fmt::Display;
 use std::fmt::Formatter;

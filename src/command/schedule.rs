@@ -1,5 +1,4 @@
 use crate::command::enums::schedule_mode::ScheduleMode;
-use crate::has_macro::HasMacro;
 use crate::resource_location::ResourceLocation;
 use crate::time::Time;
 use minecraft_command_types_proc_macros::HasMacro;

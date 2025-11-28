@@ -1,4 +1,3 @@
-use crate::has_macro::HasMacro;
 use crate::resource_location::ResourceLocation;
 use minecraft_command_types_proc_macros::HasMacro;
 use std::fmt::{Display, Formatter};

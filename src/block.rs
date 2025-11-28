@@ -1,4 +1,3 @@
-use crate::has_macro::HasMacro;
 use crate::nbt_path::SNBTCompound;
 use crate::resource_location::ResourceLocation;
 use crate::snbt::fmt_snbt_compound;

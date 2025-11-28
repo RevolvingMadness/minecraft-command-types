@@ -15,3 +15,19 @@ create_enum!(
     Voice,
     UI
 );
+
+create_enum!(
+    StopSoundSource,
+    [],
+    Master,
+    Music,
+    Record,
+    Weather,
+    Block,
+    Hostile,
+    Neutral,
+    Player,
+    Ambient,
+    Voice,
+    All
+);

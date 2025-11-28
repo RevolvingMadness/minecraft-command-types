@@ -40,12 +40,7 @@ macro_rules! create_enum {
         $($(#[$variant_attr:meta])* $variant:ident),+
         $(,)?
     ) => {
-        use crate::has_macro::HasMacro;
-        use minecraft_command_types_proc_macros::HasMacro;
-        use serde::{Deserialize, Serialize};
-        use strum::{Display, EnumString};
-
-        #[derive(Debug, Clone, Eq, PartialEq, Hash, Display, EnumString, HasMacro, Serialize, Deserialize, $($custom_derives),*)]
+        #[derive(Debug, Clone, Eq, PartialEq, Hash, ::strum::Display, ::strum::EnumString, ::minecraft_command_types_proc_macros::HasMacro, ::serde::Serialize, ::serde::Deserialize, $($custom_derives),*)]
         #[strum(serialize_all = "snake_case")]
         pub enum $name {
             $($(#[$variant_attr])* $variant,)*
@@ -59,12 +54,7 @@ macro_rules! create_enum {
         $($(#[$variant_attr:meta])* $variant:ident),+
         $(,)?
     ) => {
-        use crate::has_macro::HasMacro;
-        use minecraft_command_types_proc_macros::HasMacro;
-        use serde::{Deserialize, Serialize};
-        use strum::{Display, EnumString};
-
-        #[derive(Debug, Clone, Eq, PartialEq, Hash, Display, EnumString, HasMacro, Serialize, Deserialize, $($custom_derives),*)]
+        #[derive(Debug, Clone, Eq, PartialEq, Hash, ::strum::Display, ::strum::EnumString, ::minecraft_command_types_proc_macros::HasMacro, ::serde::Serialize, ::serde::Deserialize, $($custom_derives),*)]
         #[strum(serialize_all = $serialize_all)]
         pub enum $name {
             $($(#[$variant_attr])* $variant,)*

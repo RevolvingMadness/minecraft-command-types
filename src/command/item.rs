@@ -1,5 +1,4 @@
 use crate::command::item_source::ItemSource;
-use crate::has_macro::HasMacro;
 use crate::item::ItemStack;
 use crate::snbt::SNBT;
 use minecraft_command_types_proc_macros::HasMacro;

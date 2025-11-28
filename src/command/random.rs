@@ -1,5 +1,4 @@
 use crate::command::enums::random_type::RandomType;
-use crate::has_macro::HasMacro;
 use crate::range::IntegerRange;
 use crate::resource_location::ResourceLocation;
 use minecraft_command_types_proc_macros::HasMacro;

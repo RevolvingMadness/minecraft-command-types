@@ -1,5 +1,4 @@
 use crate::command::enums::attribute::AttributeAddModifier;
-use crate::has_macro::HasMacro;
 use crate::resource_location::ResourceLocation;
 use minecraft_command_types_proc_macros::HasMacro;
 use ordered_float::NotNan;

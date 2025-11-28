@@ -1,6 +1,5 @@
 use crate::command::enums::gamemode::Gamemode;
 use crate::command::enums::sort::Sort;
-use crate::has_macro::HasMacro;
 use crate::range::{FloatRange, IntegerRange};
 use crate::resource_location::ResourceLocation;
 use crate::snbt::SNBT;
@@ -35,7 +34,7 @@ impl Display for EntitySelectorVariable {
             EntitySelectorVariable::S => "s",
             EntitySelectorVariable::N => "n",
         }
-        .fmt(f)
+            .fmt(f)
     }
 }
 
@@ -371,35 +370,35 @@ mod tests {
             EntitySelector::e(vec![EntitySelectorOption::Distance(
                 FloatRange::new_single(nn(5.0))
             )])
-            .to_string(),
+                .to_string(),
             "@e[distance=5]"
         );
         assert_eq!(
             EntitySelector::e(vec![EntitySelectorOption::Distance(FloatRange::new_min(
                 nn(5.0)
             ))])
-            .to_string(),
+                .to_string(),
             "@e[distance=5..]"
         );
         assert_eq!(
             EntitySelector::e(vec![EntitySelectorOption::Distance(FloatRange::new_max(
                 nn(10.2)
             ))])
-            .to_string(),
+                .to_string(),
             "@e[distance=..10.2]"
         );
         assert_eq!(
             EntitySelector::e(vec![EntitySelectorOption::Distance(
                 FloatRange::new_min_max(nn(5.0), nn(10.0))
             )])
-            .to_string(),
+                .to_string(),
             "@e[distance=5..10]"
         );
         assert_eq!(
             EntitySelector::a(vec![EntitySelectorOption::Level(IntegerRange::new_single(
                 10
             ))])
-            .to_string(),
+                .to_string(),
             "@a[level=10]"
         );
         assert_eq!(
@@ -411,7 +410,7 @@ mod tests {
             EntitySelector::p(vec![EntitySelectorOption::XRotation(
                 FloatRange::new_min_max(nn(-90.0), nn(90.0))
             )])
-            .to_string(),
+                .to_string(),
             "@p[x_rotation=-90..90]"
         );
     }
@@ -423,7 +422,7 @@ mod tests {
                 false,
                 "friendly".to_string()
             )])
-            .to_string(),
+                .to_string(),
             "@e[tag=friendly]"
         );
         assert_eq!(
@@ -456,7 +455,7 @@ mod tests {
                 false,
                 ResourceLocation::new_namespace_path("minecraft", "pig")
             )])
-            .to_string(),
+                .to_string(),
             "@e[type=pig]"
         );
         assert_eq!(
@@ -464,7 +463,7 @@ mod tests {
                 true,
                 ResourceLocation::new_namespace_path("minecraft", "zombie")
             )])
-            .to_string(),
+                .to_string(),
             "@e[type=!zombie]"
         );
         assert_eq!(
@@ -472,7 +471,7 @@ mod tests {
                 false,
                 Gamemode::Survival
             )])
-            .to_string(),
+                .to_string(),
             "@a[gamemode=survival]"
         );
         assert_eq!(
@@ -480,7 +479,7 @@ mod tests {
                 true,
                 Gamemode::Creative
             )])
-            .to_string(),
+                .to_string(),
             "@a[gamemode=!creative]"
         );
         let mut compound = BTreeMap::new();

@@ -1,9 +1,8 @@
-use crate::has_macro::HasMacro;
 use itertools::Itertools;
 use minecraft_command_types_proc_macros::HasMacro;
-use nonempty::{NonEmpty, nonempty};
+use nonempty::{nonempty, NonEmpty};
 use serde::de::Visitor;
-use serde::{Deserialize, Deserializer, Serialize, Serializer, de};
+use serde::{de, Deserialize, Deserializer, Serialize, Serializer};
 use std::fmt::{Display, Formatter};
 use std::str::FromStr;
 

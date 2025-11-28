@@ -1,7 +1,6 @@
 use crate::command::enums::template_mirror::TemplateMirror;
 use crate::command::enums::template_rotation::TemplateRotation;
 use crate::coordinate::Coordinates;
-use crate::has_macro::HasMacro;
 use crate::resource_location::ResourceLocation;
 use minecraft_command_types_proc_macros::HasMacro;
 use ordered_float::NotNan;

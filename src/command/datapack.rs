@@ -1,5 +1,4 @@
 use crate::command::enums::datapack_list_type::DatapackListType;
-use crate::has_macro::HasMacro;
 use crate::snbt::SNBT;
 use minecraft_command_types_proc_macros::HasMacro;
 use std::fmt::{Display, Formatter};

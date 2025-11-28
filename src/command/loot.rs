@@ -1,7 +1,6 @@
 use crate::command::item_source::ItemSource;
 use crate::coordinate::Coordinates;
 use crate::entity_selector::EntitySelector;
-use crate::has_macro::HasMacro;
 use crate::item::ItemStack;
 use crate::resource_location::ResourceLocation;
 use minecraft_command_types_proc_macros::HasMacro;

@@ -1,5 +1,4 @@
 use crate::command::data::DataTarget;
-use crate::has_macro::HasMacro;
 use crate::nbt_path::{NbtPath, SNBTCompound};
 use crate::snbt::fmt_snbt_compound;
 use minecraft_command_types_proc_macros::HasMacro;

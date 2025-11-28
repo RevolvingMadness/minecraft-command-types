@@ -1,7 +1,6 @@
 use crate::command::enums::particle_display_type::ParticleDisplayType;
 use crate::coordinate::Coordinates;
 use crate::entity_selector::EntitySelector;
-use crate::has_macro::HasMacro;
 use minecraft_command_types_proc_macros::HasMacro;
 use ordered_float::NotNan;
 use std::fmt::{Display, Formatter};

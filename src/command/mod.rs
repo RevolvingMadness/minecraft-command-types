@@ -44,7 +44,7 @@ use crate::command::debug::DebugCommandType;
 use crate::command::dialog::DialogCommand;
 use crate::command::effect::EffectCommand;
 use crate::command::enums::setblock_mode::SetblockMode;
-use crate::command::enums::sound_source::SoundSource;
+use crate::command::enums::sound_source::{SoundSource, StopSoundSource};
 use crate::command::execute::ExecuteSubcommand;
 use crate::command::experience::ExperienceCommand;
 use crate::command::fetch_profile::FetchProfileCommand;
@@ -68,7 +68,6 @@ use crate::command::schedule::ScheduleCommand;
 use crate::command::scoreboard::ScoreboardCommand;
 use crate::coordinate::{Coordinates, WorldCoordinate};
 use crate::entity_selector::EntitySelector;
-use crate::has_macro::HasMacro;
 use crate::item::{ItemPredicate, ItemStack};
 use crate::resource_location::ResourceLocation;
 use crate::snbt::SNBT;
@@ -79,7 +78,6 @@ use enums::difficulty::Difficulty;
 use enums::gamemode::Gamemode;
 use minecraft_command_types_proc_macros::HasMacro;
 use ordered_float::NotNan;
-use serde::de::Expected;
 use std::fmt::{Display, Formatter};
 
 #[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
@@ -200,7 +198,11 @@ pub enum Command {
         EntitySelector,
     ),
     Stop,
-    // StopSound,
+    StopSound(
+        EntitySelector,
+        Option<StopSoundSource>,
+        Option<ResourceLocation>,
+    ),
     // Summon,
     // Tag,
     // Team,
@@ -283,7 +285,7 @@ impl Command {
             | Command::Spawnpoint(..)
             | Command::Spectate(..)
             | Command::SpreadPlayers(..)
-            // | Command::Stopsound(..)
+            | Command::StopSound(..)
             // | Command::Summon(..)
             // | Command::Tag(..)
             // | Command::Team(..)
@@ -774,7 +776,19 @@ impl Display for Command {
                 write!(f, "{} {}", respect_teams, targets)
             }
             Command::Stop => "stop".fmt(f),
-            // Command::StopSound() => {}
+            Command::StopSound(selector, source, sound) => {
+                write!(f, "stopsound {}", selector)?;
+
+                if let Some(source) = source {
+                    write!(f, " {}", source)?;
+
+                    if let Some(sound) = sound {
+                        write!(f, " {}", sound)?;
+                    }
+                }
+
+                Ok(())
+            }
             // Command::Summon() => {}
             // Command::Tag() => {}
             // Command::Team() => {}

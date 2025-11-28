@@ -2,7 +2,6 @@ use crate::command::enums::bossbar_color::BossbarColor;
 use crate::command::enums::bossbar_get_type::BossbarGetType;
 use crate::command::enums::bossbar_style::BossbarStyle;
 use crate::entity_selector::EntitySelector;
-use crate::has_macro::HasMacro;
 use crate::resource_location::ResourceLocation;
 use crate::snbt::SNBT;
 use minecraft_command_types_proc_macros::HasMacro;

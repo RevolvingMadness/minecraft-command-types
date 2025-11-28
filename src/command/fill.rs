@@ -1,7 +1,6 @@
 use crate::block::BlockState;
 use crate::command::enums::fill_mode::FillMode;
 use crate::command::enums::fill_replace_mode::FillReplaceMode;
-use crate::has_macro::HasMacro;
 use minecraft_command_types_proc_macros::HasMacro;
 use std::fmt::{Display, Formatter};
 
