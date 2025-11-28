@@ -183,7 +183,7 @@ pub enum Command {
     Seed,
     Setblock(Coordinates, BlockState, Option<SetblockMode>),
     SetIdleTimeout(i32),
-    // SetWorldSpawn,
+    SetWorldSpawn(Option<Coordinates>, Option<NotNan<f32>>),
     // Spawnpoint,
     // Spectate,
     // SpreadPlayers,
@@ -267,7 +267,7 @@ impl Command {
             | Command::Schedule(..)
             | Command::Scoreboard(..)
             | Command::Setblock(..)
-            // | Command::SetWorldSpawn(..)
+            | Command::SetWorldSpawn(..)
             // | Command::SpawnPoint(..)
             // | Command::Spectate(..)
             // | Command::SpreadPlayers(..)
@@ -698,7 +698,19 @@ impl Display for Command {
             Command::SetIdleTimeout(minutes) => {
                 write!(f, "setidletimeout {}", minutes)
             }
-            // Command::SetWorldSpawn() => {}
+            Command::SetWorldSpawn(coordinates, angle) => {
+                "setworldspawn".fmt(f)?;
+
+                if let Some(coordinates) = coordinates {
+                    write!(f, " {}", coordinates)?;
+
+                    if let Some(angle) = angle {
+                        write!(f, " {}", angle)?;
+                    }
+                }
+
+                Ok(())
+            }
             // Command::Spawnpoint() => {}
             // Command::Spectate() => {}
             // Command::SpreadPlayers() => {}
