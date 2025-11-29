@@ -33,6 +33,7 @@ pub mod scoreboard;
 pub mod tag;
 pub mod team;
 pub mod teleport;
+pub mod test;
 
 use crate::block::BlockState;
 use crate::column_position::ColumnPosition;
@@ -72,6 +73,7 @@ use crate::command::scoreboard::ScoreboardCommand;
 use crate::command::tag::TagCommand;
 use crate::command::team::TeamCommand;
 use crate::command::teleport::TeleportCommand;
+use crate::command::test::TestCommand;
 use crate::coordinate::{Coordinates, WorldCoordinate};
 use crate::entity_selector::EntitySelector;
 use crate::item::{ItemPredicate, ItemStack};
@@ -214,9 +216,8 @@ pub enum Command {
     Team(TeamCommand),
     TeamMessage(String),
     Teleport(TeleportCommand),
-    // Tell,
     Tellraw(EntitySelector, SNBT),
-    // Test,
+    Test(TestCommand),
     // Tick,
     // Time,
     // Title,
@@ -225,7 +226,6 @@ pub enum Command {
     // Transfer,
     // Trigger,
     // Version,
-    // W,
     // Waypoint,
     // Weather,
     // Whitelist,
@@ -240,10 +240,8 @@ impl Command {
             | Command::Random(RandomCommand::ValueRoll(_, _, None))
             | Command::Random(RandomCommand::Reset(..))
             | Command::TeamMessage(..)
-            // | Command::Tell(..)
             // | Command::Tm(..)
             // | Command::Trigger(..)
-            // | Command::W(..)
             => {
                 PermissionLevel::try_from(0).unwrap()
             }
@@ -297,7 +295,7 @@ impl Command {
             | Command::Team(..)
             | Command::Teleport(..)
             | Command::Tellraw(..)
-            // | Command::Test(..)
+            | Command::Test(..)
             // | Command::Time(..)
             // | Command::Title(..)
             // | Command::Tp(..)
@@ -820,18 +818,18 @@ impl Display for Command {
             Command::Teleport(command) => {
                 write!(f, "teleport {}", command)
             }
-            // Command::Tell() => {}
             Command::Tellraw(selector, message) => {
                 write!(f, "tellraw {} {}", selector, message)
-            } // Command::Test() => {}
-              // Command::Tick() => {}
+            }
+            Command::Test(command) => {
+                write!(f, "test {}", command)
+            } // Command::Tick() => {}
               // Command::Time() => {}
               // Command::Title() => {}
               // Command::Tp() => {}
               // Command::Transfer() => {}
               // Command::Trigger() => {}
               // Command::Version() => {}
-              // Command::W() => {}
               // Command::Waypoint() => {}
               // Command::Weather() => {}
               // Command::Whitelist() => {}

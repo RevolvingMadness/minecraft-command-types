@@ -28,6 +28,12 @@ impl_has_macro_false!(
     ordered_float::NotNan<f64>
 );
 
+impl<A: HasMacro, B: HasMacro> HasMacro for (A, B) {
+    fn has_macro(&self) -> bool {
+        self.0.has_macro() || self.1.has_macro()
+    }
+}
+
 impl<T: HasMacro> HasMacro for Option<T> {
     fn has_macro(&self) -> bool {
         self.as_ref().map(|t| t.has_macro()).unwrap_or(false)
@@ -37,12 +43,6 @@ impl<T: HasMacro> HasMacro for Option<T> {
 impl<T: HasMacro> HasMacro for Vec<T> {
     fn has_macro(&self) -> bool {
         self.iter().any(|t| t.has_macro())
-    }
-}
-
-impl<A, B: HasMacro> HasMacro for Vec<(A, B)> {
-    fn has_macro(&self) -> bool {
-        self.iter().any(|(_, b)| b.has_macro())
     }
 }
 
