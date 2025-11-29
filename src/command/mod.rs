@@ -34,6 +34,7 @@ pub mod tag;
 pub mod team;
 pub mod teleport;
 pub mod test;
+pub mod tick;
 
 use crate::block::BlockState;
 use crate::column_position::ColumnPosition;
@@ -74,6 +75,7 @@ use crate::command::tag::TagCommand;
 use crate::command::team::TeamCommand;
 use crate::command::teleport::TeleportCommand;
 use crate::command::test::TestCommand;
+use crate::command::tick::TickCommand;
 use crate::coordinate::{Coordinates, WorldCoordinate};
 use crate::entity_selector::EntitySelector;
 use crate::item::{ItemPredicate, ItemStack};
@@ -218,7 +220,7 @@ pub enum Command {
     Teleport(TeleportCommand),
     Tellraw(EntitySelector, SNBT),
     Test(TestCommand),
-    // Tick,
+    Tick(TickCommand),
     // Time,
     // Title,
     // Tm,
@@ -315,7 +317,7 @@ impl Command {
             | Command::Pardon(..)
             | Command::PardonIp(..)
             | Command::SetIdleTimeout(..)
-            // | Command::Tick(..)
+            | Command::Tick(..)
             // | Command::Transfer(..)
             // | Command::Whitelist(..)
             => PermissionLevel::try_from(3).unwrap(),
@@ -823,7 +825,8 @@ impl Display for Command {
             }
             Command::Test(command) => {
                 write!(f, "test {}", command)
-            } // Command::Tick() => {}
+            }
+            Command::Tick(command) => write!(f, "tick {}", command),
               // Command::Time() => {}
               // Command::Title() => {}
               // Command::Tp() => {}
