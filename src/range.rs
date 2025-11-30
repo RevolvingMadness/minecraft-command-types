@@ -15,10 +15,8 @@ impl IntegerRange {
             panic!("min and/or max must be Some")
         }
 
-        if let (Some(min), Some(max)) = (min, max) {
-            if min > max {
-                panic!("min must be smaller or equal to max");
-            }
+        if let (Some(min), Some(max)) = (min, max) && min > max {
+            panic!("min must be smaller or equal to max");
         }
 
         IntegerRange { min, max }
@@ -113,10 +111,8 @@ impl FloatRange {
             panic!("min and/or max must be Some")
         }
 
-        if let (Some(min), Some(max)) = (min, max) {
-            if min > max {
-                panic!("min must be smaller or equal to max");
-            }
+        if let (Some(min), Some(max)) = (min, max) && min > max {
+            panic!("min must be smaller or equal to max");
         }
 
         FloatRange { min, max }
@@ -143,7 +139,7 @@ impl FloatRange {
     #[inline]
     #[must_use]
     pub fn new_single(value: NotNan<f32>) -> FloatRange {
-        Self::new(Some(value.clone()), Some(value))
+        Self::new(Some(value), Some(value))
     }
 }
 

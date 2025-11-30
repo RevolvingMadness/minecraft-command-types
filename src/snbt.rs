@@ -283,7 +283,7 @@ impl From<Vec<SNBT>> for SNBT {
 
 impl From<BTreeMap<String, SNBT>> for SNBT {
     fn from(m: BTreeMap<String, SNBT>) -> Self {
-        SNBT::Compound(BTreeMap::from(m))
+        SNBT::Compound(m)
     }
 }
 

@@ -19,13 +19,13 @@ create_enum!(
 
 impl ScoreboardCriterion {
     pub fn can_be_modified(&self) -> bool {
-        match self {
+        matches!(
+            self,
             ScoreboardCriterion::Dummy
-            | ScoreboardCriterion::Trigger
-            | ScoreboardCriterion::DeathCount
-            | ScoreboardCriterion::PlayerKillCount
-            | ScoreboardCriterion::TotalKillCount => true,
-            _ => false,
-        }
+                | ScoreboardCriterion::Trigger
+                | ScoreboardCriterion::DeathCount
+                | ScoreboardCriterion::PlayerKillCount
+                | ScoreboardCriterion::TotalKillCount
+        )
     }
 }

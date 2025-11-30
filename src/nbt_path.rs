@@ -50,19 +50,17 @@ impl Display for NbtPathNode {
             NbtPathNode::Named(name, filter) => {
                 write!(f, "{}", escape_nbt_path_key(name))?;
 
-                if let Some(comp) = filter {
-                    if !comp.is_empty() {
-                        write!(f, "{{")?;
-                        let mut first = true;
-                        for (k, v) in comp {
-                            if !first {
-                                write!(f, ",")?;
-                            }
-                            first = false;
-                            write!(f, "{}:{}", escape_nbt_path_key(k), v)?;
+                if let Some(comp) = filter && !comp.is_empty() {
+                    write!(f, "{{")?;
+                    let mut first = true;
+                    for (k, v) in comp {
+                        if !first {
+                            write!(f, ",")?;
                         }
-                        write!(f, "}}")?;
+                        first = false;
+                        write!(f, "{}:{}", escape_nbt_path_key(k), v)?;
                     }
+                    write!(f, "}}")?;
                 }
                 Ok(())
             }
@@ -76,10 +74,8 @@ impl Display for NbtPath {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         let mut first = true;
         for node in &self.0 {
-            if !first {
-                if !matches!(node, NbtPathNode::Index(_)) {
-                    write!(f, ".")?;
-                }
+            if !first && !matches!(node, NbtPathNode::Index(_)) {
+                write!(f, ".")?;
             }
             first = false;
             write!(f, "{}", node)?;

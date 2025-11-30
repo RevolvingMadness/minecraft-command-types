@@ -59,10 +59,8 @@ impl Display for ResourceLocation {
             "#".fmt(f)?;
         }
 
-        if let Some(namespace) = &self.namespace {
-            if *namespace != "minecraft".to_string() {
-                write!(f, "{}:", namespace)?;
-            }
+        if let Some(namespace) = &self.namespace && *namespace != "minecraft" {
+            write!(f, "{}:", namespace)?;
         }
 
         self.paths.iter().join("/").fmt(f)

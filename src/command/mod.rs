@@ -337,22 +337,22 @@ impl Command {
     }
 
     pub fn is_multiplayer_only(&self) -> bool {
-        match self {
+        matches!(
+            self,
             Command::Ban(..)
-            | Command::BanIP(..)
-            | Command::Banlist(..)
-            | Command::Deop(..)
-            | Command::Op(..)
-            | Command::Pardon(..)
-            | Command::PardonIp(..)
-            | Command::Perf(..)
-            | Command::SaveAll(..)
-            | Command::SaveOff
-            | Command::SaveOn
-            | Command::SetIdleTimeout(..)
-            | Command::Stop => true,
-            _ => false,
-        }
+                | Command::BanIP(..)
+                | Command::Banlist(..)
+                | Command::Deop(..)
+                | Command::Op(..)
+                | Command::Pardon(..)
+                | Command::PardonIp(..)
+                | Command::Perf(..)
+                | Command::SaveAll(..)
+                | Command::SaveOff
+                | Command::SaveOn
+                | Command::SetIdleTimeout(..)
+                | Command::Stop
+        )
     }
 }
 
@@ -827,17 +827,17 @@ impl Display for Command {
                 write!(f, "test {}", command)
             }
             Command::Tick(command) => write!(f, "tick {}", command),
-              // Command::Time() => {}
-              // Command::Title() => {}
-              // Command::Tp() => {}
-              // Command::Transfer() => {}
-              // Command::Trigger() => {}
-              // Command::Version() => {}
-              // Command::Waypoint() => {}
-              // Command::Weather() => {}
-              // Command::Whitelist() => {}
-              // Command::Worldborder() => {}
-              // Command::Xp() => {}
+            // Command::Time() => {}
+            // Command::Title() => {}
+            // Command::Tp() => {}
+            // Command::Transfer() => {}
+            // Command::Trigger() => {}
+            // Command::Version() => {}
+            // Command::Waypoint() => {}
+            // Command::Weather() => {}
+            // Command::Whitelist() => {}
+            // Command::Worldborder() => {}
+            // Command::Xp() => {}
         }
     }
 }
