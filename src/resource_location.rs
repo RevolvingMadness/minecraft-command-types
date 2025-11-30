@@ -1,8 +1,8 @@
 use itertools::Itertools;
 use minecraft_command_types_proc_macros::HasMacro;
-use nonempty::{nonempty, NonEmpty};
+use nonempty::{NonEmpty, nonempty};
 use serde::de::Visitor;
-use serde::{de, Deserialize, Deserializer, Serialize, Serializer};
+use serde::{Deserialize, Deserializer, Serialize, Serializer, de};
 use std::fmt::{Display, Formatter};
 use std::str::FromStr;
 
@@ -79,7 +79,7 @@ impl Display for ResourceLocationParseError {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
             ResourceLocationParseError::EmptyString => {
-                write!(f, "Resource location string cannot be empty")
+                f.write_str("Resource location string cannot be empty")
             }
             ResourceLocationParseError::InvalidFormat(msg) => {
                 write!(f, "Invalid resource location format: {}", msg)

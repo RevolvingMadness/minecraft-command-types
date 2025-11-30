@@ -2,10 +2,10 @@ use crate::has_macro::HasMacro;
 use crate::nbt_path::SNBTCompound;
 use ordered_float::NotNan;
 use serde::de::{Deserialize, Deserializer, MapAccess, SeqAccess, Visitor};
-use serde::{de, Serialize, Serializer};
+use serde::{Serialize, Serializer, de};
 use std::collections::BTreeMap;
-use std::fmt::Display;
 use std::fmt::Formatter;
+use std::fmt::{Display, Pointer, Write};
 
 #[derive(Debug, Clone, Eq, PartialEq, Hash)]
 pub enum SNBT {
@@ -54,17 +54,17 @@ impl HasMacro for SNBT {
 }
 
 pub fn fmt_snbt_compound(f: &mut Formatter<'_>, compound: &SNBTCompound) -> std::fmt::Result {
-    write!(f, "{{")?;
+    f.write_str("{")?;
 
     for (i, (k, v)) in compound.iter().enumerate() {
         if i > 0 {
-            write!(f, ", ")?;
+            f.write_str(", ")?;
         }
 
         write!(f, "\"{}\":{}", escape(k), v)?;
     }
 
-    write!(f, "}}")
+    f.write_str("}")
 }
 
 fn escape(input: &str) -> String {
@@ -84,57 +84,57 @@ impl Display for SNBT {
                 write!(f, "\"{}\"", escape(s))
             }
             SNBT::List(values) => {
-                write!(f, "[")?;
+                f.write_str("]")?;
 
                 for (i, v) in values.iter().enumerate() {
                     if i > 0 {
-                        write!(f, ", ")?;
+                        f.write_str(", ")?;
                     }
 
-                    write!(f, "{}", v)?;
+                    v.fmt(f)?;
                 }
 
-                write!(f, "]")
+                f.write_str("]")
             }
             SNBT::Compound(map) => fmt_snbt_compound(f, map),
             SNBT::ByteArray(arr) => {
-                write!(f, "[B; ")?;
+                f.write_str("[B; ")?;
 
                 for (i, v) in arr.iter().enumerate() {
                     if i > 0 {
-                        write!(f, ", ")?;
+                        f.write_str(", ")?;
                     }
 
                     write!(f, "{}b", v)?;
                 }
 
-                write!(f, "]")
+                f.write_str("]")
             }
             SNBT::IntegerArray(arr) => {
-                write!(f, "[I; ")?;
+                f.write_str("[I; ")?;
 
                 for (i, v) in arr.iter().enumerate() {
                     if i > 0 {
-                        write!(f, ", ")?;
+                        f.write_str(", ")?;
                     }
 
-                    write!(f, "{}", v)?;
+                    v.fmt(f)?;
                 }
 
-                write!(f, "]")
+                f.write_str("]")
             }
             SNBT::LongArray(arr) => {
-                write!(f, "[L; ")?;
+                f.write_str("[L; ")?;
 
                 for (i, v) in arr.iter().enumerate() {
                     if i > 0 {
-                        write!(f, ", ")?;
+                        f.write_str(", ")?;
                     }
 
                     write!(f, "{}L", v)?;
                 }
 
-                write!(f, "]")
+                f.write_str("]")
             }
             SNBT::Macro(name) => write!(f, "$({})", name),
         }

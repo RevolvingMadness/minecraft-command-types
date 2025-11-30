@@ -1,4 +1,4 @@
-use crate::snbt::SNBT;
+use crate::snbt::{fmt_snbt_compound, SNBT};
 use minecraft_command_types_proc_macros::HasMacro;
 use std::collections::BTreeMap;
 use std::fmt::{Display, Formatter};
@@ -31,38 +31,14 @@ pub struct NbtPath(pub Vec<NbtPathNode>);
 impl Display for NbtPathNode {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            NbtPathNode::RootCompound(compound) => {
-                if compound.is_empty() {
-                    write!(f, "{{}}")
-                } else {
-                    let mut first = true;
-                    write!(f, "{{")?;
-                    for (k, v) in compound {
-                        if !first {
-                            write!(f, ",")?;
-                        }
-                        first = false;
-                        write!(f, "{}:{}", escape_nbt_path_key(k), v)?;
-                    }
-                    write!(f, "}}")
-                }
-            }
+            NbtPathNode::RootCompound(compound) => fmt_snbt_compound(f, compound),
             NbtPathNode::Named(name, filter) => {
                 write!(f, "{}", escape_nbt_path_key(name))?;
 
-                if let Some(comp) = filter
-                    && !comp.is_empty()
+                if let Some(filter) = filter
+                    && !filter.is_empty()
                 {
-                    write!(f, "{{")?;
-                    let mut first = true;
-                    for (k, v) in comp {
-                        if !first {
-                            write!(f, ",")?;
-                        }
-                        first = false;
-                        write!(f, "{}:{}", escape_nbt_path_key(k), v)?;
-                    }
-                    write!(f, "}}")?;
+                    fmt_snbt_compound(f, filter)?;
                 }
                 Ok(())
             }
@@ -142,7 +118,7 @@ mod tests {
             snbt_string("4.0f"),
         )]))]);
 
-        assert_eq!(path.to_string(), r#"{foo:"4.0f"}"#);
+        assert_eq!(path.to_string(), r#"{"foo":"4.0f"}"#);
 
         let path2 = NbtPath(vec![
             NbtPathNode::Named(
@@ -152,7 +128,7 @@ mod tests {
             NbtPathNode::Named("bar".to_string(), None),
         ]);
 
-        assert_eq!(path2.to_string(), r#"foo{bar:"baz"}.bar"#);
+        assert_eq!(path2.to_string(), r#"foo{"bar":"baz"}.bar"#);
     }
 
     #[test]

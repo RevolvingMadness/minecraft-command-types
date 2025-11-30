@@ -64,9 +64,9 @@ use crate::command::loot::{LootSource, LootTarget};
 use crate::command::particle::ParticleCommand;
 use crate::command::permission_level::PermissionLevel;
 use crate::command::place::PlaceCommand;
-use crate::command::r#return::ReturnCommand;
 use crate::command::random::RandomCommand;
 use crate::command::recipe::RecipeType;
+use crate::command::r#return::ReturnCommand;
 use crate::command::ride::RideCommand;
 use crate::command::rotate::RotateCommand;
 use crate::command::schedule::ScheduleCommand;
@@ -88,7 +88,7 @@ use enums::difficulty::Difficulty;
 use enums::gamemode::Gamemode;
 use minecraft_command_types_proc_macros::HasMacro;
 use ordered_float::NotNan;
-use std::fmt::{Display, Formatter};
+use std::fmt::{Display, Formatter, Write};
 
 #[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
 pub struct PlayerScore {
@@ -387,7 +387,7 @@ impl Display for Command {
                 Ok(())
             }
             Command::Banlist(type_) => {
-                write!(f, "banlist")?;
+                f.write_str("banlist")?;
 
                 if let Some(type_) = type_ {
                     write!(f, " {}", type_)?;
@@ -423,7 +423,7 @@ impl Display for Command {
                 mask_mode,
                 clone_mode,
             } => {
-                write!(f, "clone")?;
+                f.write_str("clone")?;
 
                 if let Some(source_dimension) = source_dimension {
                     write!(f, " from {}", source_dimension)?;
@@ -547,12 +547,10 @@ impl Display for Command {
                 f.write_str("jfr ")?;
 
                 if *start {
-                    write!(f, "start")?;
+                    f.write_str("start")
                 } else {
-                    write!(f, "stop")?;
+                    f.write_str("stop")
                 }
-
-                Ok(())
             }
             Command::Kick(selector, reason) => {
                 write!(f, "kick {}", selector)?;
@@ -606,15 +604,13 @@ impl Display for Command {
                 write!(f, "particle {}", command)
             }
             Command::Perf(start) => {
-                write!(f, "perf ")?;
+                f.write_str("perf ")?;
 
                 if *start {
-                    write!(f, "start")?;
+                    f.write_str("start")
                 } else {
-                    write!(f, "stop")?;
+                    f.write_str("stop")
                 }
-
-                Ok(())
             }
             Command::Place(command) => {
                 write!(f, "place {}", command)

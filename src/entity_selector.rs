@@ -6,7 +6,7 @@ use crate::snbt::SNBT;
 use minecraft_command_types_proc_macros::HasMacro;
 use ordered_float::NotNan;
 use std::collections::BTreeMap;
-use std::fmt::{Display, Formatter};
+use std::fmt::{Display, Formatter, Write};
 
 #[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
 pub enum EntitySelectorVariable {
@@ -34,7 +34,7 @@ impl Display for EntitySelectorVariable {
             EntitySelectorVariable::S => "s",
             EntitySelectorVariable::N => "n",
         }
-            .fmt(f)
+        .fmt(f)
     }
 }
 
@@ -42,12 +42,12 @@ fn fmt_b_tree_map<K: Display, V: Display>(
     f: &mut Formatter<'_>,
     input: &BTreeMap<K, V>,
 ) -> std::fmt::Result {
-    write!(f, "{{")?;
+    f.write_str("{")?;
     let mut first = true;
 
     for (k, v) in input {
         if !first {
-            write!(f, ", ")?;
+            f.write_str(", ")?;
         }
 
         first = false;
@@ -55,7 +55,7 @@ fn fmt_b_tree_map<K: Display, V: Display>(
         write!(f, "{}={}", k, v)?;
     }
 
-    write!(f, "}}")
+    f.write_str("}")
 }
 
 #[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
@@ -183,11 +183,11 @@ impl Display for EntitySelectorOption {
             }
 
             EntitySelectorOption::Scores(scores) => {
-                write!(f, "scores=")?;
+                f.write_str("scores=")?;
                 fmt_b_tree_map(f, scores)
             }
             EntitySelectorOption::Advancements(advancements) => {
-                write!(f, "advancements=")?;
+                f.write_str("advancements=")?;
                 fmt_b_tree_map(f, advancements)
             }
         }
@@ -293,20 +293,20 @@ impl Display for EntitySelector {
                 write!(f, "@{}", variable)?;
 
                 if !options.is_empty() {
-                    write!(f, "[")?;
+                    f.write_str("[")?;
                     let mut first = true;
 
                     for option in options {
                         if !first {
-                            write!(f, ", ")?;
+                            f.write_str(", ")?;
                         }
 
-                        write!(f, "{}", option)?;
+                        option.fmt(f)?;
 
                         first = false;
                     }
 
-                    write!(f, "]")?;
+                    f.write_str("]")?;
                 }
 
                 Ok(())
@@ -370,35 +370,35 @@ mod tests {
             EntitySelector::e(vec![EntitySelectorOption::Distance(
                 FloatRange::new_single(nn(5.0))
             )])
-                .to_string(),
+            .to_string(),
             "@e[distance=5]"
         );
         assert_eq!(
             EntitySelector::e(vec![EntitySelectorOption::Distance(FloatRange::new_min(
                 nn(5.0)
             ))])
-                .to_string(),
+            .to_string(),
             "@e[distance=5..]"
         );
         assert_eq!(
             EntitySelector::e(vec![EntitySelectorOption::Distance(FloatRange::new_max(
                 nn(10.2)
             ))])
-                .to_string(),
+            .to_string(),
             "@e[distance=..10.2]"
         );
         assert_eq!(
             EntitySelector::e(vec![EntitySelectorOption::Distance(
                 FloatRange::new_min_max(nn(5.0), nn(10.0))
             )])
-                .to_string(),
+            .to_string(),
             "@e[distance=5..10]"
         );
         assert_eq!(
             EntitySelector::a(vec![EntitySelectorOption::Level(IntegerRange::new_single(
                 10
             ))])
-                .to_string(),
+            .to_string(),
             "@a[level=10]"
         );
         assert_eq!(
@@ -410,7 +410,7 @@ mod tests {
             EntitySelector::p(vec![EntitySelectorOption::XRotation(
                 FloatRange::new_min_max(nn(-90.0), nn(90.0))
             )])
-                .to_string(),
+            .to_string(),
             "@p[x_rotation=-90..90]"
         );
     }
@@ -422,7 +422,7 @@ mod tests {
                 false,
                 "friendly".to_string()
             )])
-                .to_string(),
+            .to_string(),
             "@e[tag=friendly]"
         );
         assert_eq!(
@@ -455,7 +455,7 @@ mod tests {
                 false,
                 ResourceLocation::new_namespace_path("minecraft", "pig")
             )])
-                .to_string(),
+            .to_string(),
             "@e[type=pig]"
         );
         assert_eq!(
@@ -463,7 +463,7 @@ mod tests {
                 true,
                 ResourceLocation::new_namespace_path("minecraft", "zombie")
             )])
-                .to_string(),
+            .to_string(),
             "@e[type=!zombie]"
         );
         assert_eq!(
@@ -471,7 +471,7 @@ mod tests {
                 false,
                 Gamemode::Survival
             )])
-                .to_string(),
+            .to_string(),
             "@a[gamemode=survival]"
         );
         assert_eq!(
@@ -479,7 +479,7 @@ mod tests {
                 true,
                 Gamemode::Creative
             )])
-                .to_string(),
+            .to_string(),
             "@a[gamemode=!creative]"
         );
         let mut compound = BTreeMap::new();
