@@ -130,7 +130,7 @@ macro_rules! write_entity_selector_option {
         write!($f, "{}=", $key)?;
 
         if *$inverted {
-            "!".fmt($f)?;
+            $f.write_str("!")?;
         }
 
         $value.fmt($f)

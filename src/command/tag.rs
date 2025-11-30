@@ -13,7 +13,7 @@ impl Display for TagCommand {
         match self {
             TagCommand::Add(tag) => write!(f, "add {}", tag),
             TagCommand::Remove(tag) => write!(f, "remove {}", tag),
-            TagCommand::List => "list".fmt(f),
+            TagCommand::List => f.write_str("list"),
         }
     }
 }

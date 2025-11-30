@@ -30,7 +30,7 @@ impl Display for ItemType {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
             ItemType::ResourceLocation(resource_location) => resource_location.fmt(f),
-            ItemType::Wildcard => "*".fmt(f),
+            ItemType::Wildcard => f.write_str("*"),
         }
     }
 }

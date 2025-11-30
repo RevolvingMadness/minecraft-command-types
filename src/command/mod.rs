@@ -238,7 +238,10 @@ pub enum Command {
 impl Command {
     pub fn get_permission_level(&self, is_multiplayer: bool) -> PermissionLevel {
         match self {
-            Command::Help(..) | Command::List(..) | Command::Me(..) | Command::Message(..)
+            Command::Help(..)
+            | Command::List(..)
+            | Command::Me(..)
+            | Command::Message(..)
             | Command::Random(RandomCommand::ValueRoll(_, _, None))
             | Command::Random(RandomCommand::Reset(..))
             | Command::TeamMessage(..)
@@ -394,7 +397,7 @@ impl Display for Command {
             }
             Command::Bossbar(command) => write!(f, "bossbar {}", command),
             Command::Clear(selector, item, max_count) => {
-                "clear".fmt(f)?;
+                f.write_str("clear")?;
 
                 if let Some(selector) = selector {
                     write!(f, " {}", selector)?;
@@ -529,7 +532,7 @@ impl Display for Command {
                 Ok(())
             }
             Command::Help(command) => {
-                "help".fmt(f)?;
+                f.write_str("help")?;
 
                 if let Some(command) = command {
                     write!(f, " {}", command)?;
@@ -541,7 +544,7 @@ impl Display for Command {
                 write!(f, "item {} {} {}", source, slot, command)
             }
             Command::JFR(start) => {
-                "jfr ".fmt(f)?;
+                f.write_str("jfr ")?;
 
                 if *start {
                     write!(f, "start")?;
@@ -561,7 +564,7 @@ impl Display for Command {
                 Ok(())
             }
             Command::Kill(selector) => {
-                "kill".fmt(f)?;
+                f.write_str("kill")?;
 
                 if let Some(selector) = selector {
                     write!(f, " {}", selector)?;
@@ -570,10 +573,10 @@ impl Display for Command {
                 Ok(())
             }
             Command::List(show_uuids) => {
-                "list".fmt(f)?;
+                f.write_str("list")?;
 
                 if *show_uuids {
-                    " uuids".fmt(f)?;
+                    f.write_str(" uuids")?;
                 }
 
                 Ok(())
@@ -646,7 +649,7 @@ impl Display for Command {
                 Ok(())
             }
             Command::Publish(allow_commands, gamemode, port) => {
-                "playsound".fmt(f)?;
+                f.write_str("playsound")?;
 
                 if let Some(allow_commands) = allow_commands {
                     write!(f, " {}", allow_commands)?;
@@ -666,17 +669,17 @@ impl Display for Command {
                 write!(f, "random {}", command)
             }
             Command::Recipe(give, selector, recipe_type) => {
-                "recipe ".fmt(f)?;
+                f.write_str("recipe ")?;
 
                 if *give {
-                    "give".fmt(f)?;
+                    f.write_str("give")?;
                 } else {
-                    "take".fmt(f)?;
+                    f.write_str("take")?;
                 }
 
                 write!(f, " {} {}", selector, recipe_type)
             }
-            Command::Reload => "reload".fmt(f),
+            Command::Reload => f.write_str("reload"),
             Command::Return(command) => {
                 write!(f, "return {}", command)
             }
@@ -687,16 +690,16 @@ impl Display for Command {
                 write!(f, "rotate {} {}", selector, command)
             }
             Command::SaveAll(should_flush) => {
-                "save-all".fmt(f)?;
+                f.write_str("save-all")?;
 
                 if *should_flush {
-                    " flush".fmt(f)?;
+                    f.write_str(" flush")?;
                 }
 
                 Ok(())
             }
-            Command::SaveOff => "save-off".fmt(f),
-            Command::SaveOn => "save-on".fmt(f),
+            Command::SaveOff => f.write_str("save-off"),
+            Command::SaveOn => f.write_str("save-on"),
             Command::Say(message) => {
                 write!(f, "say {}", message)
             }
@@ -706,7 +709,7 @@ impl Display for Command {
             Command::Scoreboard(command) => {
                 write!(f, "scoreboard {}", command)
             }
-            Command::Seed => "seed".fmt(f),
+            Command::Seed => f.write_str("seed"),
             Command::Setblock(coordinates, block, mode) => {
                 write!(f, "setblock {} {}", coordinates, block)?;
 
@@ -720,7 +723,7 @@ impl Display for Command {
                 write!(f, "setidletimeout {}", minutes)
             }
             Command::SetWorldSpawn(coordinates, angle) => {
-                "setworldspawn".fmt(f)?;
+                f.write_str("setworldspawn")?;
 
                 if let Some(coordinates) = coordinates {
                     write!(f, " {}", coordinates)?;
@@ -733,7 +736,7 @@ impl Display for Command {
                 Ok(())
             }
             Command::Spawnpoint(selector, coordinates, angle) => {
-                "spawnpoint".fmt(f)?;
+                f.write_str("spawnpoint")?;
 
                 if let Some(selector) = selector {
                     write!(f, " {}", selector)?;
@@ -749,7 +752,7 @@ impl Display for Command {
                 Ok(())
             }
             Command::Spectate(selector1, selector2) => {
-                "spectate".fmt(f)?;
+                f.write_str("spectate")?;
 
                 if let Some(selector1) = selector1 {
                     write!(f, " {}", selector1)?;
@@ -781,7 +784,7 @@ impl Display for Command {
 
                 write!(f, "{} {}", respect_teams, targets)
             }
-            Command::Stop => "stop".fmt(f),
+            Command::Stop => f.write_str("stop"),
             Command::StopSound(selector, source, sound) => {
                 write!(f, "stopsound {}", selector)?;
 

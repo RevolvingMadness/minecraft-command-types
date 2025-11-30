@@ -50,7 +50,9 @@ impl Display for NbtPathNode {
             NbtPathNode::Named(name, filter) => {
                 write!(f, "{}", escape_nbt_path_key(name))?;
 
-                if let Some(comp) = filter && !comp.is_empty() {
+                if let Some(comp) = filter
+                    && !comp.is_empty()
+                {
                     write!(f, "{{")?;
                     let mut first = true;
                     for (k, v) in comp {

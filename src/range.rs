@@ -15,7 +15,9 @@ impl IntegerRange {
             panic!("min and/or max must be Some")
         }
 
-        if let (Some(min), Some(max)) = (min, max) && min > max {
+        if let (Some(min), Some(max)) = (min, max)
+            && min > max
+        {
             panic!("min must be smaller or equal to max");
         }
 
@@ -111,7 +113,9 @@ impl FloatRange {
             panic!("min and/or max must be Some")
         }
 
-        if let (Some(min), Some(max)) = (min, max) && min > max {
+        if let (Some(min), Some(max)) = (min, max)
+            && min > max
+        {
             panic!("min must be smaller or equal to max");
         }
 

@@ -25,7 +25,7 @@ pub enum AdvancementCommand {
 impl Display for AdvancementCommand {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            AdvancementCommand::Everything => "everything".fmt(f),
+            AdvancementCommand::Everything => f.write_str("everything"),
             AdvancementCommand::Only(advancement, criterion) => {
                 advancement.fmt(f)?;
 

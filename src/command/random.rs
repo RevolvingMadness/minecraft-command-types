@@ -13,7 +13,7 @@ pub enum RandomResetType {
 impl Display for RandomResetType {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            RandomResetType::All => "*".fmt(f),
+            RandomResetType::All => f.write_str("*"),
             RandomResetType::Sequence(sequence) => sequence.fmt(f),
         }
     }

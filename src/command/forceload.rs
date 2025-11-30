@@ -20,7 +20,7 @@ impl Display for ForceloadRemoveType {
 
                 Ok(())
             }
-            ForceloadRemoveType::All => "all".fmt(f),
+            ForceloadRemoveType::All => f.write_str("all"),
         }
     }
 }
@@ -48,7 +48,7 @@ impl Display for ForceloadCommand {
                 write!(f, "remove {}", remove_type)
             }
             ForceloadCommand::Query(position) => {
-                "query".fmt(f)?;
+                f.write_str("query")?;
 
                 if let Some(position) = position {
                     write!(f, " {}", position)?;

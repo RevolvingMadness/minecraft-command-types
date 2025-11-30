@@ -14,8 +14,8 @@ pub enum DatapackLoadPriority {
 impl Display for DatapackLoadPriority {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            DatapackLoadPriority::First => "first".fmt(f),
-            DatapackLoadPriority::Last => "last".fmt(f),
+            DatapackLoadPriority::First => f.write_str("first"),
+            DatapackLoadPriority::Last => f.write_str("last"),
             DatapackLoadPriority::Before(existing) => write!(f, "before {}", existing),
             DatapackLoadPriority::After(existing) => write!(f, "after {}", existing),
         }
@@ -46,7 +46,7 @@ impl Display for DatapackCommand {
                 Ok(())
             }
             DatapackCommand::List(list_type) => {
-                "list".fmt(f)?;
+                f.write_str("list")?;
 
                 if let Some(list_type) = list_type {
                     write!(f, " {}", list_type)?;

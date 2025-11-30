@@ -67,7 +67,7 @@ impl Display for TeamCommand {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
             TeamCommand::List(name) => {
-                "list".fmt(f)?;
+                f.write_str("list")?;
 
                 if let Some(name) = name {
                     write!(f, " {}", name)?;

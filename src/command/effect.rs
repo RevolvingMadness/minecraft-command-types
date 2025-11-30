@@ -13,7 +13,7 @@ impl Display for EffectDuration {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
             EffectDuration::Duration(duration) => duration.fmt(f),
-            EffectDuration::Infinite => "infinite".fmt(f),
+            EffectDuration::Infinite => f.write_str("infinite"),
         }
     }
 }
@@ -34,7 +34,7 @@ impl Display for EffectCommand {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
             EffectCommand::Clear(selector, effect) => {
-                "clear".fmt(f)?;
+                f.write_str("clear")?;
 
                 if let Some(selector) = selector {
                     write!(f, " {}", selector)?;

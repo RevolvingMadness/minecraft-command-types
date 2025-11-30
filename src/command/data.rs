@@ -85,11 +85,11 @@ pub enum DataCommandModificationMode {
 impl Display for DataCommandModificationMode {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            DataCommandModificationMode::Append => "append".fmt(f),
-            DataCommandModificationMode::Prepend => "prepend".fmt(f),
+            DataCommandModificationMode::Append => f.write_str("append"),
+            DataCommandModificationMode::Prepend => f.write_str("prepend"),
             DataCommandModificationMode::Insert(index) => write!(f, "insert {}", index),
-            DataCommandModificationMode::Merge => "merge".fmt(f),
-            DataCommandModificationMode::Set => "set".fmt(f),
+            DataCommandModificationMode::Merge => f.write_str("merge"),
+            DataCommandModificationMode::Set => f.write_str("set"),
         }
     }
 }

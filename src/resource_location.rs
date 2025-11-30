@@ -56,10 +56,12 @@ impl ResourceLocation {
 impl Display for ResourceLocation {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         if self.is_tag {
-            "#".fmt(f)?;
+            f.write_str("#")?;
         }
 
-        if let Some(namespace) = &self.namespace && *namespace != "minecraft" {
+        if let Some(namespace) = &self.namespace
+            && *namespace != "minecraft"
+        {
             write!(f, "{}:", namespace)?;
         }
 

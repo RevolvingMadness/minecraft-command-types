@@ -12,8 +12,8 @@ pub enum TimeSuffix {
 impl Display for TimeSuffix {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            TimeSuffix::Days => "d".fmt(f),
-            TimeSuffix::Seconds => "s".fmt(f),
+            TimeSuffix::Days => f.write_str("d"),
+            TimeSuffix::Seconds => f.write_str("s"),
             TimeSuffix::Ticks => Ok(()),
         }
     }

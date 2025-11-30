@@ -85,7 +85,7 @@ impl Display for TestCommand {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
             TestCommand::ClearAll(radius) => {
-                "clearall".fmt(f)?;
+                f.write_str("clearall")?;
 
                 if let Some(radius) = radius {
                     write!(f, " {}", radius)?;
@@ -93,8 +93,8 @@ impl Display for TestCommand {
 
                 Ok(())
             }
-            TestCommand::ClearThat => "clearthat".fmt(f),
-            TestCommand::ClearThese => "clearthese".fmt(f),
+            TestCommand::ClearThat => f.write_str("clearthat"),
+            TestCommand::ClearThese => f.write_str("clearthese"),
             TestCommand::Create(location, width, height_depth) => {
                 write!(f, "create {}", location)?;
 
@@ -110,7 +110,7 @@ impl Display for TestCommand {
             }
             TestCommand::Locate(location) => write!(f, "locate {}", location),
             TestCommand::Pos(variable) => {
-                "pos".fmt(f)?;
+                f.write_str("pos")?;
 
                 if let Some(variable) = variable {
                     write!(f, " {}", variable)?;
@@ -118,9 +118,9 @@ impl Display for TestCommand {
 
                 Ok(())
             }
-            TestCommand::ResetClosest => "resetclosest".fmt(f),
-            TestCommand::ResetThat => "resetthat".fmt(f),
-            TestCommand::ResetThese => "resetthese".fmt(f),
+            TestCommand::ResetClosest => f.write_str("resetclosest"),
+            TestCommand::ResetThat => f.write_str("resetthat"),
+            TestCommand::ResetThese => f.write_str("resetthese"),
             TestCommand::Run(
                 location,
                 number_of_times,
@@ -149,7 +149,7 @@ impl Display for TestCommand {
                 Ok(())
             }
             TestCommand::RunClosest(number_of_times, until_failed) => {
-                "runclosest".fmt(f)?;
+                f.write_str("runclosest")?;
 
                 if let Some(number_of_times) = number_of_times {
                     write!(f, " {}", number_of_times)?;
@@ -162,7 +162,7 @@ impl Display for TestCommand {
                 Ok(())
             }
             TestCommand::RunThat(number_of_times, until_failed) => {
-                "runthat".fmt(f)?;
+                f.write_str("runthat")?;
 
                 if let Some(number_of_times) = number_of_times {
                     write!(f, " {}", number_of_times)?;
@@ -175,7 +175,7 @@ impl Display for TestCommand {
                 Ok(())
             }
             TestCommand::RunThese(number_of_times, until_failed) => {
-                "runthese".fmt(f)?;
+                f.write_str("runthese")?;
 
                 if let Some(number_of_times) = number_of_times {
                     write!(f, " {}", number_of_times)?;
@@ -197,12 +197,12 @@ impl Display for TestCommand {
                 Ok(())
             }
             TestCommand::RunFailed(command) => write!(f, "runfailed {}", command),
-            TestCommand::Stop => "stop".fmt(f),
+            TestCommand::Stop => f.write_str("stop"),
             TestCommand::Verify(location) => write!(f, "verify {}", location),
             TestCommand::Export(location) => write!(f, "export {}", location),
-            TestCommand::ExportClosest => "exportclosest".fmt(f),
-            TestCommand::ExportThat => "exportthat".fmt(f),
-            TestCommand::ExportThese => "exportthese".fmt(f),
+            TestCommand::ExportClosest => f.write_str("exportclosest"),
+            TestCommand::ExportThat => f.write_str("exportthat"),
+            TestCommand::ExportThese => f.write_str("exportthese"),
         }
     }
 }

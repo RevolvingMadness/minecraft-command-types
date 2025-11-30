@@ -32,7 +32,7 @@ impl Display for BossbarSetType {
             BossbarSetType::Max(max) => write!(f, "max {}", max),
             BossbarSetType::Name(name) => write!(f, "name {}", name),
             BossbarSetType::Players(players) => {
-                "players".fmt(f)?;
+                f.write_str("players")?;
 
                 if let Some(players) = players {
                     write!(f, " {}", players)?;
@@ -61,7 +61,7 @@ impl Display for BossbarCommand {
         match self {
             BossbarCommand::Add(id, name) => write!(f, "add {} {}", id, name),
             BossbarCommand::Get(id, type_) => write!(f, "get {} {}", id, type_),
-            BossbarCommand::List => "list".fmt(f),
+            BossbarCommand::List => f.write_str("list"),
             BossbarCommand::Remove(id) => write!(f, "remove {}", id),
             BossbarCommand::Set(id, set_type) => write!(f, "set {} {}", id, set_type),
         }

@@ -44,8 +44,8 @@ impl Display for LootItemSource {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
             LootItemSource::Tool(tool) => tool.fmt(f),
-            LootItemSource::Mainhand => "mainhand".fmt(f),
-            LootItemSource::Offhand => "offhand".fmt(f),
+            LootItemSource::Mainhand => f.write_str("mainhand"),
+            LootItemSource::Offhand => f.write_str("offhand"),
         }
     }
 }

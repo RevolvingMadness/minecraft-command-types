@@ -128,9 +128,7 @@ fn write_file_path_nodes<T>(
 
 impl Namespace {
     pub fn write(&self, namespace_path: &Path) -> io::Result<()> {
-        let json_serializer = |v: &Value| {
-            serde_json::to_string_pretty(v).map_err(io::Error::other)
-        };
+        let json_serializer = |v: &Value| serde_json::to_string_pretty(v).map_err(io::Error::other);
 
         if !self.functions.is_empty() {
             write_file_path_nodes(
@@ -151,8 +149,7 @@ impl Namespace {
                 };
 
                 write_file_path_nodes(&type_path, nodes, ".json", &|tag| {
-                    serde_json::to_string_pretty(tag)
-                        .map_err(io::Error::other)
+                    serde_json::to_string_pretty(tag).map_err(io::Error::other)
                 })?;
             }
         }
@@ -234,8 +231,7 @@ impl Datapack {
         fs::create_dir_all(datapack_directory)?;
 
         let mcmeta_path = datapack_directory.join("pack.mcmeta");
-        let mcmeta_content = serde_json::to_string_pretty(&self.pack)
-            .map_err(io::Error::other)?;
+        let mcmeta_content = serde_json::to_string_pretty(&self.pack).map_err(io::Error::other)?;
         fs::write(mcmeta_path, mcmeta_content)?;
 
         let data_path = datapack_directory.join("data");
@@ -249,9 +245,7 @@ impl Datapack {
     }
 
     pub fn get_namespace_mut(&mut self, name: &str) -> &mut Namespace {
-        self.namespaces
-            .entry(name.to_string())
-            .or_default()
+        self.namespaces.entry(name.to_string()).or_default()
     }
 
     pub fn add_namespace(&mut self, name: String, namespace: Namespace) {

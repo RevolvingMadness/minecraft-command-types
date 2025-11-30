@@ -13,7 +13,7 @@ impl Display for ReturnCommand {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
             ReturnCommand::Value(v) => write!(f, "{}", v),
-            ReturnCommand::Fail => "fail".fmt(f),
+            ReturnCommand::Fail => f.write_str("fail"),
             ReturnCommand::Run(command) => write!(f, "run {}", command),
         }
     }

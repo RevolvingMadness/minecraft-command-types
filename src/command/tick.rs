@@ -19,7 +19,7 @@ impl Display for AdvanceTimeTickCommand {
 
                 Ok(())
             }
-            AdvanceTimeTickCommand::Stop => " stop".fmt(f),
+            AdvanceTimeTickCommand::Stop => f.write_str(" stop"),
         }
     }
 }
@@ -37,12 +37,12 @@ pub enum TickCommand {
 impl Display for TickCommand {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            TickCommand::Query => "query".fmt(f),
+            TickCommand::Query => f.write_str("query"),
             TickCommand::Rate(rate) => write!(f, "rate {}", rate),
-            TickCommand::Freeze => "freeze".fmt(f),
-            TickCommand::Unfreeze => "unfreeze".fmt(f),
+            TickCommand::Freeze => f.write_str("freeze"),
+            TickCommand::Unfreeze => f.write_str("unfreeze"),
             TickCommand::Step(command) => write!(f, "step{}", command),
-            TickCommand::Sprint(command) => write!(f, "sprint{}", command)
+            TickCommand::Sprint(command) => write!(f, "sprint{}", command),
         }
     }
 }

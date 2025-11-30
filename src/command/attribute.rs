@@ -20,7 +20,7 @@ impl Display for BaseAttributeCommand {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
             BaseAttributeCommand::Get(scale) => {
-                "get".fmt(f)?;
+                f.write_str("get")?;
 
                 if let Some(scale) = scale {
                     write!(f, " {}", scale)?;
@@ -29,7 +29,7 @@ impl Display for BaseAttributeCommand {
                 Ok(())
             }
             BaseAttributeCommand::Set(value) => write!(f, "set {}", value),
-            BaseAttributeCommand::Reset => "reset".fmt(f),
+            BaseAttributeCommand::Reset => f.write_str("reset"),
         }
     }
 }
@@ -78,7 +78,7 @@ impl Display for AttributeCommand {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
             AttributeCommand::Get(scale) => {
-                "get".fmt(f)?;
+                f.write_str("get")?;
 
                 if let Some(scale) = scale {
                     write!(f, " {}", scale)?;

@@ -59,7 +59,7 @@ impl WorldCoordinate {
 impl Display for WorldCoordinate {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         if self.relative {
-            "~".fmt(f)?;
+            f.write_str("~")?;
         }
 
         if let Some(value) = self.value {
@@ -121,19 +121,19 @@ impl Display for Coordinates {
                 write!(f, "{} {} {}", x, y, z)
             }
             Coordinates::Local(x, y, z) => {
-                "^".fmt(f)?;
+                f.write_str("^")?;
 
                 if let Some(x) = x {
                     x.fmt(f)?;
                 }
 
-                " ^".fmt(f)?;
+                f.write_str(" ^")?;
 
                 if let Some(y) = y {
                     y.fmt(f)?;
                 }
 
-                " ^".fmt(f)?;
+                f.write_str(" ^")?;
 
                 if let Some(z) = z {
                     z.fmt(f)?;
