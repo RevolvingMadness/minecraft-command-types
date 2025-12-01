@@ -1,8 +1,8 @@
+use crate::command::PlayerScore;
 use crate::command::enums::score_operation_operator::ScoreOperationOperator;
 use crate::command::enums::scoreboard_criterion::ScoreboardCriterion;
 use crate::command::enums::scoreboard_render_type::ScoreboardRenderType;
 use crate::command::enums::team_color::TeamColor;
-use crate::command::PlayerScore;
 use crate::entity_selector::EntitySelector;
 use crate::snbt::SNBT;
 use minecraft_command_types_proc_macros::HasMacro;

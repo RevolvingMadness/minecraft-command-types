@@ -21,7 +21,7 @@ impl Display for DataTarget {
                 write!(f, "block {}", coordinates)
             }
             DataTarget::Entity(selector) => {
-                write!(f, "selector {}", selector)
+                write!(f, "entity {}", selector)
             }
             DataTarget::Storage(storage) => {
                 write!(f, "storage {}", storage)

@@ -88,7 +88,7 @@ use enums::difficulty::Difficulty;
 use enums::gamemode::Gamemode;
 use minecraft_command_types_proc_macros::HasMacro;
 use ordered_float::NotNan;
-use std::fmt::{Display, Formatter, Write};
+use std::fmt::{Display, Formatter};
 
 #[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
 pub struct PlayerScore {

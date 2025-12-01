@@ -1,4 +1,4 @@
-use crate::snbt::{fmt_snbt_compound, SNBT};
+use crate::snbt::{SNBT, fmt_snbt_compound};
 use minecraft_command_types_proc_macros::HasMacro;
 use std::collections::BTreeMap;
 use std::fmt::{Display, Formatter};

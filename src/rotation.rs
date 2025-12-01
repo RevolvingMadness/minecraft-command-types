@@ -3,7 +3,7 @@ use ordered_float::NotNan;
 use std::fmt::{Display, Formatter};
 
 #[derive(Debug, Clone, Eq, PartialEq, Hash, Ord, PartialOrd, HasMacro)]
-pub struct Rotation(NotNan<f32>, NotNan<f32>);
+pub struct Rotation(pub NotNan<f32>, pub NotNan<f32>);
 
 impl Display for Rotation {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {

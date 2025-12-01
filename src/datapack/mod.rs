@@ -1,11 +1,11 @@
 pub mod pack;
 pub mod tag;
 
+use crate::datapack::pack::Pack;
 use crate::datapack::pack::feature::Features;
 use crate::datapack::pack::filter::Filter;
 use crate::datapack::pack::language::Language;
 use crate::datapack::pack::overlay::Overlays;
-use crate::datapack::pack::Pack;
 use crate::datapack::tag::{Tag, TagType, Worldgen};
 use nonempty::NonEmpty;
 use serde::{Deserialize, Serialize};

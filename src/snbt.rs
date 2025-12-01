@@ -4,8 +4,8 @@ use ordered_float::NotNan;
 use serde::de::{Deserialize, Deserializer, MapAccess, SeqAccess, Visitor};
 use serde::{Serialize, Serializer, de};
 use std::collections::BTreeMap;
+use std::fmt::Display;
 use std::fmt::Formatter;
-use std::fmt::{Display, Pointer, Write};
 
 #[derive(Debug, Clone, Eq, PartialEq, Hash)]
 pub enum SNBT {

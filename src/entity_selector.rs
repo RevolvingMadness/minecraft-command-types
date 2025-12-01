@@ -6,7 +6,7 @@ use crate::snbt::SNBT;
 use minecraft_command_types_proc_macros::HasMacro;
 use ordered_float::NotNan;
 use std::collections::BTreeMap;
-use std::fmt::{Display, Formatter, Write};
+use std::fmt::{Display, Formatter};
 
 #[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
 pub enum EntitySelectorVariable {
