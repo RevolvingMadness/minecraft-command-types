@@ -25,19 +25,32 @@ pub enum SNBT {
 }
 
 impl SNBT {
+    #[must_use]
     pub fn list<T: Into<SNBT>>(values: Vec<T>) -> SNBT {
         SNBT::List(values.into_iter().map(Into::into).collect())
     }
 
+    #[must_use]
     pub fn compound<T: Into<SNBT>>(values: BTreeMap<String, T>) -> SNBT {
         SNBT::Compound(values.into_iter().map(|(k, v)| (k, v.into())).collect())
     }
 
+    #[must_use]
     pub fn get(&self, key: &String) -> Option<&SNBT> {
         if let SNBT::Compound(compound) = self {
             compound.get(key)
         } else {
             None
+        }
+    }
+
+    #[inline]
+    #[must_use]
+    fn has_macro_string(&self) -> bool {
+        if let SNBT::String(string) = self {
+            string.contains("$(")
+        } else {
+            false
         }
     }
 }
@@ -48,6 +61,17 @@ impl HasMacro for SNBT {
             SNBT::Macro(_) => true,
             SNBT::List(list) => list.iter().any(|v| v.has_macro()),
             SNBT::Compound(compound) => compound.values().any(|v| v.has_macro()),
+            _ => false,
+        }
+    }
+
+    fn has_macro_conflict(&self) -> bool {
+        match self {
+            SNBT::List(values) => values.has_macro() && values.iter().any(|v| v.has_macro_string()),
+            SNBT::Compound(compound) => {
+                compound.values().any(|v| v.has_macro())
+                    && compound.values().any(|v| v.has_macro_string())
+            }
             _ => false,
         }
     }
@@ -67,6 +91,8 @@ pub fn fmt_snbt_compound(f: &mut Formatter<'_>, compound: &SNBTCompound) -> std:
     f.write_str("}")
 }
 
+#[inline]
+#[must_use]
 fn escape(input: &str) -> String {
     input.replace('\\', "\\\\").replace('"', "\\\"")
 }
