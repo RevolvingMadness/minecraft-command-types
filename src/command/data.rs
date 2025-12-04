@@ -111,7 +111,7 @@ impl Display for DataCommand {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
             DataCommand::Get(target, path, scale) => {
-                target.fmt(f)?;
+                write!(f, "get {}", target)?;
 
                 if let Some(path) = path {
                     write!(f, " {}", path)?;
