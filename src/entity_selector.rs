@@ -115,11 +115,11 @@ impl EntitySelectorOption {
         matches!(
             self,
             EntitySelectorOption::Tag(..)
-                | EntitySelectorOption::Nbt(..)
-                | EntitySelectorOption::Predicate(..)
-                | EntitySelectorOption::Name(true, _)
                 | EntitySelectorOption::Team(true, _)
+                | EntitySelectorOption::Name(true, _)
                 | EntitySelectorOption::Type(true, _)
+                | EntitySelectorOption::Predicate(..)
+                | EntitySelectorOption::Nbt(..)
                 | EntitySelectorOption::Gamemode(true, _)
         )
     }

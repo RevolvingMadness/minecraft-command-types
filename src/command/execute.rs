@@ -15,7 +15,7 @@ use crate::coordinate::Coordinates;
 use crate::entity_selector::EntitySelector;
 use crate::item::ItemPredicate;
 use crate::nbt_path::NbtPath;
-use crate::range::IntegerRange;
+use crate::range::{FloatRange, IntegerRange};
 use crate::resource_location::ResourceLocation;
 use crate::rotation::Rotation;
 use minecraft_command_types_proc_macros::HasMacro;
@@ -130,6 +130,7 @@ pub enum ExecuteIfSubcommand {
     Loaded(ColumnPosition, Option<Box<ExecuteSubcommand>>),
     Predicate(ResourceLocation, Option<Box<ExecuteSubcommand>>),
     Score(PlayerScore, ScoreComparison, Option<Box<ExecuteSubcommand>>),
+    Stopwatch(ResourceLocation, FloatRange),
 }
 
 impl Display for ExecuteIfSubcommand {
@@ -224,6 +225,9 @@ impl Display for ExecuteIfSubcommand {
                 }
 
                 Ok(())
+            }
+            ExecuteIfSubcommand::Stopwatch(location, range) => {
+                write!(f, "stopwatch {} {}", location, range)
             }
         }
     }

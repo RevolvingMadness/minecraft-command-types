@@ -30,6 +30,7 @@ pub mod ride;
 pub mod rotate;
 pub mod schedule;
 pub mod scoreboard;
+pub mod stopwatch;
 pub mod tag;
 pub mod team;
 pub mod teleport;
@@ -71,6 +72,7 @@ use crate::command::ride::RideCommand;
 use crate::command::rotate::RotateCommand;
 use crate::command::schedule::ScheduleCommand;
 use crate::command::scoreboard::ScoreboardCommand;
+use crate::command::stopwatch::StopwatchCommand;
 use crate::command::tag::TagCommand;
 use crate::command::team::TeamCommand;
 use crate::command::teleport::TeleportCommand;
@@ -213,6 +215,7 @@ pub enum Command {
         Option<StopSoundSource>,
         Option<ResourceLocation>,
     ),
+    Stopwatch(StopwatchCommand),
     Summon(EntitySelector, Option<Coordinates>, Option<SNBT>),
     Tag(EntitySelector, TagCommand),
     Team(TeamCommand),
@@ -331,6 +334,7 @@ impl Command {
             | Command::SaveOff
             | Command::SaveOn
             | Command::Stop
+            | Command::Stopwatch(..)
             => PermissionLevel::try_from(4).unwrap(),
             Command::Seed => {
                 let level = if is_multiplayer {2 } else { 0 };
@@ -793,6 +797,9 @@ impl Display for Command {
                 }
 
                 Ok(())
+            }
+            Command::Stopwatch(command) => {
+                write!(f, "stopwatch {}", command)
             }
             Command::Summon(location, coordinates, snbt) => {
                 write!(f, "summon {}", location)?;
