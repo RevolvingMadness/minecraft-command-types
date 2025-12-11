@@ -1,3 +1,5 @@
+pub use minecraft_command_types_proc_macros::*;
+
 pub mod block;
 pub mod column_position;
 pub mod command;

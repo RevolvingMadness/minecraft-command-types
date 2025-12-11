@@ -2,6 +2,11 @@
 name = "minecraft-command-types"
 version = "0.1.0"
 edition = "2024"
+description = "Provides an AST like structure for Minecraft commands."
+readme = "README.md"
+repository = "https://github.com/RevolvingMadness/minecraft-command-types"
+keywords = ["minecraft", "ast", "command", "datapack"]
+categories = ["data-structures"]
 
 [dependencies]
 nonempty = "0.12.0"
@@ -11,3 +16,6 @@ strum = { version = "0.27.2", features = ["derive"] }
 serde = { version = "1.0.228", features = ["derive"] }
 serde_json = { version = "1.0.145" }
 minecraft-command-types_proc-macros = { path = "minecraft-command-types_proc-macros" }
+
+[[example]]
+name = "datapack"
