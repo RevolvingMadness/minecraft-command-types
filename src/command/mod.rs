@@ -38,6 +38,7 @@ pub mod test;
 pub mod tick;
 pub mod time;
 pub mod title;
+pub mod trigger;
 
 use crate::block::BlockState;
 use crate::column_position::ColumnPosition;
@@ -82,6 +83,7 @@ use crate::command::test::TestCommand;
 use crate::command::tick::TickCommand;
 use crate::command::time::TimeCommand;
 use crate::command::title::TitleCommand;
+use crate::command::trigger::TriggerAction;
 use crate::coordinate::{Coordinates, WorldCoordinate};
 use crate::entity_selector::EntitySelector;
 use crate::item::{ItemPredicate, ItemStack};
@@ -231,7 +233,7 @@ pub enum Command {
     Time(TimeCommand),
     Title(EntitySelector, TitleCommand),
     Transfer(String, Option<i32>, Option<EntitySelector>),
-    // Trigger,
+    Trigger(String, Option<TriggerAction>),
     // Version,
     // Waypoint,
     // Weather,
@@ -250,7 +252,7 @@ impl Command {
             | Command::Random(RandomCommand::ValueRoll(_, _, None))
             | Command::Random(RandomCommand::Reset(..))
             | Command::TeamMessage(..)
-            // | Command::Trigger(..)
+            | Command::Trigger(..)
             => {
                 PermissionLevel::try_from(0).unwrap()
             }
@@ -848,8 +850,16 @@ impl Display for Command {
                 }
 
                 Ok(())
-            } // Command::Trigger() => {}
-              // Command::Version() => {}
+            }
+            Command::Trigger(objective, action) => {
+                write!(f, "trigger {}", objective)?;
+
+                if let Some(action) = action {
+                    write!(f, " {}", action)?;
+                }
+
+                Ok(())
+            } // Command::Version() => {}
               // Command::Waypoint() => {}
               // Command::Weather() => {}
               // Command::Whitelist() => {}
