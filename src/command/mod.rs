@@ -41,6 +41,7 @@ pub mod title;
 pub mod trigger;
 pub mod waypoint;
 pub mod whitelist;
+pub mod worldborder;
 
 use crate::block::BlockState;
 use crate::column_position::ColumnPosition;
@@ -89,6 +90,7 @@ use crate::command::title::TitleCommand;
 use crate::command::trigger::TriggerAction;
 use crate::command::waypoint::WaypointCommand;
 use crate::command::whitelist::WhitelistCommand;
+use crate::command::worldborder::WorldborderCommand;
 use crate::coordinate::{Coordinates, WorldCoordinate};
 use crate::entity_selector::EntitySelector;
 use crate::item::{ItemPredicate, ItemStack};
@@ -244,8 +246,7 @@ pub enum Command {
     Waypoint(WaypointCommand),
     Weather(WeatherType, Option<Time>),
     Whitelist(WhitelistCommand),
-    // Worldborder,
-    // Xp,
+    Worldborder(WorldborderCommand),
 }
 
 impl Command {
@@ -258,10 +259,7 @@ impl Command {
             | Command::Random(RandomCommand::ValueRoll(_, _, None))
             | Command::Random(RandomCommand::Reset(..))
             | Command::TeamMessage(..)
-            | Command::Trigger(..)
-            => {
-                PermissionLevel::try_from(0).unwrap()
-            }
+            | Command::Trigger(..) => PermissionLevel::try_from(0).unwrap(),
             Command::Advancement(..)
             | Command::Attribute(..)
             | Command::Bossbar(..)
@@ -318,9 +316,7 @@ impl Command {
             | Command::Version
             | Command::Waypoint(..)
             | Command::Weather(..)
-            // | Command::Worldborder(..)
-            // | Command::Xp(..)
-            => PermissionLevel::try_from(2).unwrap(),
+            | Command::Worldborder(..) => PermissionLevel::try_from(2).unwrap(),
             Command::Ban(..)
             | Command::BanIP(..)
             | Command::Banlist(..)
@@ -333,8 +329,7 @@ impl Command {
             | Command::SetIdleTimeout(..)
             | Command::Tick(..)
             | Command::Transfer(..)
-            | Command::Whitelist(..)
-            => PermissionLevel::try_from(3).unwrap(),
+            | Command::Whitelist(..) => PermissionLevel::try_from(3).unwrap(),
             Command::JFR(..)
             | Command::Perf(..)
             | Command::Publish(..)
@@ -342,10 +337,9 @@ impl Command {
             | Command::SaveOff
             | Command::SaveOn
             | Command::Stop
-            | Command::Stopwatch(..)
-            => PermissionLevel::try_from(4).unwrap(),
+            | Command::Stopwatch(..) => PermissionLevel::try_from(4).unwrap(),
             Command::Seed => {
-                let level = if is_multiplayer {2 } else { 0 };
+                let level = if is_multiplayer { 2 } else { 0 };
                 PermissionLevel::try_from(level).unwrap()
             }
         }
@@ -879,8 +873,7 @@ impl Display for Command {
                 Ok(())
             }
             Command::Whitelist(command) => write!(f, "whitelist {}", command),
-            // Command::Worldborder() => {}
-            // Command::Xp() => {}
+            Command::Worldborder(command) => write!(f, "worldborder {}", command),
         }
     }
 }

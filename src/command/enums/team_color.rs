@@ -22,9 +22,9 @@ create_enum!(
     White
 );
 
-impl Into<TeamColorWithReset> for TeamColor {
-    fn into(self) -> TeamColorWithReset {
-        match self {
+impl From<TeamColor> for TeamColorWithReset {
+    fn from(team_color: TeamColor) -> TeamColorWithReset {
+        match team_color {
             TeamColor::Black => TeamColorWithReset::Black,
             TeamColor::DarkBlue => TeamColorWithReset::DarkBlue,
             TeamColor::DarkGreen => TeamColorWithReset::DarkGreen,
