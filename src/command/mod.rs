@@ -55,6 +55,7 @@ use crate::command::dialog::DialogCommand;
 use crate::command::effect::EffectCommand;
 use crate::command::enums::setblock_mode::SetblockMode;
 use crate::command::enums::sound_source::{SoundSource, StopSoundSource};
+use crate::command::enums::weather_type::WeatherType;
 use crate::command::execute::ExecuteSubcommand;
 use crate::command::experience::ExperienceCommand;
 use crate::command::fetch_profile::FetchProfileCommand;
@@ -91,6 +92,7 @@ use crate::entity_selector::EntitySelector;
 use crate::item::{ItemPredicate, ItemStack};
 use crate::resource_location::ResourceLocation;
 use crate::snbt::SNBT;
+use crate::time::Time;
 use enums::advancement_type::AdvancementType;
 use enums::banlist_type::BanlistType;
 use enums::clone_mode::CloneMode;
@@ -238,7 +240,7 @@ pub enum Command {
     Trigger(String, Option<TriggerAction>),
     Version,
     Waypoint(WaypointCommand),
-    // Weather,
+    Weather(WeatherType, Option<Time>),
     // Whitelist,
     // Worldborder,
     // Xp,
@@ -313,7 +315,7 @@ impl Command {
             | Command::Title(..)
             | Command::Version
             | Command::Waypoint(..)
-            // | Command::Weather(..)
+            | Command::Weather(..)
             // | Command::Worldborder(..)
             // | Command::Xp(..)
             => PermissionLevel::try_from(2).unwrap(),
@@ -864,10 +866,17 @@ impl Display for Command {
             }
             Command::Version => f.write_str("version"),
             Command::Waypoint(command) => write!(f, "waypoint {}", command),
-            // Command::Weather() => {}
-            // Command::Whitelist() => {}
-            // Command::Worldborder() => {}
-            // Command::Xp() => {}
+            Command::Weather(type_, duration) => {
+                write!(f, "weather {}", type_)?;
+
+                if let Some(duration) = duration {
+                    write!(f, " {}", duration)?;
+                }
+
+                Ok(())
+            } // Command::Whitelist() => {}
+              // Command::Worldborder() => {}
+              // Command::Xp() => {}
         }
     }
 }
