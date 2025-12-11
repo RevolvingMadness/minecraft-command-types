@@ -35,6 +35,7 @@ pub mod template_mirror;
 pub mod template_rotation;
 pub mod time_of_day;
 pub mod time_query_type;
+pub mod title_type;
 
 #[macro_export]
 macro_rules! create_enum {

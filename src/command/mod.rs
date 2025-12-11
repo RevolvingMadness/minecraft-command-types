@@ -37,6 +37,7 @@ pub mod teleport;
 pub mod test;
 pub mod tick;
 pub mod time;
+pub mod title;
 
 use crate::block::BlockState;
 use crate::column_position::ColumnPosition;
@@ -80,6 +81,7 @@ use crate::command::teleport::TeleportCommand;
 use crate::command::test::TestCommand;
 use crate::command::tick::TickCommand;
 use crate::command::time::TimeCommand;
+use crate::command::title::TitleCommand;
 use crate::coordinate::{Coordinates, WorldCoordinate};
 use crate::entity_selector::EntitySelector;
 use crate::item::{ItemPredicate, ItemStack};
@@ -227,10 +229,8 @@ pub enum Command {
     Test(TestCommand),
     Tick(TickCommand),
     Time(TimeCommand),
-    // Title,
-    // Tm,
-    // Tp,
-    // Transfer,
+    Title(EntitySelector, TitleCommand),
+    Transfer(String, Option<i32>, Option<EntitySelector>),
     // Trigger,
     // Version,
     // Waypoint,
@@ -250,7 +250,6 @@ impl Command {
             | Command::Random(RandomCommand::ValueRoll(_, _, None))
             | Command::Random(RandomCommand::Reset(..))
             | Command::TeamMessage(..)
-            // | Command::Tm(..)
             // | Command::Trigger(..)
             => {
                 PermissionLevel::try_from(0).unwrap()
@@ -307,8 +306,7 @@ impl Command {
             | Command::Tellraw(..)
             | Command::Test(..)
             | Command::Time(..)
-            // | Command::Title(..)
-            // | Command::Tp(..)
+            | Command::Title(..)
             // | Command::Version(..)
             // | Command::Waypoint(..)
             // | Command::Weather(..)
@@ -326,7 +324,7 @@ impl Command {
             | Command::PardonIp(..)
             | Command::SetIdleTimeout(..)
             | Command::Tick(..)
-            // | Command::Transfer(..)
+            | Command::Transfer(..)
             // | Command::Whitelist(..)
             => PermissionLevel::try_from(3).unwrap(),
             Command::JFR(..)
@@ -361,6 +359,7 @@ impl Command {
                 | Command::SaveOn
                 | Command::SetIdleTimeout(..)
                 | Command::Stop
+                | Command::Transfer(..)
         )
     }
 }
@@ -836,16 +835,26 @@ impl Display for Command {
             }
             Command::Tick(command) => write!(f, "tick {}", command),
             Command::Time(command) => write!(f, "time {}", command),
-            // Command::Title() => {}
-            // Command::Tp() => {}
-            // Command::Transfer() => {}
-            // Command::Trigger() => {}
-            // Command::Version() => {}
-            // Command::Waypoint() => {}
-            // Command::Weather() => {}
-            // Command::Whitelist() => {}
-            // Command::Worldborder() => {}
-            // Command::Xp() => {}
+            Command::Title(selector, command) => write!(f, "title {} {}", selector, command),
+            Command::Transfer(hostname, port, selector) => {
+                write!(f, "transfer {}", hostname)?;
+
+                if let Some(port) = port {
+                    write!(f, " {}", port)?;
+
+                    if let Some(selector) = selector {
+                        write!(f, " {}", selector)?;
+                    }
+                }
+
+                Ok(())
+            } // Command::Trigger() => {}
+              // Command::Version() => {}
+              // Command::Waypoint() => {}
+              // Command::Weather() => {}
+              // Command::Whitelist() => {}
+              // Command::Worldborder() => {}
+              // Command::Xp() => {}
         }
     }
 }
