@@ -12,8 +12,12 @@
       <w>mainhand</w>
       <w>playsound</w>
       <w>setblock</w>
+      <w>setidletimeout</w>
+      <w>setworldspawn</w>
       <w>spawnpoint</w>
+      <w>spreadplayers</w>
       <w>stopsound</w>
+      <w>teammsg</w>
       <w>tellraw</w>
       <w>worldborder</w>
       <w>worldgen</w>
