@@ -1,5 +1,5 @@
 use itertools::Itertools;
-use minecraft_command_types_proc_macros::HasMacro;
+use minecraft_command_types_derive::HasMacro;
 use nonempty::{NonEmpty, nonempty};
 use serde::de::Visitor;
 use serde::{Deserialize, Deserializer, Serialize, Serializer, de};

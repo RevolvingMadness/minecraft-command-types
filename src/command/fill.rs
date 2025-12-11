@@ -1,7 +1,7 @@
 use crate::block::BlockState;
 use crate::command::enums::fill_mode::FillMode;
 use crate::command::enums::fill_replace_mode::FillReplaceMode;
-use minecraft_command_types_proc_macros::HasMacro;
+use minecraft_command_types_derive::HasMacro;
 use std::fmt::{Display, Formatter};
 
 #[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]

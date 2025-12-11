@@ -2,7 +2,7 @@ use crate::command::enums::template_mirror::TemplateMirror;
 use crate::command::enums::template_rotation::TemplateRotation;
 use crate::coordinate::Coordinates;
 use crate::resource_location::ResourceLocation;
-use minecraft_command_types_proc_macros::HasMacro;
+use minecraft_command_types_derive::HasMacro;
 use ordered_float::NotNan;
 use std::fmt::{Display, Formatter};
 

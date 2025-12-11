@@ -1,5 +1,5 @@
 [package]
-name = "minecraft-command-types_proc-macros"
+name = "minecraft-command-types_derive"
 version = "0.1.0"
 edition = "2024"
 

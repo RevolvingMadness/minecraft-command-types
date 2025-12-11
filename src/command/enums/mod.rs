@@ -47,7 +47,7 @@ macro_rules! create_enum {
         $($(#[$variant_attr:meta])* $variant:ident),+
         $(,)?
     ) => {
-        #[derive(Debug, Copy, Clone, Eq, PartialEq, Hash, ::strum::Display, ::strum::EnumString, ::minecraft_command_types_proc_macros::HasMacro, ::serde::Serialize, ::serde::Deserialize, $($custom_derives),*)]
+        #[derive(Debug, Copy, Clone, Eq, PartialEq, Hash, ::strum::Display, ::strum::EnumString, ::minecraft_command_types_derive::HasMacro, ::serde::Serialize, ::serde::Deserialize, $($custom_derives),*)]
         #[strum(serialize_all = "snake_case")]
         pub enum $name {
             $($(#[$variant_attr])* $variant,)*
@@ -61,7 +61,7 @@ macro_rules! create_enum {
         $($(#[$variant_attr:meta])* $variant:ident),+
         $(,)?
     ) => {
-        #[derive(Debug, Clone, Eq, PartialEq, Hash, ::strum::Display, ::strum::EnumString, ::minecraft_command_types_proc_macros::HasMacro, ::serde::Serialize, ::serde::Deserialize, $($custom_derives),*)]
+        #[derive(Debug, Clone, Eq, PartialEq, Hash, ::strum::Display, ::strum::EnumString, ::minecraft_command_types_derive::HasMacro, ::serde::Serialize, ::serde::Deserialize, $($custom_derives),*)]
         #[strum(serialize_all = $serialize_all)]
         pub enum $name {
             $($(#[$variant_attr])* $variant,)*

@@ -1,7 +1,7 @@
 use crate::command::data::DataTarget;
 use crate::nbt_path::{NbtPath, SNBTCompound};
 use crate::snbt::fmt_snbt_compound;
-use minecraft_command_types_proc_macros::HasMacro;
+use minecraft_command_types_derive::HasMacro;
 use std::fmt::{Display, Formatter};
 
 #[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]

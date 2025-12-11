@@ -3,7 +3,7 @@ use crate::command::enums::sort::Sort;
 use crate::range::{FloatRange, IntegerRange};
 use crate::resource_location::ResourceLocation;
 use crate::snbt::SNBT;
-use minecraft_command_types_proc_macros::HasMacro;
+use minecraft_command_types_derive::HasMacro;
 use ordered_float::NotNan;
 use std::collections::BTreeMap;
 use std::fmt::{Display, Formatter};

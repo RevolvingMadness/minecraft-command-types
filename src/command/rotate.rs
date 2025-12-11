@@ -2,7 +2,7 @@ use crate::command::enums::entity_anchor::EntityAnchor;
 use crate::coordinate::Coordinates;
 use crate::entity_selector::EntitySelector;
 use crate::rotation::Rotation;
-use minecraft_command_types_proc_macros::HasMacro;
+use minecraft_command_types_derive::HasMacro;
 use std::fmt::{Display, Formatter};
 
 #[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]

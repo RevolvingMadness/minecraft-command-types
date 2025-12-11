@@ -1,5 +1,5 @@
 use crate::snbt::{SNBT, fmt_snbt_compound};
-use minecraft_command_types_proc_macros::HasMacro;
+use minecraft_command_types_derive::HasMacro;
 use std::collections::BTreeMap;
 use std::fmt::{Display, Formatter};
 

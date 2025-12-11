@@ -5,7 +5,7 @@ use crate::command::enums::scoreboard_render_type::ScoreboardRenderType;
 use crate::command::enums::team_color::TeamColor;
 use crate::entity_selector::EntitySelector;
 use crate::snbt::SNBT;
-use minecraft_command_types_proc_macros::HasMacro;
+use minecraft_command_types_derive::HasMacro;
 use std::fmt::{Display, Formatter};
 
 #[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
