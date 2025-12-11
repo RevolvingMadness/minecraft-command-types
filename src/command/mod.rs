@@ -39,6 +39,7 @@ pub mod tick;
 pub mod time;
 pub mod title;
 pub mod trigger;
+pub mod waypoint;
 
 use crate::block::BlockState;
 use crate::column_position::ColumnPosition;
@@ -84,6 +85,7 @@ use crate::command::tick::TickCommand;
 use crate::command::time::TimeCommand;
 use crate::command::title::TitleCommand;
 use crate::command::trigger::TriggerAction;
+use crate::command::waypoint::WaypointCommand;
 use crate::coordinate::{Coordinates, WorldCoordinate};
 use crate::entity_selector::EntitySelector;
 use crate::item::{ItemPredicate, ItemStack};
@@ -234,8 +236,8 @@ pub enum Command {
     Title(EntitySelector, TitleCommand),
     Transfer(String, Option<i32>, Option<EntitySelector>),
     Trigger(String, Option<TriggerAction>),
-    // Version,
-    // Waypoint,
+    Version,
+    Waypoint(WaypointCommand),
     // Weather,
     // Whitelist,
     // Worldborder,
@@ -309,8 +311,8 @@ impl Command {
             | Command::Test(..)
             | Command::Time(..)
             | Command::Title(..)
-            // | Command::Version(..)
-            // | Command::Waypoint(..)
+            | Command::Version
+            | Command::Waypoint(..)
             // | Command::Weather(..)
             // | Command::Worldborder(..)
             // | Command::Xp(..)
@@ -859,12 +861,13 @@ impl Display for Command {
                 }
 
                 Ok(())
-            } // Command::Version() => {}
-              // Command::Waypoint() => {}
-              // Command::Weather() => {}
-              // Command::Whitelist() => {}
-              // Command::Worldborder() => {}
-              // Command::Xp() => {}
+            }
+            Command::Version => f.write_str("version"),
+            Command::Waypoint(command) => write!(f, "waypoint {}", command),
+            // Command::Weather() => {}
+            // Command::Whitelist() => {}
+            // Command::Worldborder() => {}
+            // Command::Xp() => {}
         }
     }
 }
