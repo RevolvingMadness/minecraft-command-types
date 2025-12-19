@@ -1,8 +1,6 @@
 use crate::command::PlayerScore;
 use crate::command::enums::score_operation_operator::ScoreOperationOperator;
-use crate::command::enums::scoreboard_criterion::ScoreboardCriterion;
 use crate::command::enums::scoreboard_render_type::ScoreboardRenderType;
-use crate::command::enums::team_color::TeamColor;
 use crate::entity_selector::EntitySelector;
 use crate::snbt::SNBT;
 use minecraft_command_types_derive::HasMacro;
@@ -59,30 +57,11 @@ impl Display for ScoreboardModification {
 }
 
 #[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
-pub enum ScoreboardDisplaySlot {
-    List,
-    Sidebar,
-    SidebarTeam(TeamColor),
-    BelowName,
-}
-
-impl Display for ScoreboardDisplaySlot {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        match self {
-            ScoreboardDisplaySlot::List => f.write_str("list"),
-            ScoreboardDisplaySlot::Sidebar => f.write_str("sidebar"),
-            ScoreboardDisplaySlot::SidebarTeam(color) => write!(f, "sidebar.team.{}", color),
-            ScoreboardDisplaySlot::BelowName => f.write_str("below_name"),
-        }
-    }
-}
-
-#[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
 pub enum ObjectivesScoreboardCommand {
     List,
-    Add(String, ScoreboardCriterion, Option<SNBT>),
+    Add(String, String, Option<SNBT>),
     Remove(String),
-    SetDisplay(ScoreboardDisplaySlot, Option<String>),
+    SetDisplay(String, Option<String>),
     Modify(String, ScoreboardModification),
 }
 

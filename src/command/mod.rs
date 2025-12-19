@@ -118,6 +118,17 @@ impl Display for PlayerScore {
     }
 }
 
+impl PlayerScore {
+    #[inline]
+    #[must_use]
+    pub fn new(selector: EntitySelector, objective: String) -> Self {
+        Self {
+            selector,
+            objective,
+        }
+    }
+}
+
 #[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
 pub enum Command {
     Advancement(AdvancementType, EntitySelector, AdvancementCommand),

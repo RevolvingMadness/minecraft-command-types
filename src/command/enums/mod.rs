@@ -22,7 +22,6 @@ pub mod random_type;
 pub mod relation;
 pub mod schedule_mode;
 pub mod score_operation_operator;
-pub mod scoreboard_criterion;
 pub mod scoreboard_render_type;
 pub mod setblock_mode;
 pub mod sort;

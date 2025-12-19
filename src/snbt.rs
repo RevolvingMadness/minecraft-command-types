@@ -110,7 +110,7 @@ impl Display for SNBT {
                 write!(f, "\"{}\"", escape(s))
             }
             SNBT::List(values) => {
-                f.write_str("]")?;
+                f.write_str("[")?;
 
                 for (i, v) in values.iter().enumerate() {
                     if i > 0 {
