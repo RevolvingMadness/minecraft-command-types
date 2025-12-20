@@ -5,6 +5,7 @@ create_enum!(
     [],
     Byte,
     Short,
+    #[strum(serialize = "int")]
     Integer,
     Long,
     Float,

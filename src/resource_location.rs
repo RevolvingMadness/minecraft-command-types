@@ -9,14 +9,23 @@ use std::str::FromStr;
 #[derive(Debug, Clone, Eq, PartialEq, Hash, Ord, PartialOrd, HasMacro)]
 pub struct ResourceLocation {
     pub is_tag: bool,
-    pub namespace: Option<String>,
+    namespace: Option<String>,
     pub paths: NonEmpty<String>,
 }
 
 impl ResourceLocation {
     #[inline]
+    pub fn namespace(&self) -> &str {
+        self.namespace.as_deref().unwrap_or("minecraft")
+    }
+
+    #[inline]
     #[must_use]
-    pub fn new<T: ToString>(is_tag: bool, namespace: Option<T>, paths: NonEmpty<T>) -> Self {
+    pub fn new<N: ToString, P: ToString>(
+        is_tag: bool,
+        namespace: Option<N>,
+        paths: NonEmpty<P>,
+    ) -> Self {
         Self {
             is_tag,
             namespace: namespace.map(|namespace| namespace.to_string()),
@@ -26,7 +35,7 @@ impl ResourceLocation {
 
     #[inline]
     #[must_use]
-    pub fn new_namespace_paths<T: ToString>(namespace: T, paths: NonEmpty<T>) -> Self {
+    pub fn new_namespace_paths<N: ToString, P: ToString>(namespace: N, paths: NonEmpty<P>) -> Self {
         Self::new(false, Some(namespace), paths)
     }
 
@@ -38,14 +47,14 @@ impl ResourceLocation {
 
     #[inline]
     #[must_use]
-    pub fn new_paths<T: ToString>(paths: NonEmpty<T>) -> Self {
-        Self::new(false, None, paths)
+    pub fn new_paths<N: ToString, P: ToString>(paths: NonEmpty<P>) -> Self {
+        Self::new::<N, _>(false, None, paths)
     }
 
     #[inline]
     #[must_use]
-    pub fn new_path<T: ToString>(path: T) -> Self {
-        Self::new_paths(nonempty![path])
+    pub fn new_path<N: ToString, P: ToString>(path: P) -> Self {
+        Self::new_paths::<N, _>(nonempty![path])
     }
 
     pub fn paths_string(&self) -> String {

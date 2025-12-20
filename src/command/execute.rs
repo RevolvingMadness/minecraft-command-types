@@ -235,40 +235,22 @@ impl Display for ExecuteIfSubcommand {
 
 #[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
 pub enum ExecuteStoreSubcommand {
-    Block(
-        Coordinates,
+    Data(
+        DataTarget,
         NbtPath,
         NumericSNBTType,
         NotNan<f32>,
         Box<ExecuteSubcommand>,
     ),
     Bossbar(ResourceLocation, BossbarStoreType, Box<ExecuteSubcommand>),
-    Entity(
-        EntitySelector,
-        NbtPath,
-        NumericSNBTType,
-        NotNan<f32>,
-        Box<ExecuteSubcommand>,
-    ),
     Score(PlayerScore, Box<ExecuteSubcommand>),
-    Storage(
-        ResourceLocation,
-        NbtPath,
-        NumericSNBTType,
-        NotNan<f32>,
-        Box<ExecuteSubcommand>,
-    ),
 }
 
 impl Display for ExecuteStoreSubcommand {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            ExecuteStoreSubcommand::Block(coords, path, num_type, scale, next) => {
-                write!(
-                    f,
-                    "block {} {} {} {} {}",
-                    coords, path, num_type, scale, next
-                )?;
+            ExecuteStoreSubcommand::Data(target, path, num_type, scale, next) => {
+                write!(f, "{} {} {} {} {}", target, path, num_type, scale, next)?;
 
                 Ok(())
             }
@@ -277,22 +259,8 @@ impl Display for ExecuteStoreSubcommand {
 
                 Ok(())
             }
-            ExecuteStoreSubcommand::Entity(selector, path, num_type, scale, next) => {
-                write!(
-                    f,
-                    "entity {} {} {} {} {}",
-                    selector, path, num_type, scale, next
-                )?;
-
-                Ok(())
-            }
             ExecuteStoreSubcommand::Score(score, next) => {
                 write!(f, "score {} {}", score, next)?;
-
-                Ok(())
-            }
-            ExecuteStoreSubcommand::Storage(id, path, num_type, scale, next) => {
-                write!(f, "storage {} {} {} {} {}", id, path, num_type, scale, next)?;
 
                 Ok(())
             }
