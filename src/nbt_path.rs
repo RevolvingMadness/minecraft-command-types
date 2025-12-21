@@ -28,6 +28,14 @@ pub enum NbtPathNode {
 #[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
 pub struct NbtPath(pub Vec<NbtPathNode>);
 
+impl NbtPath {
+    pub fn with_node(mut self, node: NbtPathNode) -> Self {
+        self.0.push(node);
+
+        self
+    }
+}
+
 impl Display for NbtPathNode {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
