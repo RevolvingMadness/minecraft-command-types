@@ -2,7 +2,7 @@ use crate::column_position::ColumnPosition;
 use minecraft_command_types_derive::HasMacro;
 use std::fmt::{Display, Formatter};
 
-#[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
+#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
 pub enum ForceloadRemoveType {
     ColumnPosition(ColumnPosition, Option<ColumnPosition>),
     All,
@@ -25,7 +25,7 @@ impl Display for ForceloadRemoveType {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
+#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
 pub enum ForceloadCommand {
     Add(ColumnPosition, Option<ColumnPosition>),
     Remove(ForceloadRemoveType),

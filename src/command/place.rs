@@ -6,7 +6,7 @@ use minecraft_command_types_derive::HasMacro;
 use ordered_float::NotNan;
 use std::fmt::{Display, Formatter};
 
-#[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
+#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
 pub enum PlaceCommand {
     Feature(ResourceLocation, Option<Coordinates>),
     Jigsaw(ResourceLocation, ResourceLocation, i32, Option<Coordinates>),

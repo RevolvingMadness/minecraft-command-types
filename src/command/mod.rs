@@ -106,7 +106,7 @@ use minecraft_command_types_derive::HasMacro;
 use ordered_float::NotNan;
 use std::fmt::{Display, Formatter};
 
-#[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
+#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
 pub struct PlayerScore {
     pub selector: EntitySelector,
     pub objective: String,
@@ -129,7 +129,7 @@ impl PlayerScore {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
+#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
 pub enum Command {
     Advancement(AdvancementType, EntitySelector, AdvancementCommand),
     Attribute(EntitySelector, ResourceLocation, AttributeCommand),

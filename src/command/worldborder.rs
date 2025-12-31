@@ -4,7 +4,7 @@ use minecraft_command_types_derive::HasMacro;
 use ordered_float::NotNan;
 use std::fmt::{Display, Formatter};
 
-#[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
+#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
 pub enum DamageWorldborderCommand {
     Amount(NotNan<f32>),
     Buffer(NotNan<f32>),
@@ -19,7 +19,7 @@ impl Display for DamageWorldborderCommand {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
+#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
 pub enum WarningWorldborderCommand {
     Distance(i32),
     Time(Time),
@@ -34,7 +34,7 @@ impl Display for WarningWorldborderCommand {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
+#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
 pub enum WorldborderCommand {
     Add(NotNan<f64>, Option<Time>),
     Center(ColumnPosition),

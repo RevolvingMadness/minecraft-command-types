@@ -8,7 +8,7 @@ use ordered_float::NotNan;
 use std::collections::BTreeMap;
 use std::fmt::{Display, Formatter};
 
-#[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
+#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
 pub enum EntitySelectorVariable {
     /// Selects the nearest player from the command's execution. If there are multiple nearest players, caused by them being precisely the same distance away, the player who most recently joined the server is selected.
     P,
@@ -38,7 +38,7 @@ impl Display for EntitySelectorVariable {
     }
 }
 
-fn fmt_b_tree_map<K: Display, V: Display>(
+fn fmt_hash_map<K: Display, V: Display>(
     f: &mut Formatter<'_>,
     input: &BTreeMap<K, V>,
 ) -> std::fmt::Result {
@@ -58,7 +58,7 @@ fn fmt_b_tree_map<K: Display, V: Display>(
     f.write_str("}")
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
+#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
 pub enum AdvancementChoiceType {
     Boolean(bool),
     Criterion(BTreeMap<String, bool>),
@@ -80,12 +80,12 @@ impl Display for AdvancementChoiceType {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
             AdvancementChoiceType::Boolean(bool) => bool.fmt(f),
-            AdvancementChoiceType::Criterion(map) => fmt_b_tree_map(f, map),
+            AdvancementChoiceType::Criterion(map) => fmt_hash_map(f, map),
         }
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
+#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
 pub enum EntitySelectorOption {
     X(NotNan<f32>),
     Y(NotNan<f32>),
@@ -184,17 +184,17 @@ impl Display for EntitySelectorOption {
 
             EntitySelectorOption::Scores(scores) => {
                 f.write_str("scores=")?;
-                fmt_b_tree_map(f, scores)
+                fmt_hash_map(f, scores)
             }
             EntitySelectorOption::Advancements(advancements) => {
                 f.write_str("advancements=")?;
-                fmt_b_tree_map(f, advancements)
+                fmt_hash_map(f, advancements)
             }
         }
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
+#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
 pub enum EntitySelector {
     Variable(EntitySelectorVariable, Vec<EntitySelectorOption>),
     Name(String),
@@ -318,6 +318,8 @@ impl Display for EntitySelector {
 
 #[cfg(test)]
 mod tests {
+    use crate::snbt::SNBTString;
+
     use super::*;
     use ordered_float::NotNan;
     use std::collections::BTreeMap;
@@ -483,14 +485,14 @@ mod tests {
             "@a[gamemode=!creative]"
         );
         let mut compound = BTreeMap::new();
-        compound.insert("OnGround".to_string(), SNBT::Byte(1));
+        compound.insert(SNBTString(false, "OnGround".to_string()), SNBT::Byte(1));
         let nbt = SNBT::Compound(compound);
         assert_eq!(
             EntitySelector::e(vec![EntitySelectorOption::Nbt(false, nbt)]).to_string(),
             "@e[nbt={OnGround:1b}]"
         );
         let mut compound = BTreeMap::new();
-        compound.insert("Air".to_string(), SNBT::Short(300));
+        compound.insert(SNBTString(false, "Air".to_string()), SNBT::Short(300));
         let nbt = SNBT::Compound(compound);
         assert_eq!(
             EntitySelector::e(vec![EntitySelectorOption::Nbt(true, nbt)]).to_string(),

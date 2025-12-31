@@ -24,7 +24,7 @@ use std::collections::BTreeSet;
 use std::fmt::{Display, Formatter};
 use strum::Display;
 
-#[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
+#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
 pub enum Facing {
     Position(Coordinates),
     Entity(EntitySelector, EntityAnchor),
@@ -39,7 +39,7 @@ impl Display for Facing {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
+#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
 pub enum Positioned {
     Position(Coordinates),
     As(EntitySelector),
@@ -56,7 +56,7 @@ impl Display for Positioned {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
+#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
 pub enum Rotated {
     Rotation(Rotation),
     As(EntitySelector),
@@ -71,7 +71,7 @@ impl Display for Rotated {
     }
 }
 
-#[derive(Display, Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
+#[derive(Display, Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
 pub enum ScoreComparisonOperator {
     #[strum(serialize = "<")]
     LessThan,
@@ -85,7 +85,7 @@ pub enum ScoreComparisonOperator {
     GreaterThanOrEqualTo,
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
+#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
 pub enum ScoreComparison {
     Range(IntegerRange),
     Score(ScoreComparisonOperator, PlayerScore),
@@ -102,7 +102,7 @@ impl Display for ScoreComparison {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
+#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
 pub enum ExecuteIfSubcommand {
     Biome(
         Coordinates,
@@ -130,7 +130,7 @@ pub enum ExecuteIfSubcommand {
     Loaded(ColumnPosition, Option<Box<ExecuteSubcommand>>),
     Predicate(ResourceLocation, Option<Box<ExecuteSubcommand>>),
     Score(PlayerScore, ScoreComparison, Option<Box<ExecuteSubcommand>>),
-    Stopwatch(ResourceLocation, FloatRange),
+    Stopwatch(ResourceLocation, FloatRange, Option<Box<ExecuteSubcommand>>),
 }
 
 impl Display for ExecuteIfSubcommand {
@@ -226,14 +226,142 @@ impl Display for ExecuteIfSubcommand {
 
                 Ok(())
             }
-            ExecuteIfSubcommand::Stopwatch(location, range) => {
-                write!(f, "stopwatch {} {}", location, range)
+            ExecuteIfSubcommand::Stopwatch(location, range, next) => {
+                write!(f, "stopwatch {} {}", location, range)?;
+                if let Some(next_sub) = next {
+                    write!(f, " {}", next_sub)?;
+                }
+
+                Ok(())
             }
         }
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
+impl ExecuteIfSubcommand {
+    pub fn then(self, next: ExecuteSubcommand) -> ExecuteIfSubcommand {
+        match self {
+            ExecuteIfSubcommand::Biome(coordinates, resource_location, inner_next) => {
+                ExecuteIfSubcommand::Biome(
+                    coordinates,
+                    resource_location,
+                    Some(Box::new(match inner_next {
+                        Some(inner_next) => inner_next.then(next),
+                        None => next,
+                    })),
+                )
+            }
+            ExecuteIfSubcommand::Block(coordinates, block_state, inner_next) => {
+                ExecuteIfSubcommand::Block(
+                    coordinates,
+                    block_state,
+                    Some(Box::new(match inner_next {
+                        Some(inner_next) => inner_next.then(next),
+                        None => next,
+                    })),
+                )
+            }
+            ExecuteIfSubcommand::Blocks(
+                coordinates,
+                coordinates1,
+                coordinates2,
+                if_blocks_mode,
+                inner_next,
+            ) => ExecuteIfSubcommand::Blocks(
+                coordinates,
+                coordinates1,
+                coordinates2,
+                if_blocks_mode,
+                Some(Box::new(match inner_next {
+                    Some(inner_next) => inner_next.then(next),
+                    None => next,
+                })),
+            ),
+            ExecuteIfSubcommand::Data(data_target, nbt_path, inner_next) => {
+                ExecuteIfSubcommand::Data(
+                    data_target,
+                    nbt_path,
+                    Some(Box::new(match inner_next {
+                        Some(inner_next) => inner_next.then(next),
+                        None => next,
+                    })),
+                )
+            }
+            ExecuteIfSubcommand::Dimension(resource_location, inner_next) => {
+                ExecuteIfSubcommand::Dimension(
+                    resource_location,
+                    Some(Box::new(match inner_next {
+                        Some(inner_next) => inner_next.then(next),
+                        None => next,
+                    })),
+                )
+            }
+            ExecuteIfSubcommand::Entity(entity_selector, inner_next) => {
+                ExecuteIfSubcommand::Entity(
+                    entity_selector,
+                    Some(Box::new(match inner_next {
+                        Some(inner_next) => inner_next.then(next),
+                        None => next,
+                    })),
+                )
+            }
+            ExecuteIfSubcommand::Function(resource_location, inner_next) => {
+                ExecuteIfSubcommand::Function(resource_location, Box::new(inner_next.then(next)))
+            }
+            ExecuteIfSubcommand::Items(item_source, slot, item_predicate, inner_next) => {
+                ExecuteIfSubcommand::Items(
+                    item_source,
+                    slot,
+                    item_predicate,
+                    Some(Box::new(match inner_next {
+                        Some(inner_next) => inner_next.then(next),
+                        None => next,
+                    })),
+                )
+            }
+            ExecuteIfSubcommand::Loaded(column_position, inner_next) => {
+                ExecuteIfSubcommand::Loaded(
+                    column_position,
+                    Some(Box::new(match inner_next {
+                        Some(inner_next) => inner_next.then(next),
+                        None => next,
+                    })),
+                )
+            }
+            ExecuteIfSubcommand::Predicate(resource_location, inner_next) => {
+                ExecuteIfSubcommand::Predicate(
+                    resource_location,
+                    Some(Box::new(match inner_next {
+                        Some(inner_next) => inner_next.then(next),
+                        None => next,
+                    })),
+                )
+            }
+            ExecuteIfSubcommand::Score(player_score, score_comparison, inner_next) => {
+                ExecuteIfSubcommand::Score(
+                    player_score,
+                    score_comparison,
+                    Some(Box::new(match inner_next {
+                        Some(inner_next) => inner_next.then(next),
+                        None => next,
+                    })),
+                )
+            }
+            ExecuteIfSubcommand::Stopwatch(resource_location, float_range, inner_next) => {
+                ExecuteIfSubcommand::Stopwatch(
+                    resource_location,
+                    float_range,
+                    Some(Box::new(match inner_next {
+                        Some(inner_next) => inner_next.then(next),
+                        None => next,
+                    })),
+                )
+            }
+        }
+    }
+}
+
+#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
 pub enum ExecuteStoreSubcommand {
     Data(
         DataTarget,
@@ -268,7 +396,29 @@ impl Display for ExecuteStoreSubcommand {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
+impl ExecuteStoreSubcommand {
+    pub fn then(self, next: ExecuteSubcommand) -> ExecuteStoreSubcommand {
+        match self {
+            ExecuteStoreSubcommand::Data(target, path, num_type, scale, inner_next) => {
+                ExecuteStoreSubcommand::Data(
+                    target,
+                    path,
+                    num_type,
+                    scale,
+                    Box::new(inner_next.then(next)),
+                )
+            }
+            ExecuteStoreSubcommand::Bossbar(id, store_type, inner_next) => {
+                ExecuteStoreSubcommand::Bossbar(id, store_type, Box::new(inner_next.then(next)))
+            }
+            ExecuteStoreSubcommand::Score(score, inner_next) => {
+                ExecuteStoreSubcommand::Score(score, Box::new(inner_next.then(next)))
+            }
+        }
+    }
+}
+
+#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
 pub enum ExecuteSubcommand {
     Align(BTreeSet<Axis>, Box<ExecuteSubcommand>),
     Anchored(EntityAnchor, Box<ExecuteSubcommand>),
@@ -350,6 +500,50 @@ impl Display for ExecuteSubcommand {
             ExecuteSubcommand::Run(command) => {
                 write!(f, "run {}", command)
             }
+        }
+    }
+}
+
+impl ExecuteSubcommand {
+    pub fn then(self, next: ExecuteSubcommand) -> ExecuteSubcommand {
+        match self {
+            ExecuteSubcommand::Align(axes, inner_next) => {
+                ExecuteSubcommand::Align(axes, Box::new(inner_next.then(next)))
+            }
+            ExecuteSubcommand::Anchored(anchor, inner_next) => {
+                ExecuteSubcommand::Anchored(anchor, Box::new(inner_next.then(next)))
+            }
+            ExecuteSubcommand::As(selector, inner_next) => {
+                ExecuteSubcommand::As(selector, Box::new(inner_next.then(next)))
+            }
+            ExecuteSubcommand::At(selector, inner_next) => {
+                ExecuteSubcommand::At(selector, Box::new(inner_next.then(next)))
+            }
+            ExecuteSubcommand::Facing(facing, inner_next) => {
+                ExecuteSubcommand::Facing(facing, Box::new(inner_next.then(next)))
+            }
+            ExecuteSubcommand::In(resource_location, inner_next) => {
+                ExecuteSubcommand::In(resource_location, Box::new(inner_next.then(next)))
+            }
+            ExecuteSubcommand::On(relation, inner_next) => {
+                ExecuteSubcommand::On(relation, Box::new(inner_next.then(next)))
+            }
+            ExecuteSubcommand::Positioned(positioned, inner_next) => {
+                ExecuteSubcommand::Positioned(positioned, Box::new(inner_next.then(next)))
+            }
+            ExecuteSubcommand::Rotated(rotated, inner_next) => {
+                ExecuteSubcommand::Rotated(rotated, Box::new(inner_next.then(next)))
+            }
+            ExecuteSubcommand::Summon(resource_location, inner_next) => {
+                ExecuteSubcommand::Summon(resource_location, Box::new(inner_next.then(next)))
+            }
+            ExecuteSubcommand::If(inverted, subcommand) => {
+                ExecuteSubcommand::If(inverted, subcommand.then(next))
+            }
+            ExecuteSubcommand::Store(store_type, subcommand) => {
+                ExecuteSubcommand::Store(store_type, subcommand.then(next))
+            }
+            ExecuteSubcommand::Run(_) => next.then(self),
         }
     }
 }

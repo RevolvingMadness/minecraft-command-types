@@ -11,7 +11,8 @@ use nonempty::NonEmpty;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use std::collections::BTreeMap;
-use std::path::Path;
+use std::collections::btree_map::Entry;
+use std::path::{Path, PathBuf};
 use std::{fs, io};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -28,7 +29,7 @@ pub struct PackMCMeta {
     pub language: Option<BTreeMap<String, Language>>,
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub enum FilePathNode<T> {
     Directory(String, Vec<FilePathNode<T>>),
     File(String, T),
@@ -61,109 +62,146 @@ impl<T> FilePathNode<T> {
     }
 }
 
-#[derive(Clone, Default)]
+#[derive(Debug, Clone, Default)]
 pub struct Namespace {
-    pub functions: Vec<FilePathNode<String>>,
-    pub tags: BTreeMap<TagType, Vec<FilePathNode<Tag>>>,
+    pub functions: BTreeMap<NonEmpty<String>, String>,
+    pub tags: BTreeMap<TagType, BTreeMap<NonEmpty<String>, Tag>>,
 
-    pub advancements: Vec<FilePathNode<Value>>,
-    pub banner_patterns: Vec<FilePathNode<Value>>,
-    pub cat_variants: Vec<FilePathNode<Value>>,
-    pub chat_types: Vec<FilePathNode<Value>>,
-    pub chicken_variants: Vec<FilePathNode<Value>>,
-    pub cow_variants: Vec<FilePathNode<Value>>,
-    pub damage_types: Vec<FilePathNode<Value>>,
-    pub dialogs: Vec<FilePathNode<Value>>,
-    pub dimensions: Vec<FilePathNode<Value>>,
-    pub dimension_types: Vec<FilePathNode<Value>>,
-    pub enchantments: Vec<FilePathNode<Value>>,
-    pub enchantment_providers: Vec<FilePathNode<Value>>,
-    pub frog_variants: Vec<FilePathNode<Value>>,
-    pub instruments: Vec<FilePathNode<Value>>,
-    pub item_modifiers: Vec<FilePathNode<Value>>,
-    pub jukebox_songs: Vec<FilePathNode<Value>>,
-    pub loot_tables: Vec<FilePathNode<Value>>,
-    pub painting_variants: Vec<FilePathNode<Value>>,
-    pub pig_variants: Vec<FilePathNode<Value>>,
-    pub predicates: Vec<FilePathNode<Value>>,
-    pub recipes: Vec<FilePathNode<Value>>,
-    pub test_environments: Vec<FilePathNode<Value>>,
-    pub test_instances: Vec<FilePathNode<Value>>,
-    pub timelines: Vec<FilePathNode<Value>>,
-    pub trial_spawners: Vec<FilePathNode<Value>>,
-    pub trim_materials: Vec<FilePathNode<Value>>,
-    pub trim_patterns: Vec<FilePathNode<Value>>,
-    pub wolf_sound_variants: Vec<FilePathNode<Value>>,
-    pub wolf_variants: Vec<FilePathNode<Value>>,
+    pub advancements: BTreeMap<NonEmpty<String>, Value>,
+    pub banner_patterns: BTreeMap<NonEmpty<String>, Value>,
+    pub cat_variants: BTreeMap<NonEmpty<String>, Value>,
+    pub chat_types: BTreeMap<NonEmpty<String>, Value>,
+    pub chicken_variants: BTreeMap<NonEmpty<String>, Value>,
+    pub cow_variants: BTreeMap<NonEmpty<String>, Value>,
+    pub damage_types: BTreeMap<NonEmpty<String>, Value>,
+    pub dialogs: BTreeMap<NonEmpty<String>, Value>,
+    pub dimensions: BTreeMap<NonEmpty<String>, Value>,
+    pub dimension_types: BTreeMap<NonEmpty<String>, Value>,
+    pub enchantments: BTreeMap<NonEmpty<String>, Value>,
+    pub enchantment_providers: BTreeMap<NonEmpty<String>, Value>,
+    pub frog_variants: BTreeMap<NonEmpty<String>, Value>,
+    pub instruments: BTreeMap<NonEmpty<String>, Value>,
+    pub item_modifiers: BTreeMap<NonEmpty<String>, Value>,
+    pub jukebox_songs: BTreeMap<NonEmpty<String>, Value>,
+    pub loot_tables: BTreeMap<NonEmpty<String>, Value>,
+    pub painting_variants: BTreeMap<NonEmpty<String>, Value>,
+    pub pig_variants: BTreeMap<NonEmpty<String>, Value>,
+    pub predicates: BTreeMap<NonEmpty<String>, Value>,
+    pub recipes: BTreeMap<NonEmpty<String>, Value>,
+    pub test_environments: BTreeMap<NonEmpty<String>, Value>,
+    pub test_instances: BTreeMap<NonEmpty<String>, Value>,
+    pub timelines: BTreeMap<NonEmpty<String>, Value>,
+    pub trial_spawners: BTreeMap<NonEmpty<String>, Value>,
+    pub trim_materials: BTreeMap<NonEmpty<String>, Value>,
+    pub trim_patterns: BTreeMap<NonEmpty<String>, Value>,
+    pub wolf_sound_variants: BTreeMap<NonEmpty<String>, Value>,
+    pub wolf_variants: BTreeMap<NonEmpty<String>, Value>,
     pub worldgen: Worldgen,
 }
-
 fn write_file_path_nodes<T>(
     base_path: &Path,
-    nodes: &[FilePathNode<T>],
+    nodes: &BTreeMap<NonEmpty<String>, T>,
     extension: &str,
     serializer: &impl Fn(&T) -> io::Result<String>,
 ) -> io::Result<()> {
-    fs::create_dir_all(base_path)?;
-    for node in nodes {
-        match node {
-            FilePathNode::Directory(name, children) => {
-                let dir_path = base_path.join(name);
-                write_file_path_nodes(&dir_path, children, extension, serializer)?;
-            }
-            FilePathNode::File(name, content) => {
-                let filename = if name.ends_with(extension) {
-                    name.clone()
-                } else {
-                    format!("{}{}", name, extension)
-                };
-                let file_path = base_path.join(filename);
-                let serialized_content = serializer(content)?;
-                fs::write(file_path, serialized_content)?;
-            }
+    for (path, content) in nodes {
+        let mut file_path = PathBuf::from(base_path);
+
+        for segment in path.iter() {
+            file_path.push(segment);
         }
+
+        file_path.set_extension(extension.trim_start_matches('.'));
+
+        let serialized_content = serializer(content)?;
+        if serialized_content.is_empty() {
+            continue;
+        }
+
+        if let Some(parent) = file_path.parent() {
+            fs::create_dir_all(parent)?;
+        }
+
+        fs::write(&file_path, serialized_content)?;
     }
+
     Ok(())
 }
 
 impl Namespace {
+    pub fn merge(&mut self, mut other: Namespace) {
+        self.functions.append(&mut other.functions);
+
+        for (tag_type, tags) in other.tags {
+            self.tags.entry(tag_type).or_default().extend(tags);
+        }
+
+        self.advancements.append(&mut other.advancements);
+        self.banner_patterns.append(&mut other.banner_patterns);
+        self.cat_variants.append(&mut other.cat_variants);
+        self.chat_types.append(&mut other.chat_types);
+        self.chicken_variants.append(&mut other.chicken_variants);
+        self.cow_variants.append(&mut other.cow_variants);
+        self.damage_types.append(&mut other.damage_types);
+        self.dialogs.append(&mut other.dialogs);
+        self.dimensions.append(&mut other.dimensions);
+        self.dimension_types.append(&mut other.dimension_types);
+        self.enchantments.append(&mut other.enchantments);
+        self.enchantment_providers
+            .append(&mut other.enchantment_providers);
+        self.frog_variants.append(&mut other.frog_variants);
+        self.instruments.append(&mut other.instruments);
+        self.item_modifiers.append(&mut other.item_modifiers);
+        self.jukebox_songs.append(&mut other.jukebox_songs);
+        self.loot_tables.append(&mut other.loot_tables);
+        self.painting_variants.append(&mut other.painting_variants);
+        self.pig_variants.append(&mut other.pig_variants);
+        self.predicates.append(&mut other.predicates);
+        self.recipes.append(&mut other.recipes);
+        self.test_environments.append(&mut other.test_environments);
+        self.test_instances.append(&mut other.test_instances);
+        self.timelines.append(&mut other.timelines);
+        self.trial_spawners.append(&mut other.trial_spawners);
+        self.trim_materials.append(&mut other.trim_materials);
+        self.trim_patterns.append(&mut other.trim_patterns);
+        self.wolf_sound_variants
+            .append(&mut other.wolf_sound_variants);
+        self.wolf_variants.append(&mut other.wolf_variants);
+
+        self.worldgen.merge(other.worldgen);
+    }
+
     pub fn write(&self, namespace_path: &Path) -> io::Result<()> {
         let json_serializer = |v: &Value| serde_json::to_string_pretty(v).map_err(io::Error::other);
 
-        if !self.functions.is_empty() {
-            write_file_path_nodes(
-                &namespace_path.join("function"),
-                &self.functions,
-                ".mcfunction",
-                &|content_str| Ok(content_str.clone()),
-            )?;
-        }
+        write_file_path_nodes(
+            &namespace_path.join("function"),
+            &self.functions,
+            ".mcfunction",
+            &|content_str| Ok(content_str.clone()),
+        )?;
 
-        if !self.tags.is_empty() {
-            let tags_root_path = namespace_path.join("tags");
-            for (tag_type, nodes) in &self.tags {
-                let type_path = if tag_type.is_worldgen() {
-                    tags_root_path.join("worldgen").join(tag_type.to_string())
-                } else {
-                    tags_root_path.join(tag_type.to_string())
-                };
+        let tags_root_path = namespace_path.join("tags");
+        for (tag_type, nodes) in &self.tags {
+            let type_path = if tag_type.is_worldgen() {
+                tags_root_path.join("worldgen").join(tag_type.to_string())
+            } else {
+                tags_root_path.join(tag_type.to_string())
+            };
 
-                write_file_path_nodes(&type_path, nodes, ".json", &|tag| {
-                    serde_json::to_string_pretty(tag).map_err(io::Error::other)
-                })?;
-            }
+            write_file_path_nodes(&type_path, nodes, ".json", &|tag| {
+                serde_json::to_string_pretty(tag).map_err(io::Error::other)
+            })?;
         }
 
         macro_rules! generate_write_file_path_nodes {
             ($field_name:expr, $folder_name:expr) => {
-                if !$field_name.is_empty() {
-                    write_file_path_nodes(
-                        &namespace_path.join($folder_name),
-                        &$field_name,
-                        ".json",
-                        &json_serializer,
-                    )?;
-                }
+                write_file_path_nodes(
+                    &namespace_path.join($folder_name),
+                    &$field_name,
+                    ".json",
+                    &json_serializer,
+                )?;
             };
         }
 
@@ -198,6 +236,29 @@ impl Namespace {
         generate_write_file_path_nodes!(self.wolf_variants, "wolf_variant");
 
         Ok(())
+    }
+
+    pub fn add_tag(&mut self, tag_type: TagType, path: &NonEmpty<String>, new_tag: Tag) {
+        if let Some(tags) = self.tags.get_mut(&tag_type) {
+            if let Some(tag) = tags.get_mut(path) {
+                tag.extend(new_tag);
+            } else {
+                tags.insert(path.clone(), new_tag);
+            }
+        } else {
+            self.tags
+                .insert(tag_type, BTreeMap::from([(path.clone(), new_tag)]));
+        }
+    }
+
+    pub fn add_function(&mut self, path: &NonEmpty<String>, new_function: &str) {
+        if let Some(functions) = self.functions.get_mut(path) {
+            functions.push('\n');
+            functions.push_str(new_function);
+        } else {
+            self.functions
+                .insert(path.clone(), new_function.to_string());
+        }
     }
 }
 
@@ -248,7 +309,14 @@ impl Datapack {
         self.namespaces.entry(name.to_string()).or_default()
     }
 
-    pub fn add_namespace(&mut self, name: String, namespace: Namespace) {
-        self.namespaces.insert(name, namespace);
+    pub fn add_namespace<T: ToString>(&mut self, name: T, namespace: Namespace) {
+        match self.namespaces.entry(name.to_string()) {
+            Entry::Vacant(e) => {
+                e.insert(namespace);
+            }
+            Entry::Occupied(mut e) => {
+                e.get_mut().merge(namespace);
+            }
+        }
     }
 }

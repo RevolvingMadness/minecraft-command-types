@@ -6,7 +6,7 @@ use serde::{Deserialize, Deserializer, Serialize, Serializer, de};
 use std::fmt::{Display, Formatter};
 use std::str::FromStr;
 
-#[derive(Debug, Clone, Eq, PartialEq, Hash, Ord, PartialOrd, HasMacro)]
+#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
 pub struct ResourceLocation {
     pub is_tag: bool,
     namespace: Option<String>,
@@ -41,7 +41,7 @@ impl ResourceLocation {
 
     #[inline]
     #[must_use]
-    pub fn new_namespace_path<T: ToString>(namespace: T, path: T) -> Self {
+    pub fn new_namespace_path<N: ToString, P: ToString>(namespace: N, path: P) -> Self {
         Self::new_namespace_paths(namespace, nonempty![path])
     }
 

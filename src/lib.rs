@@ -1,3 +1,5 @@
+extern crate self as minecraft_command_types;
+
 pub mod block;
 pub mod column_position;
 pub mod command;

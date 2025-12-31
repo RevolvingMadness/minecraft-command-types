@@ -6,7 +6,7 @@ use crate::snbt::SNBT;
 use minecraft_command_types_derive::HasMacro;
 use std::fmt::{Display, Formatter};
 
-#[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
+#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
 pub enum TeamOption {
     DisplayName(SNBT),
     Color(TeamColor),
@@ -52,7 +52,8 @@ impl Display for TeamOption {
         }
     }
 }
-#[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
+
+#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
 pub enum TeamCommand {
     List(Option<String>),
     Add(String, Option<SNBT>),

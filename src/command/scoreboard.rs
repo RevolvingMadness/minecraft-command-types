@@ -6,7 +6,7 @@ use crate::snbt::SNBT;
 use minecraft_command_types_derive::HasMacro;
 use std::fmt::{Display, Formatter};
 
-#[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
+#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
 pub enum ScoreboardNumberFormat {
     Blank,
     Fixed(SNBT),
@@ -23,7 +23,7 @@ impl Display for ScoreboardNumberFormat {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
+#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
 pub enum ScoreboardModification {
     DisplayAutoUpdate(bool),
     DisplayName(SNBT),
@@ -56,7 +56,7 @@ impl Display for ScoreboardModification {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
+#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
 pub enum ObjectivesScoreboardCommand {
     List,
     Add(String, String, Option<SNBT>),
@@ -97,7 +97,7 @@ impl Display for ObjectivesScoreboardCommand {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
+#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
 pub enum PlayersDisplayScoreboardCommand {
     Name(PlayerScore, Option<SNBT>),
     NumberFormat(PlayerScore, Option<ScoreboardNumberFormat>),
@@ -128,7 +128,7 @@ impl Display for PlayersDisplayScoreboardCommand {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
+#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
 pub enum PlayersScoreboardCommand {
     List(Option<EntitySelector>),
     Get(PlayerScore),
@@ -187,7 +187,7 @@ impl Display for PlayersScoreboardCommand {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
+#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
 pub enum ScoreboardCommand {
     Objectives(ObjectivesScoreboardCommand),
     Players(PlayersScoreboardCommand),

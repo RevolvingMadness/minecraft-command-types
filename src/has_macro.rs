@@ -10,7 +10,7 @@ pub trait HasMacro {
 macro_rules! impl_has_macro_false {
     ($($t:ty),*) => {
         $(
-            impl HasMacro for $t {
+            impl ::minecraft_command_types::has_macro::HasMacro for $t {
                 #[inline(always)]
                 fn has_macro(&self) -> bool { false }
 

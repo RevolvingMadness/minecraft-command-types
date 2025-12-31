@@ -7,7 +7,7 @@ use crate::snbt::SNBT;
 use minecraft_command_types_derive::HasMacro;
 use std::fmt::{Display, Formatter};
 
-#[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
+#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
 pub enum BossbarSetType {
     /// Set the text color (if no color was specified as part of a text component) and bar color. Defaults to `white` upon creation.
     Color(BossbarColor),
@@ -47,7 +47,7 @@ impl Display for BossbarSetType {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
+#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
 pub enum BossbarCommand {
     Add(ResourceLocation, SNBT),
     Get(ResourceLocation, BossbarGetType),

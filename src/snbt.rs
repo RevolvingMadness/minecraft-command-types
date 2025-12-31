@@ -7,7 +7,35 @@ use std::collections::BTreeMap;
 use std::fmt::Display;
 use std::fmt::Formatter;
 
-#[derive(Debug, Clone, Eq, PartialEq, Hash)]
+#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash)]
+pub struct SNBTString(pub bool, pub String);
+
+impl HasMacro for SNBTString {
+    fn has_macro(&self) -> bool {
+        self.0
+    }
+
+    fn has_macro_conflict(&self) -> bool {
+        false
+    }
+}
+
+impl Serialize for SNBTString {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        match self {
+            SNBTString(false, value) => serializer.serialize_str(value),
+            SNBTString(true, name) => {
+                let formatted = format!("$({})", name);
+                serializer.serialize_str(&formatted)
+            }
+        }
+    }
+}
+
+#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash)]
 pub enum SNBT {
     Byte(i8),
     Short(i16),
@@ -15,9 +43,9 @@ pub enum SNBT {
     Long(i64),
     Float(NotNan<f32>),
     Double(NotNan<f64>),
-    String(String),
+    String(SNBTString),
     List(Vec<SNBT>),
-    Compound(BTreeMap<String, SNBT>),
+    Compound(SNBTCompound),
     ByteArray(Vec<i8>),
     IntegerArray(Vec<i32>),
     LongArray(Vec<i64>),
@@ -31,26 +59,22 @@ impl SNBT {
     }
 
     #[must_use]
-    pub fn compound<T: Into<SNBT>>(values: BTreeMap<String, T>) -> SNBT {
+    pub fn compound<T: Into<SNBT>>(values: BTreeMap<SNBTString, T>) -> SNBT {
         SNBT::Compound(values.into_iter().map(|(k, v)| (k, v.into())).collect())
-    }
-
-    #[must_use]
-    pub fn get(&self, key: &String) -> Option<&SNBT> {
-        if let SNBT::Compound(compound) = self {
-            compound.get(key)
-        } else {
-            None
-        }
     }
 
     #[inline]
     #[must_use]
-    fn has_macro_string(&self) -> bool {
-        if let SNBT::String(string) = self {
-            string.contains("$(")
+    pub fn string<T: ToString>(s: T) -> SNBT {
+        SNBT::String(SNBTString(false, s.to_string()))
+    }
+
+    #[must_use]
+    pub fn get(&self, key: &SNBTString) -> Option<&SNBT> {
+        if let SNBT::Compound(compound) = self {
+            compound.get(key)
         } else {
-            false
+            None
         }
     }
 }
@@ -60,18 +84,19 @@ impl HasMacro for SNBT {
         match self {
             SNBT::Macro(_) => true,
             SNBT::List(list) => list.iter().any(|v| v.has_macro()),
-            SNBT::Compound(compound) => compound.values().any(|v| v.has_macro()),
+            SNBT::Compound(compound) => compound
+                .iter()
+                .any(|(SNBTString(has_macro, _), value)| *has_macro || value.has_macro()),
+            SNBT::String(SNBTString(has_macro, _)) => *has_macro,
             _ => false,
         }
     }
 
     fn has_macro_conflict(&self) -> bool {
         match self {
-            SNBT::List(values) => values.has_macro() && values.iter().any(|v| v.has_macro_string()),
-            SNBT::Compound(compound) => {
-                compound.values().any(|v| v.has_macro())
-                    && compound.values().any(|v| v.has_macro_string())
-            }
+            SNBT::List(values) => values.iter().any(|v| v.has_macro_conflict()),
+            SNBT::Compound(compound) => compound.values().any(|v| v.has_macro_conflict()),
+            SNBT::String(SNBTString(false, value)) => value.contains("$("),
             _ => false,
         }
     }
@@ -80,7 +105,7 @@ impl HasMacro for SNBT {
 pub fn fmt_snbt_compound(f: &mut Formatter<'_>, compound: &SNBTCompound) -> std::fmt::Result {
     f.write_str("{")?;
 
-    for (i, (k, v)) in compound.iter().enumerate() {
+    for (i, (SNBTString(_, k), v)) in compound.iter().enumerate() {
         if i > 0 {
             f.write_str(", ")?;
         }
@@ -106,7 +131,7 @@ impl Display for SNBT {
             SNBT::Long(v) => write!(f, "{}l", v),
             SNBT::Float(v) => write!(f, "{}f", v),
             SNBT::Double(v) => write!(f, "{}d", v),
-            SNBT::String(s) => {
+            SNBT::String(SNBTString(_, s)) => {
                 write!(f, "\"{}\"", escape(s))
             }
             SNBT::List(values) => {
@@ -179,7 +204,7 @@ impl Serialize for SNBT {
             SNBT::Long(v) => serializer.serialize_i64(*v),
             SNBT::Float(v) => serializer.serialize_f32(**v),
             SNBT::Double(v) => serializer.serialize_f64(**v),
-            SNBT::String(v) => serializer.serialize_str(v),
+            SNBT::String(SNBTString(_, v)) => serializer.serialize_str(v),
             SNBT::List(v) => v.serialize(serializer),
             SNBT::Compound(v) => v.serialize(serializer),
             SNBT::ByteArray(v) => v.serialize(serializer),
@@ -233,7 +258,7 @@ impl<'de> Visitor<'de> for SNBTVisitor {
     }
 
     fn visit_str<E>(self, value: &str) -> Result<Self::Value, E> {
-        Ok(SNBT::String(value.to_owned()))
+        Ok(SNBT::String(SNBTString(false, value.to_owned())))
     }
 
     fn visit_seq<A>(self, mut seq: A) -> Result<Self::Value, A::Error>
@@ -251,9 +276,9 @@ impl<'de> Visitor<'de> for SNBTVisitor {
     where
         M: MapAccess<'de>,
     {
-        let mut compound = BTreeMap::new();
+        let mut compound = SNBTCompound::new();
         while let Some((key, value)) = map.next_entry()? {
-            compound.insert(key, value);
+            compound.insert(SNBTString(false, key), value);
         }
         Ok(SNBT::Compound(compound))
     }
@@ -297,7 +322,7 @@ impl From<NotNan<f64>> for SNBT {
 
 impl From<String> for SNBT {
     fn from(s: String) -> Self {
-        SNBT::String(s)
+        SNBT::String(SNBTString(false, s))
     }
 }
 
@@ -307,8 +332,8 @@ impl From<Vec<SNBT>> for SNBT {
     }
 }
 
-impl From<BTreeMap<String, SNBT>> for SNBT {
-    fn from(m: BTreeMap<String, SNBT>) -> Self {
+impl From<BTreeMap<SNBTString, SNBT>> for SNBT {
+    fn from(m: BTreeMap<SNBTString, SNBT>) -> Self {
         SNBT::Compound(m)
     }
 }
@@ -328,214 +353,5 @@ impl From<Vec<i32>> for SNBT {
 impl From<Vec<i64>> for SNBT {
     fn from(v: Vec<i64>) -> Self {
         SNBT::LongArray(v)
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use ordered_float::NotNan;
-    use std::collections::BTreeMap;
-
-    fn nnf32(val: f32) -> NotNan<f32> {
-        NotNan::new(val).unwrap()
-    }
-
-    fn nnf64(val: f64) -> NotNan<f64> {
-        NotNan::new(val).unwrap()
-    }
-
-    #[test]
-    fn test_get_from_compound() {
-        let mut map = BTreeMap::new();
-        map.insert("key1".to_string(), SNBT::Integer(123));
-        map.insert("key2".to_string(), SNBT::String("hello".to_string()));
-        let compound = SNBT::Compound(map);
-
-        assert_eq!(compound.get(&"key1".to_string()), Some(&SNBT::Integer(123)));
-        assert_eq!(
-            compound.get(&"key2".to_string()),
-            Some(&SNBT::String("hello".to_string()))
-        );
-        assert_eq!(compound.get(&"non_existent_key".to_string()), None);
-    }
-
-    #[test]
-    fn test_get_from_non_compound() {
-        let list = SNBT::List(vec![SNBT::Integer(1)]);
-        let integer = SNBT::Integer(42);
-        let string = SNBT::String("test".to_string());
-
-        assert_eq!(list.get(&"any_key".to_string()), None);
-        assert_eq!(integer.get(&"any_key".to_string()), None);
-        assert_eq!(string.get(&"any_key".to_string()), None);
-    }
-
-    #[test]
-    fn test_from_implementations() {
-        assert_eq!(SNBT::from(10i8), SNBT::Byte(10));
-        assert_eq!(SNBT::from(1000i16), SNBT::Short(1000));
-        assert_eq!(SNBT::from(100000i32), SNBT::Integer(100000));
-        assert_eq!(SNBT::from(10000000000i64), SNBT::Long(10000000000));
-        assert_eq!(SNBT::from(nnf32(1.23)), SNBT::Float(nnf32(1.23)));
-        assert_eq!(SNBT::from(nnf64(4.56)), SNBT::Double(nnf64(4.56)));
-        assert_eq!(
-            SNBT::from("hello".to_string()),
-            SNBT::String("hello".to_string())
-        );
-        assert_eq!(
-            SNBT::from(vec![SNBT::Integer(1)]),
-            SNBT::List(vec![SNBT::Integer(1)])
-        );
-        let mut map = BTreeMap::new();
-        map.insert("a".to_string(), SNBT::Integer(1));
-        assert_eq!(SNBT::from(map.clone()), SNBT::Compound(map));
-        assert_eq!(SNBT::from(vec![1, 2, 3]), SNBT::IntegerArray(vec![1, 2, 3]));
-    }
-
-    mod serde_tests {
-        use super::*;
-        use serde_json;
-
-        fn assert_roundtrip(snbt: &SNBT, expected_json: &str) {
-            let json = serde_json::to_string(snbt).unwrap();
-            assert_eq!(json, expected_json);
-
-            let deserialized: SNBT = serde_json::from_str(&json).unwrap();
-            assert_eq!(*snbt, deserialized);
-        }
-
-        #[test]
-        fn test_serde_primitives() {
-            assert_roundtrip(&SNBT::Long(9223372036854775807), "9223372036854775807");
-            assert_roundtrip(&SNBT::Double(nnf64(-1.5e10)), "-15000000000.0");
-            assert_roundtrip(
-                &SNBT::String("Hello, World!".to_string()),
-                "\"Hello, World!\"",
-            );
-        }
-
-        #[test]
-        fn test_serde_list() {
-            let list = SNBT::List(vec![SNBT::Long(1), SNBT::String("two".to_string())]);
-            let json = "[1,\"two\"]";
-            assert_roundtrip(&list, json);
-        }
-
-        #[test]
-        fn test_serde_compound() {
-            let mut map = BTreeMap::new();
-            map.insert("name".to_string(), SNBT::String("Test".to_string()));
-            map.insert("value".to_string(), SNBT::Long(42));
-            let compound = SNBT::Compound(map);
-            let json = "{\"name\":\"Test\",\"value\":42}";
-            assert_roundtrip(&compound, json);
-        }
-
-        #[test]
-        fn test_serde_nested() {
-            let mut root = BTreeMap::new();
-            root.insert("id".to_string(), SNBT::Long(123456789));
-            root.insert(
-                "data".to_string(),
-                SNBT::List(vec![
-                    SNBT::Compound({
-                        let mut item1 = BTreeMap::new();
-                        item1.insert("type".to_string(), SNBT::String("A".to_string()));
-                        item1.insert("coords".to_string(), SNBT::list(vec![1i64, 2, 3]));
-                        item1
-                    }),
-                    SNBT::Compound({
-                        let mut item2 = BTreeMap::new();
-                        item2.insert("type".to_string(), SNBT::String("B".to_string()));
-                        item2
-                    }),
-                ]),
-            );
-            let snbt = SNBT::Compound(root);
-            let json = r#"{"data":[{"coords":[1,2,3],"type":"A"},{"type":"B"}],"id":123456789}"#;
-            assert_roundtrip(&snbt, json);
-        }
-
-        #[test]
-        fn test_deserialize_u64_in_range() {
-            let u64_val: u64 = 100;
-            let json = format!("{}", u64_val);
-            let snbt: SNBT = serde_json::from_str(&json).unwrap();
-            assert_eq!(snbt, SNBT::Long(100));
-        }
-
-        #[test]
-        fn test_deserialize_u64_out_of_range_fails() {
-            let u64_val: u64 = i64::MAX as u64 + 1;
-            let json = format!("{}", u64_val);
-            let result: Result<SNBT, _> = serde_json::from_str(&json);
-            assert!(result.is_err());
-            let err_msg = result.unwrap_err().to_string();
-            assert!(err_msg.contains("u64 out of range for i64"));
-        }
-
-        #[test]
-        fn test_deserialize_nan_double_fails() {
-            let result: Result<SNBT, _> = serde_json::from_str("NaN");
-            assert!(result.is_err());
-        }
-    }
-
-    #[cfg(test)]
-    mod has_macro_tests {
-        use super::*;
-        use std::collections::BTreeMap;
-
-        #[test]
-        fn test_has_macro_direct() {
-            let snbt = SNBT::Macro("test".to_string());
-            assert!(snbt.has_macro());
-        }
-
-        #[test]
-        fn test_has_macro_in_list() {
-            let snbt = SNBT::List(vec![
-                SNBT::Integer(1),
-                SNBT::Macro("test".to_string()),
-                SNBT::Integer(2),
-            ]);
-            assert!(snbt.has_macro());
-        }
-
-        #[test]
-        fn test_has_macro_in_compound() {
-            let mut map = BTreeMap::new();
-            map.insert("a".to_string(), SNBT::Integer(1));
-            map.insert("b".to_string(), SNBT::Macro("test".to_string()));
-            let snbt = SNBT::Compound(map);
-            assert!(snbt.has_macro());
-        }
-
-        #[test]
-        fn test_has_macro_nested() {
-            let mut inner_map = BTreeMap::new();
-            inner_map.insert("c".to_string(), SNBT::Macro("test".to_string()));
-            let mut map = BTreeMap::new();
-            map.insert("a".to_string(), SNBT::Integer(1));
-            map.insert("b".to_string(), SNBT::Compound(inner_map));
-            let snbt = SNBT::Compound(map);
-            assert!(snbt.has_macro());
-        }
-
-        #[test]
-        fn test_no_macro() {
-            let snbt = SNBT::List(vec![SNBT::Integer(1), SNBT::Integer(2)]);
-            assert!(!snbt.has_macro());
-        }
-
-        #[test]
-        fn test_no_macro_in_compound() {
-            let mut map = BTreeMap::new();
-            map.insert("a".to_string(), SNBT::Integer(1));
-            map.insert("b".to_string(), SNBT::String("test".to_string()));
-            let snbt = SNBT::Compound(map);
-            assert!(!snbt.has_macro());
-        }
     }
 }

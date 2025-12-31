@@ -6,7 +6,7 @@ use crate::resource_location::ResourceLocation;
 use minecraft_command_types_derive::HasMacro;
 use std::fmt::{Display, Formatter};
 
-#[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
+#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
 pub enum LootTarget {
     Give(EntitySelector),
     Insert(Coordinates),
@@ -33,7 +33,7 @@ impl Display for LootTarget {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
+#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
 pub enum LootItemSource {
     Tool(ItemStack),
     Mainhand,
@@ -50,7 +50,7 @@ impl Display for LootItemSource {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
+#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
 pub enum LootSource {
     Fish(ResourceLocation, Coordinates, Option<LootItemSource>),
     Loot(ResourceLocation),

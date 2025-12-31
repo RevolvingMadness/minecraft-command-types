@@ -5,7 +5,7 @@ use crate::rotation::Rotation;
 use minecraft_command_types_derive::HasMacro;
 use std::fmt::{Display, Formatter};
 
-#[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
+#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
 pub enum TeleportFacing {
     Position(Coordinates),
     Entity(EntitySelector, Option<EntityAnchor>),
@@ -28,7 +28,7 @@ impl Display for TeleportFacing {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
+#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
 pub enum TeleportCoordinatesType {
     Rotation(Rotation),
     Facing(TeleportFacing),
@@ -45,7 +45,7 @@ impl Display for TeleportCoordinatesType {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
+#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
 pub enum TargetTeleportCommand {
     Coordinates(Coordinates, Option<TeleportCoordinatesType>),
     Entity(EntitySelector),
@@ -68,7 +68,7 @@ impl Display for TargetTeleportCommand {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
+#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
 pub enum TeleportCommand {
     Coordinates(Coordinates),
     Entity(EntitySelector, Option<TargetTeleportCommand>),

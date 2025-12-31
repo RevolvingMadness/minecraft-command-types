@@ -4,7 +4,7 @@ use crate::resource_location::ResourceLocation;
 use minecraft_command_types_derive::HasMacro;
 use std::fmt::{Display, Formatter};
 
-#[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
+#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
 pub enum WaypointColor {
     Color(TeamColorWithReset),
     Hex(String),
@@ -21,7 +21,7 @@ impl Display for WaypointColor {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
+#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
 pub enum WaypointStyleModification {
     Set(ResourceLocation),
     Reset,
@@ -36,7 +36,7 @@ impl Display for WaypointStyleModification {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
+#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
 pub enum WaypointModification {
     Color(WaypointColor),
     Style(WaypointStyleModification),
@@ -51,7 +51,7 @@ impl Display for WaypointModification {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
+#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
 pub enum WaypointCommand {
     List,
     Modify(EntitySelector, WaypointModification),

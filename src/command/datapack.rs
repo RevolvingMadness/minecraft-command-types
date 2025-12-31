@@ -3,7 +3,7 @@ use crate::snbt::SNBT;
 use minecraft_command_types_derive::HasMacro;
 use std::fmt::{Display, Formatter};
 
-#[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
+#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
 pub enum DatapackLoadPriority {
     First,
     Last,
@@ -22,7 +22,7 @@ impl Display for DatapackLoadPriority {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
+#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
 pub enum DatapackCommand {
     Disable(String),
     Enable(String, Option<DatapackLoadPriority>),

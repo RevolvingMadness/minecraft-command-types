@@ -3,7 +3,7 @@ use crate::snbt::SNBT;
 use minecraft_command_types_derive::HasMacro;
 use std::fmt::{Display, Formatter};
 
-#[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
+#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
 pub enum ItemTest {
     Component(ResourceLocation),
     ComponentMatches(ResourceLocation, SNBT),
@@ -20,7 +20,7 @@ impl Display for ItemTest {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
+#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
 pub enum ItemType {
     ResourceLocation(ResourceLocation),
     Wildcard,
@@ -35,7 +35,7 @@ impl Display for ItemType {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
+#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
 pub struct OrGroup(pub Vec<(bool, ItemTest)>);
 
 impl Display for OrGroup {
@@ -55,7 +55,7 @@ impl Display for OrGroup {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
+#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
 pub struct ItemPredicate {
     pub id: ItemType,
     pub tests: Vec<OrGroup>,
@@ -95,7 +95,7 @@ impl ItemPredicate {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
+#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
 pub enum ItemComponent {
     KeyValue(ResourceLocation, SNBT),
     Remove(ResourceLocation),
@@ -112,7 +112,7 @@ impl Display for ItemComponent {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
+#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
 pub struct ItemStack {
     pub id: ItemType,
     pub components: Vec<ItemComponent>,

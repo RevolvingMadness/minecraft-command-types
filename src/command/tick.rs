@@ -3,7 +3,7 @@ use minecraft_command_types_derive::HasMacro;
 use ordered_float::NotNan;
 use std::fmt::{Display, Formatter};
 
-#[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
+#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
 pub enum AdvanceTimeTickCommand {
     Time(Option<Time>),
     Stop,
@@ -24,7 +24,7 @@ impl Display for AdvanceTimeTickCommand {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
+#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
 pub enum TickCommand {
     Query,
     Rate(NotNan<f32>),

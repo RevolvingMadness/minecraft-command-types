@@ -2,7 +2,7 @@ use crate::resource_location::ResourceLocation;
 use minecraft_command_types_derive::HasMacro;
 use std::fmt::{Display, Formatter};
 
-#[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
+#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
 pub enum RunfailedTestCommand {
     NumberOfTimes(Option<i32>, Option<bool>, Option<i32>, Option<i32>),
     OnlyRequiredTest(Option<bool>, Option<i32>),
@@ -50,7 +50,7 @@ impl Display for RunfailedTestCommand {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
+#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
 pub enum TestCommand {
     ClearAll(Option<i32>),
     ClearThat,

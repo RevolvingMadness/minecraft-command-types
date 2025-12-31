@@ -2,7 +2,7 @@ use minecraft_command_types_derive::HasMacro;
 use ordered_float::NotNan;
 use std::fmt::{Display, Formatter};
 
-#[derive(Debug, Clone, Copy, Eq, PartialEq, Hash, HasMacro)]
+#[derive(Debug, Clone, Copy, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
 pub struct WorldCoordinate {
     pub relative: bool,
     pub value: Option<NotNan<f32>>,
@@ -70,7 +70,7 @@ impl Display for WorldCoordinate {
     }
 }
 
-#[derive(Debug, Clone, Copy, Eq, PartialEq, Hash, HasMacro)]
+#[derive(Debug, Clone, Copy, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
 pub enum Coordinates {
     World(WorldCoordinate, WorldCoordinate, WorldCoordinate),
     Local(

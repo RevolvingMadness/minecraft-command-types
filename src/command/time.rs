@@ -4,7 +4,7 @@ use crate::time::Time;
 use minecraft_command_types_derive::HasMacro;
 use std::fmt::{Display, Formatter};
 
-#[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
+#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
 pub enum TimeSetType {
     Time(Time),
     TimeOfDay(TimeOfDay),
@@ -19,7 +19,7 @@ impl Display for TimeSetType {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
+#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
 pub enum TimeCommand {
     Add(Time),
     Query(TimeQueryType),

@@ -1,4 +1,4 @@
-#[derive(Debug, Clone, Eq, PartialEq, Hash)]
+#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash)]
 #[repr(u8)]
 pub enum PermissionLevel {
     /// * No permission.

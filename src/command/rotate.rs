@@ -5,7 +5,7 @@ use crate::rotation::Rotation;
 use minecraft_command_types_derive::HasMacro;
 use std::fmt::{Display, Formatter};
 
-#[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
+#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
 pub enum FacingRotateCommand {
     Coordinates(Coordinates),
     Entity(EntitySelector, Option<EntityAnchor>),
@@ -28,7 +28,7 @@ impl Display for FacingRotateCommand {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, Hash, HasMacro)]
+#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
 pub enum RotateCommand {
     Rotation(Rotation),
     Facing(FacingRotateCommand),
