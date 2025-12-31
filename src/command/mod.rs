@@ -241,7 +241,7 @@ pub enum Command {
         Option<ResourceLocation>,
     ),
     Stopwatch(StopwatchCommand),
-    Summon(EntitySelector, Option<Coordinates>, Option<SNBT>),
+    Summon(ResourceLocation, Option<Coordinates>, Option<SNBT>),
     Tag(EntitySelector, TagCommand),
     Team(TeamCommand),
     TeamMessage(String),
