@@ -160,7 +160,7 @@ pub enum Command {
     DefaultGamemode(Gamemode),
     Deop(EntitySelector),
     Dialog(DialogCommand),
-    Difficulty(Difficulty),
+    Difficulty(Option<Difficulty>),
     Effect(EffectCommand),
     Enchant(EntitySelector, ResourceLocation, Option<i32>),
     Execute(ExecuteSubcommand),
@@ -481,7 +481,15 @@ impl Display for Command {
             Command::DefaultGamemode(gamemode) => write!(f, "defaultgamemode {}", gamemode),
             Command::Deop(selector) => write!(f, "deop {}", selector),
             Command::Dialog(dialog_command) => write!(f, "dialog {}", dialog_command),
-            Command::Difficulty(difficulty) => write!(f, "difficulty {}", difficulty),
+            Command::Difficulty(difficulty) => {
+                f.write_str("difficulty")?;
+
+                if let Some(difficulty) = difficulty {
+                    write!(f, " {}", difficulty)?;
+                }
+
+                Ok(())
+            }
             Command::Effect(effect_command) => write!(f, "effect {}", effect_command),
             Command::Enchant(selector, enchantment, level) => {
                 write!(f, "enchant {} {}", selector, enchantment)?;
