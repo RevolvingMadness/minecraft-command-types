@@ -16,7 +16,7 @@ impl HasMacro for SNBTString {
     }
 
     fn has_macro_conflict(&self) -> bool {
-        false
+        if self.0 { false } else { self.1.contains("$(") }
     }
 }
 

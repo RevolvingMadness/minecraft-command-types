@@ -58,20 +58,20 @@ impl Display for OrGroup {
 #[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
 pub struct ItemPredicate {
     pub id: ItemType,
-    pub tests: Vec<OrGroup>,
+    pub or_groups: Vec<OrGroup>,
 }
 
 impl Display for ItemPredicate {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         self.id.fmt(f)?;
 
-        if self.tests.is_empty() {
+        if self.or_groups.is_empty() {
             return Ok(());
         }
 
         write!(f, "[")?;
 
-        let parts: Vec<String> = self.tests.iter().map(|g| g.to_string()).collect();
+        let parts: Vec<String> = self.or_groups.iter().map(|g| g.to_string()).collect();
         write!(f, "{}]", parts.join(","))
     }
 }
@@ -80,12 +80,12 @@ impl ItemPredicate {
     pub fn new(id: ItemType) -> Self {
         Self {
             id,
-            tests: Vec::new(),
+            or_groups: Vec::new(),
         }
     }
 
     pub fn with_test_group(mut self, group: OrGroup) -> Self {
-        self.tests.push(group);
+        self.or_groups.push(group);
         self
     }
 
