@@ -160,10 +160,18 @@ impl Display for PlayersScoreboardCommand {
                 write!(f, "set {} {}", score, value)
             }
             PlayersScoreboardCommand::Add(score, value) => {
-                write!(f, "add {} {}", score, value)
+                if *value >= 0 {
+                    write!(f, "add {} {}", score, value)
+                } else {
+                    write!(f, "remove {} {}", score, -value)
+                }
             }
             PlayersScoreboardCommand::Remove(score, value) => {
-                write!(f, "remove {} {}", score, value)
+                if *value >= 0 {
+                    write!(f, "remove {} {}", score, value)
+                } else {
+                    write!(f, "add {} {}", score, -value)
+                }
             }
             PlayersScoreboardCommand::Reset(selector, objective) => {
                 write!(f, "reset {}", selector)?;

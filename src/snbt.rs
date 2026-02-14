@@ -119,7 +119,7 @@ pub fn fmt_snbt_compound(f: &mut Formatter<'_>, compound: &SNBTCompound) -> std:
 #[inline]
 #[must_use]
 fn escape(input: &str) -> String {
-    input.replace('\\', "\\\\").replace('"', "\\\"")
+    input.chars().flat_map(|c| c.escape_default()).collect()
 }
 
 impl Display for SNBT {
