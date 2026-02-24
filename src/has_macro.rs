@@ -14,6 +14,7 @@ macro_rules! impl_has_macro_false {
                 #[inline(always)]
                 fn has_macro(&self) -> bool { false }
 
+                #[inline(always)]
                 fn has_macro_conflict(&self) -> bool { false }
             }
         )*
