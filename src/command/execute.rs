@@ -239,6 +239,7 @@ impl Display for ExecuteIfSubcommand {
 }
 
 impl ExecuteIfSubcommand {
+    #[must_use]
     pub fn then(self, next: ExecuteSubcommand) -> ExecuteIfSubcommand {
         match self {
             ExecuteIfSubcommand::Biome(coordinates, resource_location, inner_next) => {
@@ -397,6 +398,7 @@ impl Display for ExecuteStoreSubcommand {
 }
 
 impl ExecuteStoreSubcommand {
+    #[must_use]
     pub fn then(self, next: ExecuteSubcommand) -> ExecuteStoreSubcommand {
         match self {
             ExecuteStoreSubcommand::Data(target, path, num_type, scale, inner_next) => {
@@ -439,7 +441,7 @@ impl Display for ExecuteSubcommand {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
             ExecuteSubcommand::Align(axes, next) => {
-                let axes_str: String = axes.iter().map(|a| a.to_string()).collect();
+                let axes_str: String = axes.iter().map(ToString::to_string).collect();
                 write!(f, "align {} {}", axes_str, next)?;
 
                 Ok(())
@@ -505,6 +507,7 @@ impl Display for ExecuteSubcommand {
 }
 
 impl ExecuteSubcommand {
+    #[must_use]
     pub fn then(self, next: ExecuteSubcommand) -> ExecuteSubcommand {
         match self {
             ExecuteSubcommand::Align(axes, inner_next) => {

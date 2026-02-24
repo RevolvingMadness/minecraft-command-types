@@ -58,6 +58,7 @@ impl Tag {
 }
 
 impl TagType {
+    #[must_use]
     pub fn is_worldgen(&self) -> bool {
         matches!(
             self,

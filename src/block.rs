@@ -34,6 +34,8 @@ impl Display for BlockState {
 }
 
 impl BlockState {
+    #[inline]
+    #[must_use]
     pub fn new(id: ResourceLocation) -> Self {
         Self {
             id,

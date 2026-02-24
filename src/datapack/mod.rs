@@ -48,14 +48,14 @@ impl<T> FilePathNode<T> {
         current_node
     }
 
-    pub fn from_nonempty_vec_string(vec: &NonEmpty<String>, value: T) -> Self {
-        let mut vec = vec.iter().rev();
+    pub fn from_nonempty_vec_string(vec: NonEmpty<String>, value: T) -> Self {
+        let mut vec = vec.into_iter().rev();
 
         let file_name = vec.next().expect("Path cannot be empty");
-        let mut current_node = FilePathNode::File(file_name.to_string(), value);
+        let mut current_node = FilePathNode::File(file_name, value);
 
         for part in vec {
-            current_node = FilePathNode::Directory(part.to_string(), vec![current_node]);
+            current_node = FilePathNode::Directory(part, vec![current_node]);
         }
 
         current_node
@@ -309,7 +309,7 @@ impl Datapack {
         self.namespaces.entry(name.to_string()).or_default()
     }
 
-    pub fn add_namespace<T: ToString>(&mut self, name: T, namespace: Namespace) {
+    pub fn add_namespace(&mut self, name: &str, namespace: Namespace) {
         match self.namespaces.entry(name.to_string()) {
             Entry::Vacant(e) => {
                 e.insert(namespace);

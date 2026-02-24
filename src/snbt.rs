@@ -65,8 +65,8 @@ impl SNBT {
 
     #[inline]
     #[must_use]
-    pub fn string<T: ToString>(s: T) -> SNBT {
-        SNBT::String(SNBTString(false, s.to_string()))
+    pub fn string(string: impl ToString) -> SNBT {
+        SNBT::String(SNBTString(false, string.to_string()))
     }
 
     #[must_use]
@@ -83,7 +83,7 @@ impl HasMacro for SNBT {
     fn has_macro(&self) -> bool {
         match self {
             SNBT::Macro(_) => true,
-            SNBT::List(list) => list.iter().any(|v| v.has_macro()),
+            SNBT::List(list) => list.iter().any(HasMacro::has_macro),
             SNBT::Compound(compound) => compound
                 .iter()
                 .any(|(SNBTString(has_macro, _), value)| *has_macro || value.has_macro()),
@@ -93,9 +93,12 @@ impl HasMacro for SNBT {
     }
 
     fn has_macro_conflict(&self) -> bool {
+        fn fun_name(v: &SNBT) -> bool {
+            v.has_macro_conflict()
+        }
         match self {
-            SNBT::List(values) => values.iter().any(|v| v.has_macro_conflict()),
-            SNBT::Compound(compound) => compound.values().any(|v| v.has_macro_conflict()),
+            SNBT::List(values) => values.iter().any(HasMacro::has_macro_conflict),
+            SNBT::Compound(compound) => compound.values().any(fun_name),
             SNBT::String(SNBTString(false, value)) => value.contains("$("),
             _ => false,
         }
@@ -119,7 +122,7 @@ pub fn fmt_snbt_compound(f: &mut Formatter<'_>, compound: &SNBTCompound) -> std:
 #[inline]
 #[must_use]
 fn escape(input: &str) -> String {
-    input.chars().flat_map(|c| c.escape_default()).collect()
+    input.chars().flat_map(char::escape_default).collect()
 }
 
 impl Display for SNBT {

@@ -12,9 +12,10 @@ impl WorldCoordinate {
     #[inline]
     #[must_use]
     pub fn new(relative: bool, value: Option<NotNan<f32>>) -> Self {
-        if !relative && value.is_none() {
-            panic!("A world coordinate must have a relative coordinate and/or have a value");
-        }
+        assert!(
+            relative || value.is_some(),
+            "A world coordinate must have a relative coordinate and/or have a value"
+        );
 
         Self { relative, value }
     }

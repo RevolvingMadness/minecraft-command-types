@@ -14,7 +14,7 @@ pub struct ResourceLocation {
 }
 
 impl ResourceLocation {
-    #[inline]
+    #[must_use]
     pub fn namespace(&self) -> &str {
         self.namespace.as_deref().unwrap_or("minecraft")
     }
@@ -57,6 +57,7 @@ impl ResourceLocation {
         Self::new_paths::<N, _>(nonempty![path])
     }
 
+    #[must_use]
     pub fn paths_string(&self) -> String {
         self.paths.iter().join("/")
     }
@@ -140,12 +141,12 @@ impl FromStr for ResourceLocation {
             ));
         }
 
-        let path_components: Vec<String> = path_raw.split('/').map(|s| s.to_owned()).collect();
+        let path_components: Vec<String> = path_raw.split('/').map(ToString::to_string).collect();
 
         let paths = NonEmpty::from_vec(path_components)
             .expect("Path component check guarantees paths are not empty");
 
-        let namespace = namespace_raw.map(|s| s.to_string());
+        let namespace = namespace_raw.map(ToString::to_string);
 
         Ok(ResourceLocation {
             is_tag,
@@ -166,7 +167,7 @@ impl Serialize for ResourceLocation {
 
 struct ResourceLocationVisitor;
 
-impl<'de> Visitor<'de> for ResourceLocationVisitor {
+impl Visitor<'_> for ResourceLocationVisitor {
     type Value = ResourceLocation;
 
     fn expecting(&self, formatter: &mut Formatter) -> std::fmt::Result {

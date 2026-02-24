@@ -111,6 +111,7 @@ pub enum EntitySelectorOption {
 }
 
 impl EntitySelectorOption {
+    #[must_use]
     pub fn can_be_repeated(&self) -> bool {
         matches!(
             self,

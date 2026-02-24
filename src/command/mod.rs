@@ -261,14 +261,14 @@ pub enum Command {
 }
 
 impl Command {
+    #[must_use]
     pub fn get_permission_level(&self, is_multiplayer: bool) -> PermissionLevel {
         match self {
             Command::Help(..)
             | Command::List(..)
             | Command::Me(..)
             | Command::Message(..)
-            | Command::Random(RandomCommand::ValueRoll(_, _, None))
-            | Command::Random(RandomCommand::Reset(..))
+            | Command::Random(RandomCommand::ValueRoll(_, _, None) | RandomCommand::Reset(..))
             | Command::TeamMessage(..)
             | Command::Trigger(..) => PermissionLevel::try_from(0).unwrap(),
             Command::Advancement(..)
@@ -356,6 +356,7 @@ impl Command {
         }
     }
 
+    #[must_use]
     pub fn is_multiplayer_only(&self) -> bool {
         matches!(
             self,

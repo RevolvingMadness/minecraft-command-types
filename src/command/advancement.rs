@@ -35,9 +35,9 @@ impl Display for AdvancementCommand {
 
                 Ok(())
             }
-            AdvancementCommand::From(advancement) => advancement.fmt(f),
-            AdvancementCommand::Through(advancement) => advancement.fmt(f),
-            AdvancementCommand::Until(advancement) => advancement.fmt(f),
+            AdvancementCommand::From(advancement)
+            | AdvancementCommand::Through(advancement)
+            | AdvancementCommand::Until(advancement) => advancement.fmt(f),
         }
     }
 }

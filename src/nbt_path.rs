@@ -28,10 +28,14 @@ pub enum NbtPathNode {
 }
 
 impl NbtPathNode {
+    #[inline]
+    #[must_use]
     pub fn named(name: SNBTString) -> Self {
         NbtPathNode::Named(name, None)
     }
 
+    #[inline]
+    #[must_use]
     pub fn named_string(name: String) -> Self {
         NbtPathNode::named(SNBTString(false, name))
     }
@@ -41,12 +45,14 @@ impl NbtPathNode {
 pub struct NbtPath(pub NonEmpty<NbtPathNode>);
 
 impl NbtPath {
+    #[must_use]
     pub fn with_node(mut self, node: NbtPathNode) -> Self {
         self.0.push(node);
 
         self
     }
 
+    #[must_use]
     pub fn with_named_compound(mut self, compound: SNBTCompound) -> Self {
         if let NbtPathNode::Named(_, inner_compound) = self.0.last_mut()
             && inner_compound.is_none()
@@ -57,6 +63,8 @@ impl NbtPath {
         self
     }
 
+    #[inline]
+    #[must_use]
     pub fn to_snbt_string(&self) -> SNBT {
         SNBT::String(SNBTString(self.has_macro(), self.to_string()))
     }

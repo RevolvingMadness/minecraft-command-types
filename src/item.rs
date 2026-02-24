@@ -71,12 +71,14 @@ impl Display for ItemPredicate {
 
         write!(f, "[")?;
 
-        let parts: Vec<String> = self.or_groups.iter().map(|g| g.to_string()).collect();
+        let parts: Vec<String> = self.or_groups.iter().map(ToString::to_string).collect();
         write!(f, "{}]", parts.join(","))
     }
 }
 
 impl ItemPredicate {
+    #[inline]
+    #[must_use]
     pub fn new(id: ItemType) -> Self {
         Self {
             id,
@@ -84,13 +86,17 @@ impl ItemPredicate {
         }
     }
 
+    #[must_use]
     pub fn with_test_group(mut self, group: OrGroup) -> Self {
         self.or_groups.push(group);
+
         self
     }
 
+    #[must_use]
     pub fn with_test(self, negated: bool, test: ItemTest) -> Self {
         let group = OrGroup(vec![(negated, test)]);
+
         self.with_test_group(group)
     }
 }

@@ -44,33 +44,31 @@ impl<A: HasMacro, B: HasMacro> HasMacro for (A, B) {
 
 impl<T: HasMacro> HasMacro for Option<T> {
     fn has_macro(&self) -> bool {
-        self.as_ref().map(|t| t.has_macro()).unwrap_or(false)
+        self.as_ref().is_some_and(HasMacro::has_macro)
     }
 
     fn has_macro_conflict(&self) -> bool {
-        self.as_ref()
-            .map(|t| t.has_macro_conflict())
-            .unwrap_or(false)
+        self.as_ref().is_some_and(HasMacro::has_macro_conflict)
     }
 }
 
 impl<T: HasMacro> HasMacro for Vec<T> {
     fn has_macro(&self) -> bool {
-        self.iter().any(|t| t.has_macro())
+        self.iter().any(HasMacro::has_macro)
     }
 
     fn has_macro_conflict(&self) -> bool {
-        self.iter().any(|t| t.has_macro_conflict())
+        self.iter().any(HasMacro::has_macro_conflict)
     }
 }
 
 impl<T: HasMacro> HasMacro for NonEmpty<T> {
     fn has_macro(&self) -> bool {
-        self.iter().any(|t| t.has_macro())
+        self.iter().any(HasMacro::has_macro)
     }
 
     fn has_macro_conflict(&self) -> bool {
-        self.iter().any(|t| t.has_macro_conflict())
+        self.iter().any(HasMacro::has_macro_conflict)
     }
 }
 
@@ -86,20 +84,20 @@ impl<T: HasMacro> HasMacro for Box<T> {
 
 impl<K, V: HasMacro> HasMacro for BTreeMap<K, V> {
     fn has_macro(&self) -> bool {
-        self.values().any(|t| t.has_macro())
+        self.values().any(HasMacro::has_macro)
     }
 
     fn has_macro_conflict(&self) -> bool {
-        self.values().any(|t| t.has_macro_conflict())
+        self.values().any(HasMacro::has_macro_conflict)
     }
 }
 
 impl<T: HasMacro> HasMacro for BTreeSet<T> {
     fn has_macro(&self) -> bool {
-        self.iter().any(|t| t.has_macro())
+        self.iter().any(HasMacro::has_macro)
     }
 
     fn has_macro_conflict(&self) -> bool {
-        self.iter().any(|t| t.has_macro_conflict())
+        self.iter().any(HasMacro::has_macro_conflict)
     }
 }

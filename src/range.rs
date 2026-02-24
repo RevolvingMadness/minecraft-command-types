@@ -10,10 +10,12 @@ pub struct IntegerRange {
 }
 
 impl IntegerRange {
+    #[must_use]
     pub fn new(min: Option<i32>, max: Option<i32>) -> IntegerRange {
-        if min.is_none() && max.is_none() {
-            panic!("min and/or max must be Some")
-        }
+        assert!(
+            min.is_some() || max.is_some(),
+            "min and/or max must be Some"
+        );
 
         if let (Some(min), Some(max)) = (min, max)
             && min > max
@@ -24,18 +26,26 @@ impl IntegerRange {
         IntegerRange { min, max }
     }
 
+    #[inline]
+    #[must_use]
     pub fn new_min(min: i32) -> IntegerRange {
         Self::new(Some(min), None)
     }
 
+    #[inline]
+    #[must_use]
     pub fn new_max(max: i32) -> IntegerRange {
         Self::new(None, Some(max))
     }
 
+    #[inline]
+    #[must_use]
     pub fn new_min_max(min: i32, max: i32) -> IntegerRange {
         Self::new(Some(min), Some(max))
     }
 
+    #[inline]
+    #[must_use]
     pub fn new_single(value: i32) -> IntegerRange {
         Self::new(Some(value), Some(value))
     }
@@ -109,9 +119,10 @@ pub struct FloatRange {
 impl FloatRange {
     #[must_use]
     pub fn new(min: Option<NotNan<f32>>, max: Option<NotNan<f32>>) -> FloatRange {
-        if min.is_none() && max.is_none() {
-            panic!("min and/or max must be Some")
-        }
+        assert!(
+            min.is_some() || max.is_some(),
+            "min and/or max must be Some"
+        );
 
         if let (Some(min), Some(max)) = (min, max)
             && min > max
