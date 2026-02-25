@@ -13,8 +13,8 @@ pub enum FunctionCommandArguments {
 impl Display for FunctionCommandArguments {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            FunctionCommandArguments::Compound(compound) => fmt_snbt_compound(f, compound),
-            FunctionCommandArguments::DataTarget(target, path) => {
+            Self::Compound(compound) => fmt_snbt_compound(f, compound),
+            Self::DataTarget(target, path) => {
                 write!(f, "with {}", target)?;
 
                 if let Some(path) = path {

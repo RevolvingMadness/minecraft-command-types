@@ -12,14 +12,14 @@ pub enum AdvanceTimeTickCommand {
 impl Display for AdvanceTimeTickCommand {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            AdvanceTimeTickCommand::Time(time) => {
+            Self::Time(time) => {
                 if let Some(time) = time {
                     write!(f, " {}", time)?;
                 }
 
                 Ok(())
             }
-            AdvanceTimeTickCommand::Stop => f.write_str(" stop"),
+            Self::Stop => f.write_str(" stop"),
         }
     }
 }
@@ -37,12 +37,12 @@ pub enum TickCommand {
 impl Display for TickCommand {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            TickCommand::Query => f.write_str("query"),
-            TickCommand::Rate(rate) => write!(f, "rate {}", rate),
-            TickCommand::Freeze => f.write_str("freeze"),
-            TickCommand::Unfreeze => f.write_str("unfreeze"),
-            TickCommand::Step(command) => write!(f, "step{}", command),
-            TickCommand::Sprint(command) => write!(f, "sprint{}", command),
+            Self::Query => f.write_str("query"),
+            Self::Rate(rate) => write!(f, "rate {}", rate),
+            Self::Freeze => f.write_str("freeze"),
+            Self::Unfreeze => f.write_str("unfreeze"),
+            Self::Step(command) => write!(f, "step{}", command),
+            Self::Sprint(command) => write!(f, "sprint{}", command),
         }
     }
 }

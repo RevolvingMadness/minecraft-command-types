@@ -15,10 +15,10 @@ pub enum TitleCommand {
 impl Display for TitleCommand {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            TitleCommand::Clear => f.write_str("clear"),
-            TitleCommand::Reset => f.write_str("reset"),
-            TitleCommand::Title(type_, title) => write!(f, "{} {}", type_, title),
-            TitleCommand::Times(fade_in, stay, fade_out) => {
+            Self::Clear => f.write_str("clear"),
+            Self::Reset => f.write_str("reset"),
+            Self::Title(type_, title) => write!(f, "{} {}", type_, title),
+            Self::Times(fade_in, stay, fade_out) => {
                 write!(f, "times {} {} {}", fade_in, stay, fade_out)
             }
         }

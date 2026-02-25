@@ -17,13 +17,13 @@ pub enum DataTarget {
 impl Display for DataTarget {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            DataTarget::Block(coordinates) => {
+            Self::Block(coordinates) => {
                 write!(f, "block {}", coordinates)
             }
-            DataTarget::Entity(selector) => {
+            Self::Entity(selector) => {
                 write!(f, "entity {}", selector)
             }
-            DataTarget::Storage(storage) => {
+            Self::Storage(storage) => {
                 write!(f, "storage {}", storage)
             }
         }
@@ -40,7 +40,7 @@ pub enum DataCommandModification {
 impl Display for DataCommandModification {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            DataCommandModification::From(source, path) => {
+            Self::From(source, path) => {
                 write!(f, "from {}", source)?;
 
                 if let Some(path) = path {
@@ -49,7 +49,7 @@ impl Display for DataCommandModification {
 
                 Ok(())
             }
-            DataCommandModification::String(source, path, start, end) => {
+            Self::String(source, path, start, end) => {
                 write!(f, "string {}", source)?;
 
                 if let Some(path) = path {
@@ -66,7 +66,7 @@ impl Display for DataCommandModification {
 
                 Ok(())
             }
-            DataCommandModification::Value(value) => {
+            Self::Value(value) => {
                 write!(f, "value {}", value)
             }
         }
@@ -85,11 +85,11 @@ pub enum DataCommandModificationMode {
 impl Display for DataCommandModificationMode {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            DataCommandModificationMode::Append => f.write_str("append"),
-            DataCommandModificationMode::Prepend => f.write_str("prepend"),
-            DataCommandModificationMode::Insert(index) => write!(f, "insert {}", index),
-            DataCommandModificationMode::Merge => f.write_str("merge"),
-            DataCommandModificationMode::Set => f.write_str("set"),
+            Self::Append => f.write_str("append"),
+            Self::Prepend => f.write_str("prepend"),
+            Self::Insert(index) => write!(f, "insert {}", index),
+            Self::Merge => f.write_str("merge"),
+            Self::Set => f.write_str("set"),
         }
     }
 }
@@ -110,7 +110,7 @@ pub enum DataCommand {
 impl Display for DataCommand {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            DataCommand::Get(target, path, scale) => {
+            Self::Get(target, path, scale) => {
                 write!(f, "get {}", target)?;
 
                 if let Some(path) = path {
@@ -123,17 +123,17 @@ impl Display for DataCommand {
 
                 Ok(())
             }
-            DataCommand::Merge(target, nbt) => {
+            Self::Merge(target, nbt) => {
                 write!(f, "merge {} {}", target, nbt)
             }
-            DataCommand::Modify(target, path, modification_mode, modification_command) => {
+            Self::Modify(target, path, modification_mode, modification_command) => {
                 write!(
                     f,
                     "modify {} {} {} {}",
                     target, path, modification_mode, modification_command
                 )
             }
-            DataCommand::Remove(target, path) => {
+            Self::Remove(target, path) => {
                 write!(f, "remove {} {}", target, path)
             }
         }

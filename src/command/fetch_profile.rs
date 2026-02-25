@@ -10,8 +10,8 @@ pub enum FetchProfileCommand {
 impl Display for FetchProfileCommand {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            FetchProfileCommand::Name(name) => write!(f, "name {}", name),
-            FetchProfileCommand::Id(id) => write!(f, "id {}", id),
+            Self::Name(name) => write!(f, "name {}", name),
+            Self::Id(id) => write!(f, "id {}", id),
         }
     }
 }

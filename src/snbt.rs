@@ -26,8 +26,8 @@ impl Serialize for SNBTString {
         S: Serializer,
     {
         match self {
-            SNBTString(false, value) => serializer.serialize_str(value),
-            SNBTString(true, name) => {
+            Self(false, value) => serializer.serialize_str(value),
+            Self(true, name) => {
                 let formatted = format!("$({})", name);
                 serializer.serialize_str(&formatted)
             }
@@ -44,7 +44,7 @@ pub enum SNBT {
     Float(NotNan<f32>),
     Double(NotNan<f64>),
     String(SNBTString),
-    List(Vec<SNBT>),
+    List(Vec<Self>),
     Compound(SNBTCompound),
     ByteArray(Vec<i8>),
     IntegerArray(Vec<i32>),
@@ -54,24 +54,25 @@ pub enum SNBT {
 
 impl SNBT {
     #[must_use]
-    pub fn list<T: Into<SNBT>>(values: Vec<T>) -> SNBT {
-        SNBT::List(values.into_iter().map(Into::into).collect())
+    pub fn list<T: Into<Self>>(values: Vec<T>) -> Self {
+        Self::List(values.into_iter().map(Into::into).collect())
     }
 
     #[must_use]
-    pub fn compound<T: Into<SNBT>>(values: BTreeMap<SNBTString, T>) -> SNBT {
-        SNBT::Compound(values.into_iter().map(|(k, v)| (k, v.into())).collect())
+    pub fn compound<T: Into<Self>>(values: BTreeMap<SNBTString, T>) -> Self {
+        Self::Compound(values.into_iter().map(|(k, v)| (k, v.into())).collect())
     }
 
     #[inline]
     #[must_use]
-    pub fn string(string: impl ToString) -> SNBT {
-        SNBT::String(SNBTString(false, string.to_string()))
+    #[allow(clippy::needless_pass_by_value)]
+    pub fn string(string: impl ToString) -> Self {
+        Self::String(SNBTString(false, string.to_string()))
     }
 
     #[must_use]
-    pub fn get(&self, key: &SNBTString) -> Option<&SNBT> {
-        if let SNBT::Compound(compound) = self {
+    pub fn get(&self, key: &SNBTString) -> Option<&Self> {
+        if let Self::Compound(compound) = self {
             compound.get(key)
         } else {
             None
@@ -82,12 +83,12 @@ impl SNBT {
 impl HasMacro for SNBT {
     fn has_macro(&self) -> bool {
         match self {
-            SNBT::Macro(_) => true,
-            SNBT::List(list) => list.iter().any(HasMacro::has_macro),
-            SNBT::Compound(compound) => compound
+            Self::Macro(_) => true,
+            Self::List(list) => list.iter().any(HasMacro::has_macro),
+            Self::Compound(compound) => compound
                 .iter()
                 .any(|(SNBTString(has_macro, _), value)| *has_macro || value.has_macro()),
-            SNBT::String(SNBTString(has_macro, _)) => *has_macro,
+            Self::String(SNBTString(has_macro, _)) => *has_macro,
             _ => false,
         }
     }
@@ -97,9 +98,9 @@ impl HasMacro for SNBT {
             v.has_macro_conflict()
         }
         match self {
-            SNBT::List(values) => values.iter().any(HasMacro::has_macro_conflict),
-            SNBT::Compound(compound) => compound.values().any(fun_name),
-            SNBT::String(SNBTString(false, value)) => value.contains("$("),
+            Self::List(values) => values.iter().any(HasMacro::has_macro_conflict),
+            Self::Compound(compound) => compound.values().any(fun_name),
+            Self::String(SNBTString(false, value)) => value.contains("$("),
             _ => false,
         }
     }
@@ -128,16 +129,16 @@ fn escape(input: &str) -> String {
 impl Display for SNBT {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            SNBT::Byte(v) => write!(f, "{}b", v),
-            SNBT::Short(v) => write!(f, "{}s", v),
-            SNBT::Integer(v) => write!(f, "{}", v),
-            SNBT::Long(v) => write!(f, "{}l", v),
-            SNBT::Float(v) => write!(f, "{}f", v),
-            SNBT::Double(v) => write!(f, "{}d", v),
-            SNBT::String(SNBTString(_, s)) => {
+            Self::Byte(v) => write!(f, "{}b", v),
+            Self::Short(v) => write!(f, "{}s", v),
+            Self::Integer(v) => write!(f, "{}", v),
+            Self::Long(v) => write!(f, "{}l", v),
+            Self::Float(v) => write!(f, "{}f", v),
+            Self::Double(v) => write!(f, "{}d", v),
+            Self::String(SNBTString(_, s)) => {
                 write!(f, "\"{}\"", escape(s))
             }
-            SNBT::List(values) => {
+            Self::List(values) => {
                 f.write_str("[")?;
 
                 for (i, v) in values.iter().enumerate() {
@@ -150,8 +151,8 @@ impl Display for SNBT {
 
                 f.write_str("]")
             }
-            SNBT::Compound(map) => fmt_snbt_compound(f, map),
-            SNBT::ByteArray(arr) => {
+            Self::Compound(map) => fmt_snbt_compound(f, map),
+            Self::ByteArray(arr) => {
                 f.write_str("[B; ")?;
 
                 for (i, v) in arr.iter().enumerate() {
@@ -164,7 +165,7 @@ impl Display for SNBT {
 
                 f.write_str("]")
             }
-            SNBT::IntegerArray(arr) => {
+            Self::IntegerArray(arr) => {
                 f.write_str("[I; ")?;
 
                 for (i, v) in arr.iter().enumerate() {
@@ -177,7 +178,7 @@ impl Display for SNBT {
 
                 f.write_str("]")
             }
-            SNBT::LongArray(arr) => {
+            Self::LongArray(arr) => {
                 f.write_str("[L; ")?;
 
                 for (i, v) in arr.iter().enumerate() {
@@ -190,7 +191,7 @@ impl Display for SNBT {
 
                 f.write_str("]")
             }
-            SNBT::Macro(name) => write!(f, "$({})", name),
+            Self::Macro(name) => write!(f, "$({})", name),
         }
     }
 }
@@ -201,19 +202,19 @@ impl Serialize for SNBT {
         S: Serializer,
     {
         match self {
-            SNBT::Byte(v) => serializer.serialize_i8(*v),
-            SNBT::Short(v) => serializer.serialize_i16(*v),
-            SNBT::Integer(v) => serializer.serialize_i32(*v),
-            SNBT::Long(v) => serializer.serialize_i64(*v),
-            SNBT::Float(v) => serializer.serialize_f32(**v),
-            SNBT::Double(v) => serializer.serialize_f64(**v),
-            SNBT::String(SNBTString(_, v)) => serializer.serialize_str(v),
-            SNBT::List(v) => v.serialize(serializer),
-            SNBT::Compound(v) => v.serialize(serializer),
-            SNBT::ByteArray(v) => v.serialize(serializer),
-            SNBT::IntegerArray(v) => v.serialize(serializer),
-            SNBT::LongArray(v) => v.serialize(serializer),
-            SNBT::Macro(v) => format!("<macro {}>", v).serialize(serializer),
+            Self::Byte(v) => serializer.serialize_i8(*v),
+            Self::Short(v) => serializer.serialize_i16(*v),
+            Self::Integer(v) => serializer.serialize_i32(*v),
+            Self::Long(v) => serializer.serialize_i64(*v),
+            Self::Float(v) => serializer.serialize_f32(**v),
+            Self::Double(v) => serializer.serialize_f64(**v),
+            Self::String(SNBTString(_, v)) => serializer.serialize_str(v),
+            Self::List(v) => v.serialize(serializer),
+            Self::Compound(v) => v.serialize(serializer),
+            Self::ByteArray(v) => v.serialize(serializer),
+            Self::IntegerArray(v) => v.serialize(serializer),
+            Self::LongArray(v) => v.serialize(serializer),
+            Self::Macro(v) => format!("<macro {}>", v).serialize(serializer),
         }
     }
 }
@@ -244,11 +245,10 @@ impl<'de> Visitor<'de> for SNBTVisitor {
     where
         E: de::Error,
     {
-        if let Ok(v) = i64::try_from(value) {
-            Ok(SNBT::Long(v))
-        } else {
-            Err(E::custom(format!("u64 out of range for i64: {}", value)))
-        }
+        i64::try_from(value).map_or_else(
+            |_| Err(E::custom(format!("u64 out of range for i64: {}", value))),
+            |v| Ok(SNBT::Long(v)),
+        )
     }
 
     fn visit_f64<E>(self, value: f64) -> Result<Self::Value, E>
@@ -289,72 +289,72 @@ impl<'de> Visitor<'de> for SNBTVisitor {
 
 impl From<i8> for SNBT {
     fn from(i: i8) -> Self {
-        SNBT::Byte(i)
+        Self::Byte(i)
     }
 }
 
 impl From<i16> for SNBT {
     fn from(i: i16) -> Self {
-        SNBT::Short(i)
+        Self::Short(i)
     }
 }
 
 impl From<i32> for SNBT {
     fn from(i: i32) -> Self {
-        SNBT::Integer(i)
+        Self::Integer(i)
     }
 }
 
 impl From<i64> for SNBT {
     fn from(i: i64) -> Self {
-        SNBT::Long(i)
+        Self::Long(i)
     }
 }
 
 impl From<NotNan<f32>> for SNBT {
     fn from(f: NotNan<f32>) -> Self {
-        SNBT::Float(f)
+        Self::Float(f)
     }
 }
 
 impl From<NotNan<f64>> for SNBT {
     fn from(f: NotNan<f64>) -> Self {
-        SNBT::Double(f)
+        Self::Double(f)
     }
 }
 
 impl From<String> for SNBT {
     fn from(s: String) -> Self {
-        SNBT::String(SNBTString(false, s))
+        Self::String(SNBTString(false, s))
     }
 }
 
-impl From<Vec<SNBT>> for SNBT {
-    fn from(v: Vec<SNBT>) -> Self {
-        SNBT::List(v)
+impl From<Vec<Self>> for SNBT {
+    fn from(v: Vec<Self>) -> Self {
+        Self::List(v)
     }
 }
 
-impl From<BTreeMap<SNBTString, SNBT>> for SNBT {
-    fn from(m: BTreeMap<SNBTString, SNBT>) -> Self {
-        SNBT::Compound(m)
+impl From<BTreeMap<SNBTString, Self>> for SNBT {
+    fn from(m: BTreeMap<SNBTString, Self>) -> Self {
+        Self::Compound(m)
     }
 }
 
 impl From<Vec<i8>> for SNBT {
     fn from(v: Vec<i8>) -> Self {
-        SNBT::ByteArray(v)
+        Self::ByteArray(v)
     }
 }
 
 impl From<Vec<i32>> for SNBT {
     fn from(v: Vec<i32>) -> Self {
-        SNBT::IntegerArray(v)
+        Self::IntegerArray(v)
     }
 }
 
 impl From<Vec<i64>> for SNBT {
     fn from(v: Vec<i64>) -> Self {
-        SNBT::LongArray(v)
+        Self::LongArray(v)
     }
 }

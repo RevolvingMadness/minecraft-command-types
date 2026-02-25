@@ -14,8 +14,8 @@ pub enum TeleportFacing {
 impl Display for TeleportFacing {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            TeleportFacing::Position(coords) => coords.fmt(f),
-            TeleportFacing::Entity(selector, anchor) => {
+            Self::Position(coords) => coords.fmt(f),
+            Self::Entity(selector, anchor) => {
                 write!(f, "entity {}", selector)?;
 
                 if let Some(anchor) = anchor {
@@ -37,8 +37,8 @@ pub enum TeleportCoordinatesType {
 impl Display for TeleportCoordinatesType {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            TeleportCoordinatesType::Rotation(rotation) => rotation.fmt(f),
-            TeleportCoordinatesType::Facing(facing) => {
+            Self::Rotation(rotation) => rotation.fmt(f),
+            Self::Facing(facing) => {
                 write!(f, "facing {}", facing)
             }
         }
@@ -54,7 +54,7 @@ pub enum TargetTeleportCommand {
 impl Display for TargetTeleportCommand {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            TargetTeleportCommand::Coordinates(coordinates, additional) => {
+            Self::Coordinates(coordinates, additional) => {
                 coordinates.fmt(f)?;
 
                 if let Some(additional) = additional {
@@ -63,7 +63,7 @@ impl Display for TargetTeleportCommand {
 
                 Ok(())
             }
-            TargetTeleportCommand::Entity(selector) => selector.fmt(f),
+            Self::Entity(selector) => selector.fmt(f),
         }
     }
 }
@@ -77,8 +77,8 @@ pub enum TeleportCommand {
 impl Display for TeleportCommand {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            TeleportCommand::Coordinates(coordinates) => coordinates.fmt(f),
-            TeleportCommand::Entity(selector, additional) => {
+            Self::Coordinates(coordinates) => coordinates.fmt(f),
+            Self::Entity(selector, additional) => {
                 selector.fmt(f)?;
 
                 if let Some(additional) = additional {

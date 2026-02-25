@@ -12,9 +12,9 @@ pub enum DebugCommandType {
 impl Display for DebugCommandType {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            DebugCommandType::Start => f.write_str("start"),
-            DebugCommandType::Stop => f.write_str("stop"),
-            DebugCommandType::Function(location) => write!(f, "function {}", location),
+            Self::Start => f.write_str("start"),
+            Self::Stop => f.write_str("stop"),
+            Self::Function(location) => write!(f, "function {}", location),
         }
     }
 }

@@ -10,29 +10,23 @@ use std::fmt::{Display, Formatter};
 
 #[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
 pub enum EntitySelectorVariable {
-    /// Selects the nearest player from the command's execution. If there are multiple nearest players, caused by them being precisely the same distance away, the player who most recently joined the server is selected.
     P,
-    /// Selects a random online player.
     R,
-    /// Selects every online player (alive or dead).
     A,
-    /// Selects all alive entities in loaded chunks, and all alive online players.
     E,
-    /// Selects the entity (alive or not) that the command was executed as. It does not select anything if the command was not ran as an entity (e.g. from a command block or server console).
     S,
-    /// Selects the nearest alive entity from the command's execution.
     N,
 }
 
 impl Display for EntitySelectorVariable {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            EntitySelectorVariable::P => "p",
-            EntitySelectorVariable::R => "r",
-            EntitySelectorVariable::A => "a",
-            EntitySelectorVariable::E => "e",
-            EntitySelectorVariable::S => "s",
-            EntitySelectorVariable::N => "n",
+            Self::P => "p",
+            Self::R => "r",
+            Self::A => "a",
+            Self::E => "e",
+            Self::S => "s",
+            Self::N => "n",
         }
         .fmt(f)
     }
@@ -66,21 +60,21 @@ pub enum AdvancementChoiceType {
 
 impl From<bool> for AdvancementChoiceType {
     fn from(value: bool) -> Self {
-        AdvancementChoiceType::Boolean(value)
+        Self::Boolean(value)
     }
 }
 
 impl From<BTreeMap<String, bool>> for AdvancementChoiceType {
     fn from(value: BTreeMap<String, bool>) -> Self {
-        AdvancementChoiceType::Criterion(value)
+        Self::Criterion(value)
     }
 }
 
 impl Display for AdvancementChoiceType {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            AdvancementChoiceType::Boolean(bool) => bool.fmt(f),
-            AdvancementChoiceType::Criterion(map) => fmt_hash_map(f, map),
+            Self::Boolean(bool) => bool.fmt(f),
+            Self::Criterion(map) => fmt_hash_map(f, map),
         }
     }
 }
@@ -112,16 +106,16 @@ pub enum EntitySelectorOption {
 
 impl EntitySelectorOption {
     #[must_use]
-    pub fn can_be_repeated(&self) -> bool {
+    pub const fn can_be_repeated(&self) -> bool {
         matches!(
             self,
-            EntitySelectorOption::Tag(..)
-                | EntitySelectorOption::Team(true, _)
-                | EntitySelectorOption::Name(true, _)
-                | EntitySelectorOption::Type(true, _)
-                | EntitySelectorOption::Predicate(..)
-                | EntitySelectorOption::Nbt(..)
-                | EntitySelectorOption::Gamemode(true, _)
+            Self::Tag(..)
+                | Self::Team(true, _)
+                | Self::Name(true, _)
+                | Self::Type(true, _)
+                | Self::Predicate(..)
+                | Self::Nbt(..)
+                | Self::Gamemode(true, _)
         )
     }
 }
@@ -144,50 +138,50 @@ macro_rules! write_entity_selector_option {
 impl Display for EntitySelectorOption {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            EntitySelectorOption::X(x) => write_entity_selector_option!(f, "x", x),
-            EntitySelectorOption::Y(y) => write_entity_selector_option!(f, "y", y),
-            EntitySelectorOption::Z(z) => write_entity_selector_option!(f, "z", z),
-            EntitySelectorOption::Distance(d) => write_entity_selector_option!(f, "distance", d),
-            EntitySelectorOption::DistanceX(dx) => write_entity_selector_option!(f, "dx", dx),
-            EntitySelectorOption::DistanceY(dy) => write_entity_selector_option!(f, "dy", dy),
-            EntitySelectorOption::DistanceZ(dz) => write_entity_selector_option!(f, "dz", dz),
-            EntitySelectorOption::XRotation(rot) => {
+            Self::X(x) => write_entity_selector_option!(f, "x", x),
+            Self::Y(y) => write_entity_selector_option!(f, "y", y),
+            Self::Z(z) => write_entity_selector_option!(f, "z", z),
+            Self::Distance(d) => write_entity_selector_option!(f, "distance", d),
+            Self::DistanceX(dx) => write_entity_selector_option!(f, "dx", dx),
+            Self::DistanceY(dy) => write_entity_selector_option!(f, "dy", dy),
+            Self::DistanceZ(dz) => write_entity_selector_option!(f, "dz", dz),
+            Self::XRotation(rot) => {
                 write_entity_selector_option!(f, "x_rotation", rot)
             }
-            EntitySelectorOption::YRotation(rot) => {
+            Self::YRotation(rot) => {
                 write_entity_selector_option!(f, "y_rotation", rot)
             }
-            EntitySelectorOption::Level(level) => write_entity_selector_option!(f, "level", level),
-            EntitySelectorOption::Limit(limit) => write_entity_selector_option!(f, "limit", limit),
-            EntitySelectorOption::Sort(sort) => write_entity_selector_option!(f, "sort", sort),
+            Self::Level(level) => write_entity_selector_option!(f, "level", level),
+            Self::Limit(limit) => write_entity_selector_option!(f, "limit", limit),
+            Self::Sort(sort) => write_entity_selector_option!(f, "sort", sort),
 
-            EntitySelectorOption::Tag(inv, val) => {
+            Self::Tag(inv, val) => {
                 write_entity_selector_option!(f, "tag", inv, val)
             }
-            EntitySelectorOption::Team(inv, val) => {
+            Self::Team(inv, val) => {
                 write_entity_selector_option!(f, "team", inv, val)
             }
-            EntitySelectorOption::Name(inv, val) => {
+            Self::Name(inv, val) => {
                 write_entity_selector_option!(f, "name", inv, val)
             }
-            EntitySelectorOption::Type(inv, val) => {
+            Self::Type(inv, val) => {
                 write_entity_selector_option!(f, "type", inv, val)
             }
-            EntitySelectorOption::Predicate(inv, val) => {
+            Self::Predicate(inv, val) => {
                 write_entity_selector_option!(f, "predicate", inv, val)
             }
-            EntitySelectorOption::Nbt(inv, val) => {
+            Self::Nbt(inv, val) => {
                 write_entity_selector_option!(f, "nbt", inv, val)
             }
-            EntitySelectorOption::Gamemode(inv, val) => {
+            Self::Gamemode(inv, val) => {
                 write_entity_selector_option!(f, "gamemode", inv, val)
             }
 
-            EntitySelectorOption::Scores(scores) => {
+            Self::Scores(scores) => {
                 f.write_str("scores=")?;
                 fmt_hash_map(f, scores)
             }
-            EntitySelectorOption::Advancements(advancements) => {
+            Self::Advancements(advancements) => {
                 f.write_str("advancements=")?;
                 fmt_hash_map(f, advancements)
             }
@@ -202,95 +196,82 @@ pub enum EntitySelector {
 }
 
 impl EntitySelector {
-    #[inline]
     #[must_use]
-    pub fn new(variable: EntitySelectorVariable, options: Vec<EntitySelectorOption>) -> Self {
+    pub const fn new(variable: EntitySelectorVariable, options: Vec<EntitySelectorOption>) -> Self {
         Self::Variable(variable, options)
     }
 
-    #[inline]
     #[must_use]
-    pub fn p(options: Vec<EntitySelectorOption>) -> Self {
+    pub const fn p(options: Vec<EntitySelectorOption>) -> Self {
         Self::new(EntitySelectorVariable::P, options)
     }
 
-    #[inline]
     #[must_use]
-    pub fn p_no_options() -> Self {
+    pub const fn p_no_options() -> Self {
         Self::p(vec![])
     }
 
-    #[inline]
     #[must_use]
-    pub fn r(options: Vec<EntitySelectorOption>) -> Self {
+    pub const fn r(options: Vec<EntitySelectorOption>) -> Self {
         Self::new(EntitySelectorVariable::R, options)
     }
 
-    #[inline]
     #[must_use]
-    pub fn r_no_options() -> Self {
+    pub const fn r_no_options() -> Self {
         Self::r(vec![])
     }
 
-    #[inline]
     #[must_use]
-    pub fn a(options: Vec<EntitySelectorOption>) -> Self {
+    pub const fn a(options: Vec<EntitySelectorOption>) -> Self {
         Self::new(EntitySelectorVariable::A, options)
     }
 
-    #[inline]
     #[must_use]
-    pub fn a_no_options() -> Self {
+    pub const fn a_no_options() -> Self {
         Self::a(vec![])
     }
 
-    #[inline]
     #[must_use]
-    pub fn e(options: Vec<EntitySelectorOption>) -> Self {
+    pub const fn e(options: Vec<EntitySelectorOption>) -> Self {
         Self::new(EntitySelectorVariable::E, options)
     }
 
-    #[inline]
     #[must_use]
-    pub fn e_no_options() -> Self {
+    pub const fn e_no_options() -> Self {
         Self::e(vec![])
     }
 
-    #[inline]
     #[must_use]
-    pub fn s(options: Vec<EntitySelectorOption>) -> Self {
+    pub const fn s(options: Vec<EntitySelectorOption>) -> Self {
         Self::new(EntitySelectorVariable::S, options)
     }
 
-    #[inline]
     #[must_use]
-    pub fn s_no_options() -> Self {
+    pub const fn s_no_options() -> Self {
         Self::s(vec![])
     }
 
-    #[inline]
     #[must_use]
-    pub fn n(options: Vec<EntitySelectorOption>) -> Self {
+    pub const fn n(options: Vec<EntitySelectorOption>) -> Self {
         Self::new(EntitySelectorVariable::N, options)
     }
 
-    #[inline]
     #[must_use]
-    pub fn n_no_options() -> Self {
+    pub const fn n_no_options() -> Self {
         Self::n(vec![])
     }
 }
 
 impl Default for EntitySelector {
     fn default() -> Self {
-        EntitySelector::s_no_options()
+        Self::s_no_options()
     }
 }
 
 impl Display for EntitySelector {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            EntitySelector::Variable(variable, options) => {
+            Self::Variable(variable, options) => {
                 write!(f, "@{}", variable)?;
 
                 if !options.is_empty() {
@@ -312,7 +293,7 @@ impl Display for EntitySelector {
 
                 Ok(())
             }
-            EntitySelector::Name(name) => name.fmt(f),
+            Self::Name(name) => name.fmt(f),
         }
     }
 }

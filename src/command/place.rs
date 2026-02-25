@@ -25,7 +25,7 @@ pub enum PlaceCommand {
 impl Display for PlaceCommand {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            PlaceCommand::Feature(feature, pos) => {
+            Self::Feature(feature, pos) => {
                 write!(f, "feature {}", feature)?;
 
                 if let Some(pos) = pos {
@@ -34,7 +34,7 @@ impl Display for PlaceCommand {
 
                 Ok(())
             }
-            PlaceCommand::Jigsaw(pool, target, max_depth, position) => {
+            Self::Jigsaw(pool, target, max_depth, position) => {
                 write!(f, "jigsaw {} {} {}", pool, target, max_depth)?;
 
                 if let Some(position) = position {
@@ -43,7 +43,7 @@ impl Display for PlaceCommand {
 
                 Ok(())
             }
-            PlaceCommand::Structure(structure, pos) => {
+            Self::Structure(structure, pos) => {
                 write!(f, "structure {}", structure)?;
 
                 if let Some(pos) = pos {
@@ -52,7 +52,7 @@ impl Display for PlaceCommand {
 
                 Ok(())
             }
-            PlaceCommand::Template(template, pos, rotation, mirror, integrity, seed, strict) => {
+            Self::Template(template, pos, rotation, mirror, integrity, seed, strict) => {
                 write!(f, "template {}", template)?;
 
                 if let Some(pos) = pos {

@@ -11,7 +11,7 @@ pub enum ForceloadRemoveType {
 impl Display for ForceloadRemoveType {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            ForceloadRemoveType::ColumnPosition(from, to) => {
+            Self::ColumnPosition(from, to) => {
                 from.fmt(f)?;
 
                 if let Some(to) = to {
@@ -20,7 +20,7 @@ impl Display for ForceloadRemoveType {
 
                 Ok(())
             }
-            ForceloadRemoveType::All => f.write_str("all"),
+            Self::All => f.write_str("all"),
         }
     }
 }
@@ -35,7 +35,7 @@ pub enum ForceloadCommand {
 impl Display for ForceloadCommand {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            ForceloadCommand::Add(from, to) => {
+            Self::Add(from, to) => {
                 write!(f, "add {}", from)?;
 
                 if let Some(to) = to {
@@ -44,10 +44,10 @@ impl Display for ForceloadCommand {
 
                 Ok(())
             }
-            ForceloadCommand::Remove(remove_type) => {
+            Self::Remove(remove_type) => {
                 write!(f, "remove {}", remove_type)
             }
-            ForceloadCommand::Query(position) => {
+            Self::Query(position) => {
                 f.write_str("query")?;
 
                 if let Some(position) = position {

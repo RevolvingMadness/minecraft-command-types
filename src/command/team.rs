@@ -22,31 +22,31 @@ pub enum TeamOption {
 impl Display for TeamOption {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            TeamOption::DisplayName(display_name) => {
+            Self::DisplayName(display_name) => {
                 write!(f, "displayName {}", display_name)
             }
-            TeamOption::Color(color) => {
+            Self::Color(color) => {
                 write!(f, "color {}", color)
             }
-            TeamOption::FriendlyFire(friendly_fire) => {
+            Self::FriendlyFire(friendly_fire) => {
                 write!(f, "friendlyFire {}", friendly_fire)
             }
-            TeamOption::SeeFriendlyInvisibles(see_friendly_invisibles) => {
+            Self::SeeFriendlyInvisibles(see_friendly_invisibles) => {
                 write!(f, "seeFriendlyInvisibles {}", see_friendly_invisibles)
             }
-            TeamOption::NametagVisibility(visibility) => {
+            Self::NametagVisibility(visibility) => {
                 write!(f, "nametagVisibility {}", visibility)
             }
-            TeamOption::DeathMessageVisibility(visibility) => {
+            Self::DeathMessageVisibility(visibility) => {
                 write!(f, "deathMessageVisibility {}", visibility)
             }
-            TeamOption::CollisionRule(collision_rule) => {
+            Self::CollisionRule(collision_rule) => {
                 write!(f, "collisionRule {}", collision_rule)
             }
-            TeamOption::Prefix(prefix) => {
+            Self::Prefix(prefix) => {
                 write!(f, "prefix {}", prefix)
             }
-            TeamOption::Suffix(suffix) => {
+            Self::Suffix(suffix) => {
                 write!(f, "suffix {}", suffix)
             }
         }
@@ -67,7 +67,7 @@ pub enum TeamCommand {
 impl Display for TeamCommand {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            TeamCommand::List(name) => {
+            Self::List(name) => {
                 f.write_str("list")?;
 
                 if let Some(name) = name {
@@ -76,7 +76,7 @@ impl Display for TeamCommand {
 
                 Ok(())
             }
-            TeamCommand::Add(name, display_name) => {
+            Self::Add(name, display_name) => {
                 write!(f, "add {}", name)?;
 
                 if let Some(display_name) = display_name {
@@ -85,13 +85,13 @@ impl Display for TeamCommand {
 
                 Ok(())
             }
-            TeamCommand::Remove(name) => {
+            Self::Remove(name) => {
                 write!(f, "remove {}", name)
             }
-            TeamCommand::Empty(name) => {
+            Self::Empty(name) => {
                 write!(f, "empty {}", name)
             }
-            TeamCommand::Join(name, selector) => {
+            Self::Join(name, selector) => {
                 write!(f, "join {}", name)?;
 
                 if let Some(selector) = selector {
@@ -100,10 +100,10 @@ impl Display for TeamCommand {
 
                 Ok(())
             }
-            TeamCommand::Leave(selector) => {
+            Self::Leave(selector) => {
                 write!(f, "leave {}", selector)
             }
-            TeamCommand::Modify(name, option) => {
+            Self::Modify(name, option) => {
                 write!(f, "modify {} {}", name, option)
             }
         }

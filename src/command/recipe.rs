@@ -11,8 +11,8 @@ pub enum RecipeType {
 impl Display for RecipeType {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            RecipeType::All => f.write_str("*"),
-            RecipeType::Recipe(recipe) => recipe.fmt(f),
+            Self::All => f.write_str("*"),
+            Self::Recipe(recipe) => recipe.fmt(f),
         }
     }
 }

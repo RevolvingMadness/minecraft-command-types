@@ -13,8 +13,8 @@ pub enum DamageWorldborderCommand {
 impl Display for DamageWorldborderCommand {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            DamageWorldborderCommand::Amount(amount) => write!(f, "amount {}", amount),
-            DamageWorldborderCommand::Buffer(buffer) => write!(f, "buffer {}", buffer),
+            Self::Amount(amount) => write!(f, "amount {}", amount),
+            Self::Buffer(buffer) => write!(f, "buffer {}", buffer),
         }
     }
 }
@@ -28,8 +28,8 @@ pub enum WarningWorldborderCommand {
 impl Display for WarningWorldborderCommand {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            WarningWorldborderCommand::Distance(distance) => write!(f, "distance {}", distance),
-            WarningWorldborderCommand::Time(time) => write!(f, "time {}", time),
+            Self::Distance(distance) => write!(f, "distance {}", distance),
+            Self::Time(time) => write!(f, "time {}", time),
         }
     }
 }
@@ -47,7 +47,7 @@ pub enum WorldborderCommand {
 impl Display for WorldborderCommand {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            WorldborderCommand::Add(distance, time) => {
+            Self::Add(distance, time) => {
                 write!(f, "add {}", distance)?;
 
                 if let Some(time) = time {
@@ -56,10 +56,10 @@ impl Display for WorldborderCommand {
 
                 Ok(())
             }
-            WorldborderCommand::Center(position) => write!(f, "center {}", position),
-            WorldborderCommand::Damage(damage_command) => write!(f, "damage {}", damage_command),
-            WorldborderCommand::Get => f.write_str("get"),
-            WorldborderCommand::Set(distance, time) => {
+            Self::Center(position) => write!(f, "center {}", position),
+            Self::Damage(damage_command) => write!(f, "damage {}", damage_command),
+            Self::Get => f.write_str("get"),
+            Self::Set(distance, time) => {
                 write!(f, "set {}", distance)?;
 
                 if let Some(time) = time {
@@ -68,7 +68,7 @@ impl Display for WorldborderCommand {
 
                 Ok(())
             }
-            WorldborderCommand::Warning(warning_command) => {
+            Self::Warning(warning_command) => {
                 write!(f, "warning {}", warning_command)
             }
         }

@@ -13,8 +13,8 @@ pub enum TimeSetType {
 impl Display for TimeSetType {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            TimeSetType::Time(time) => time.fmt(f),
-            TimeSetType::TimeOfDay(time_of_day) => time_of_day.fmt(f),
+            Self::Time(time) => time.fmt(f),
+            Self::TimeOfDay(time_of_day) => time_of_day.fmt(f),
         }
     }
 }
@@ -29,9 +29,9 @@ pub enum TimeCommand {
 impl Display for TimeCommand {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            TimeCommand::Add(time) => write!(f, "add {}", time),
-            TimeCommand::Query(query_type) => write!(f, "query {}", query_type),
-            TimeCommand::Set(set_type) => write!(f, "set {}", set_type),
+            Self::Add(time) => write!(f, "add {}", time),
+            Self::Query(query_type) => write!(f, "query {}", query_type),
+            Self::Set(set_type) => write!(f, "set {}", set_type),
         }
     }
 }

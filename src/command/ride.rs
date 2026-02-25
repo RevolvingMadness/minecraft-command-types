@@ -11,8 +11,8 @@ pub enum RideCommand {
 impl Display for RideCommand {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            RideCommand::Mount(selector) => write!(f, "mount {}", selector),
-            RideCommand::Dismount => f.write_str("dismount"),
+            Self::Mount(selector) => write!(f, "mount {}", selector),
+            Self::Dismount => f.write_str("dismount"),
         }
     }
 }

@@ -13,8 +13,8 @@ pub enum FillCommand {
 impl Display for FillCommand {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            FillCommand::Mode(mode) => mode.fmt(f),
-            FillCommand::Replace(predicate, replace_mode) => {
+            Self::Mode(mode) => mode.fmt(f),
+            Self::Replace(predicate, replace_mode) => {
                 predicate.fmt(f)?;
 
                 if let Some(replace_mode) = replace_mode {

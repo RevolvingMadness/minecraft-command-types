@@ -14,8 +14,8 @@ pub enum ItemCommand {
 impl Display for ItemCommand {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            ItemCommand::Modifier(item) => item.fmt(f),
-            ItemCommand::With(item, count) => {
+            Self::Modifier(item) => item.fmt(f),
+            Self::With(item, count) => {
                 write!(f, "with {}", item)?;
 
                 if let Some(count) = count {
@@ -24,7 +24,7 @@ impl Display for ItemCommand {
 
                 Ok(())
             }
-            ItemCommand::From(source, slot, modifier) => {
+            Self::From(source, slot, modifier) => {
                 write!(f, "from {} {}", source, slot)?;
 
                 if let Some(modifier) = modifier {

@@ -12,8 +12,8 @@ pub enum ItemSource {
 impl Display for ItemSource {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            ItemSource::Block(coords) => write!(f, "block {}", coords),
-            ItemSource::Entity(selector) => write!(f, "entity {}", selector),
+            Self::Block(coords) => write!(f, "block {}", coords),
+            Self::Entity(selector) => write!(f, "entity {}", selector),
         }
     }
 }

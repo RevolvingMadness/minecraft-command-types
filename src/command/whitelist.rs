@@ -15,12 +15,12 @@ pub enum WhitelistCommand {
 impl Display for WhitelistCommand {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            WhitelistCommand::Add(selector) => write!(f, "add {}", selector),
-            WhitelistCommand::List => f.write_str("list"),
-            WhitelistCommand::Off => f.write_str("off"),
-            WhitelistCommand::On => f.write_str("on"),
-            WhitelistCommand::Reload => f.write_str("reload"),
-            WhitelistCommand::Remove(selector) => write!(f, "remove {}", selector),
+            Self::Add(selector) => write!(f, "add {}", selector),
+            Self::List => f.write_str("list"),
+            Self::Off => f.write_str("off"),
+            Self::On => f.write_str("on"),
+            Self::Reload => f.write_str("reload"),
+            Self::Remove(selector) => write!(f, "remove {}", selector),
         }
     }
 }

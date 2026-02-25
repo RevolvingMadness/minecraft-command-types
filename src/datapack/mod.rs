@@ -31,7 +31,7 @@ pub struct PackMCMeta {
 
 #[derive(Debug, Clone)]
 pub enum FilePathNode<T> {
-    Directory(String, Vec<FilePathNode<T>>),
+    Directory(String, Vec<Self>),
     File(String, T),
 }
 
@@ -39,10 +39,10 @@ impl<T> FilePathNode<T> {
     pub fn from_str(path: &str, value: T) -> Self {
         let mut parts = path.split('/').rev();
         let file_name = parts.next().expect("Path cannot be empty");
-        let mut current_node = FilePathNode::File(file_name.to_string(), value);
+        let mut current_node = Self::File(file_name.to_string(), value);
 
         for part in parts {
-            current_node = FilePathNode::Directory(part.to_string(), vec![current_node]);
+            current_node = Self::Directory(part.to_string(), vec![current_node]);
         }
 
         current_node
@@ -52,10 +52,10 @@ impl<T> FilePathNode<T> {
         let mut vec = vec.into_iter().rev();
 
         let file_name = vec.next().expect("Path cannot be empty");
-        let mut current_node = FilePathNode::File(file_name, value);
+        let mut current_node = Self::File(file_name, value);
 
         for part in vec {
-            current_node = FilePathNode::Directory(part, vec![current_node]);
+            current_node = Self::Directory(part, vec![current_node]);
         }
 
         current_node
@@ -129,7 +129,7 @@ fn write_file_path_nodes<T>(
 }
 
 impl Namespace {
-    pub fn merge(&mut self, mut other: Namespace) {
+    pub fn merge(&mut self, mut other: Self) {
         self.functions.append(&mut other.functions);
 
         for (tag_type, tags) in other.tags {
@@ -268,10 +268,9 @@ pub struct Datapack {
 }
 
 impl Datapack {
-    #[inline]
     #[must_use]
-    pub fn new(pack_format: i32, description: Value) -> Datapack {
-        Datapack {
+    pub const fn new(pack_format: i32, description: Value) -> Self {
+        Self {
             pack: PackMCMeta {
                 pack: Pack {
                     pack_format: Some(pack_format),

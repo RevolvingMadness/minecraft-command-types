@@ -12,8 +12,8 @@ pub enum EffectDuration {
 impl Display for EffectDuration {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            EffectDuration::Duration(duration) => duration.fmt(f),
-            EffectDuration::Infinite => f.write_str("infinite"),
+            Self::Duration(duration) => duration.fmt(f),
+            Self::Infinite => f.write_str("infinite"),
         }
     }
 }
@@ -33,7 +33,7 @@ pub enum EffectCommand {
 impl Display for EffectCommand {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            EffectCommand::Clear(selector, effect) => {
+            Self::Clear(selector, effect) => {
                 f.write_str("clear")?;
 
                 if let Some(selector) = selector {
@@ -46,7 +46,7 @@ impl Display for EffectCommand {
 
                 Ok(())
             }
-            EffectCommand::Give(selector, effect, duration, amplifier, hide_particles) => {
+            Self::Give(selector, effect, duration, amplifier, hide_particles) => {
                 write!(f, "give {} {}", selector, effect)?;
 
                 if let Some(duration) = duration {

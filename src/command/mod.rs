@@ -119,9 +119,8 @@ impl Display for PlayerScore {
 }
 
 impl PlayerScore {
-    #[inline]
     #[must_use]
-    pub fn new(selector: EntitySelector, objective: String) -> Self {
+    pub const fn new(selector: EntitySelector, objective: String) -> Self {
         Self {
             selector,
             objective,
@@ -264,92 +263,92 @@ impl Command {
     #[must_use]
     pub fn get_permission_level(&self, is_multiplayer: bool) -> PermissionLevel {
         match self {
-            Command::Help(..)
-            | Command::List(..)
-            | Command::Me(..)
-            | Command::Message(..)
-            | Command::Random(RandomCommand::ValueRoll(_, _, None) | RandomCommand::Reset(..))
-            | Command::TeamMessage(..)
-            | Command::Trigger(..) => PermissionLevel::try_from(0).unwrap(),
-            Command::Advancement(..)
-            | Command::Attribute(..)
-            | Command::Bossbar(..)
-            | Command::Clear(..)
-            | Command::Clone { .. }
-            | Command::Damage(..)
-            | Command::Data(..)
-            | Command::Datapack(..)
-            | Command::DefaultGamemode(..)
-            | Command::Dialog(..)
-            | Command::Difficulty(..)
-            | Command::Effect(..)
-            | Command::Enchant(..)
-            | Command::Execute(..)
-            | Command::Experience(..)
-            | Command::FetchProfile(..)
-            | Command::Fill(..)
-            | Command::FillBiome(..)
-            | Command::Forceload(..)
-            | Command::Function(..)
-            | Command::Gamemode(..)
-            | Command::Gamerule(..)
-            | Command::Give(..)
-            | Command::Item(..)
-            | Command::Kill(..)
-            | Command::Locate(..)
-            | Command::Loot(..)
-            | Command::Particle(..)
-            | Command::Place(..)
-            | Command::Playsound(..)
-            | Command::Random(RandomCommand::ValueRoll(_, _, Some(_)))
-            | Command::Recipe(..)
-            | Command::Reload
-            | Command::Return(..)
-            | Command::Ride(..)
-            | Command::Rotate(..)
-            | Command::Say(..)
-            | Command::Schedule(..)
-            | Command::Scoreboard(..)
-            | Command::Setblock(..)
-            | Command::SetWorldSpawn(..)
-            | Command::Spawnpoint(..)
-            | Command::Spectate(..)
-            | Command::SpreadPlayers(..)
-            | Command::StopSound(..)
-            | Command::Summon(..)
-            | Command::Tag(..)
-            | Command::Team(..)
-            | Command::Teleport(..)
-            | Command::Tellraw(..)
-            | Command::Test(..)
-            | Command::Time(..)
-            | Command::Title(..)
-            | Command::Version
-            | Command::Waypoint(..)
-            | Command::Weather(..)
-            | Command::Worldborder(..) => PermissionLevel::try_from(2).unwrap(),
-            Command::Ban(..)
-            | Command::BanIP(..)
-            | Command::Banlist(..)
-            | Command::Debug(..)
-            | Command::Deop(..)
-            | Command::Kick(..)
-            | Command::Op(..)
-            | Command::Pardon(..)
-            | Command::PardonIp(..)
-            | Command::SetIdleTimeout(..)
-            | Command::Tick(..)
-            | Command::Transfer(..)
-            | Command::Whitelist(..) => PermissionLevel::try_from(3).unwrap(),
-            Command::JFR(..)
-            | Command::Perf(..)
-            | Command::Publish(..)
-            | Command::SaveAll(..)
-            | Command::SaveOff
-            | Command::SaveOn
-            | Command::Stop
-            | Command::Stopwatch(..) => PermissionLevel::try_from(4).unwrap(),
-            Command::Seed => {
+            Self::Help(..)
+            | Self::List(..)
+            | Self::Me(..)
+            | Self::Message(..)
+            | Self::Random(RandomCommand::ValueRoll(_, _, None) | RandomCommand::Reset(..))
+            | Self::TeamMessage(..)
+            | Self::Trigger(..) => PermissionLevel::try_from(0).unwrap(),
+            Self::Advancement(..)
+            | Self::Attribute(..)
+            | Self::Bossbar(..)
+            | Self::Clear(..)
+            | Self::Clone { .. }
+            | Self::Damage(..)
+            | Self::Data(..)
+            | Self::Datapack(..)
+            | Self::DefaultGamemode(..)
+            | Self::Dialog(..)
+            | Self::Difficulty(..)
+            | Self::Effect(..)
+            | Self::Enchant(..)
+            | Self::Execute(..)
+            | Self::Experience(..)
+            | Self::FetchProfile(..)
+            | Self::Fill(..)
+            | Self::FillBiome(..)
+            | Self::Forceload(..)
+            | Self::Function(..)
+            | Self::Gamemode(..)
+            | Self::Gamerule(..)
+            | Self::Give(..)
+            | Self::Item(..)
+            | Self::Kill(..)
+            | Self::Locate(..)
+            | Self::Loot(..)
+            | Self::Particle(..)
+            | Self::Place(..)
+            | Self::Playsound(..)
+            | Self::Random(RandomCommand::ValueRoll(_, _, Some(_)))
+            | Self::Recipe(..)
+            | Self::Reload
+            | Self::Return(..)
+            | Self::Ride(..)
+            | Self::Rotate(..)
+            | Self::Say(..)
+            | Self::Schedule(..)
+            | Self::Scoreboard(..)
+            | Self::Setblock(..)
+            | Self::SetWorldSpawn(..)
+            | Self::Spawnpoint(..)
+            | Self::Spectate(..)
+            | Self::SpreadPlayers(..)
+            | Self::StopSound(..)
+            | Self::Summon(..)
+            | Self::Tag(..)
+            | Self::Team(..)
+            | Self::Teleport(..)
+            | Self::Tellraw(..)
+            | Self::Test(..)
+            | Self::Time(..)
+            | Self::Title(..)
+            | Self::Version
+            | Self::Waypoint(..)
+            | Self::Weather(..)
+            | Self::Worldborder(..) => PermissionLevel::try_from(2).unwrap(),
+            Self::Ban(..)
+            | Self::BanIP(..)
+            | Self::Banlist(..)
+            | Self::Debug(..)
+            | Self::Deop(..)
+            | Self::Kick(..)
+            | Self::Op(..)
+            | Self::Pardon(..)
+            | Self::PardonIp(..)
+            | Self::SetIdleTimeout(..)
+            | Self::Tick(..)
+            | Self::Transfer(..)
+            | Self::Whitelist(..) => PermissionLevel::try_from(3).unwrap(),
+            Self::JFR(..)
+            | Self::Perf(..)
+            | Self::Publish(..)
+            | Self::SaveAll(..)
+            | Self::SaveOff
+            | Self::SaveOn
+            | Self::Stop
+            | Self::Stopwatch(..) => PermissionLevel::try_from(4).unwrap(),
+            Self::Seed => {
                 let level = if is_multiplayer { 2 } else { 0 };
                 PermissionLevel::try_from(level).unwrap()
             }
@@ -357,24 +356,24 @@ impl Command {
     }
 
     #[must_use]
-    pub fn is_multiplayer_only(&self) -> bool {
+    pub const fn is_multiplayer_only(&self) -> bool {
         matches!(
             self,
-            Command::Ban(..)
-                | Command::BanIP(..)
-                | Command::Banlist(..)
-                | Command::Deop(..)
-                | Command::Op(..)
-                | Command::Pardon(..)
-                | Command::PardonIp(..)
-                | Command::Perf(..)
-                | Command::SaveAll(..)
-                | Command::SaveOff
-                | Command::SaveOn
-                | Command::SetIdleTimeout(..)
-                | Command::Stop
-                | Command::Transfer(..)
-                | Command::Whitelist(..)
+            Self::Ban(..)
+                | Self::BanIP(..)
+                | Self::Banlist(..)
+                | Self::Deop(..)
+                | Self::Op(..)
+                | Self::Pardon(..)
+                | Self::PardonIp(..)
+                | Self::Perf(..)
+                | Self::SaveAll(..)
+                | Self::SaveOff
+                | Self::SaveOn
+                | Self::SetIdleTimeout(..)
+                | Self::Stop
+                | Self::Transfer(..)
+                | Self::Whitelist(..)
         )
     }
 }
@@ -382,13 +381,13 @@ impl Command {
 impl Display for Command {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            Command::Advancement(type_, selector, command) => {
+            Self::Advancement(type_, selector, command) => {
                 write!(f, "advancement {} {} {}", type_, selector, command)
             }
-            Command::Attribute(selector, attribute, command) => {
+            Self::Attribute(selector, attribute, command) => {
                 write!(f, "attribute {} {} {}", selector, attribute, command)
             }
-            Command::Ban(selectors, reason) => {
+            Self::Ban(selectors, reason) => {
                 write!(f, "ban {}", selectors)?;
 
                 if let Some(reason) = reason {
@@ -397,7 +396,7 @@ impl Display for Command {
 
                 Ok(())
             }
-            Command::BanIP(target, reason) => {
+            Self::BanIP(target, reason) => {
                 write!(f, "ban-ip {}", target)?;
 
                 if let Some(reason) = reason {
@@ -406,7 +405,7 @@ impl Display for Command {
 
                 Ok(())
             }
-            Command::Banlist(type_) => {
+            Self::Banlist(type_) => {
                 f.write_str("banlist")?;
 
                 if let Some(type_) = type_ {
@@ -415,8 +414,8 @@ impl Display for Command {
 
                 Ok(())
             }
-            Command::Bossbar(command) => write!(f, "bossbar {}", command),
-            Command::Clear(selector, item, max_count) => {
+            Self::Bossbar(command) => write!(f, "bossbar {}", command),
+            Self::Clear(selector, item, max_count) => {
                 f.write_str("clear")?;
 
                 if let Some(selector) = selector {
@@ -433,7 +432,7 @@ impl Display for Command {
 
                 Ok(())
             }
-            Command::Clone {
+            Self::Clone {
                 source_dimension,
                 begin,
                 end,
@@ -463,7 +462,7 @@ impl Display for Command {
 
                 write!(f, " {} {}", mask_mode, clone_mode)
             }
-            Command::Damage(target, amount, type_, command_type) => {
+            Self::Damage(target, amount, type_, command_type) => {
                 write!(f, "damage {} {}", target, amount)?;
 
                 if let Some(type_) = type_ {
@@ -476,13 +475,13 @@ impl Display for Command {
 
                 Ok(())
             }
-            Command::Data(data_command) => write!(f, "data {}", data_command),
-            Command::Datapack(datapack_command) => write!(f, "datapack {},", datapack_command),
-            Command::Debug(debug_type) => write!(f, "debug {}", debug_type),
-            Command::DefaultGamemode(gamemode) => write!(f, "defaultgamemode {}", gamemode),
-            Command::Deop(selector) => write!(f, "deop {}", selector),
-            Command::Dialog(dialog_command) => write!(f, "dialog {}", dialog_command),
-            Command::Difficulty(difficulty) => {
+            Self::Data(data_command) => write!(f, "data {}", data_command),
+            Self::Datapack(datapack_command) => write!(f, "datapack {},", datapack_command),
+            Self::Debug(debug_type) => write!(f, "debug {}", debug_type),
+            Self::DefaultGamemode(gamemode) => write!(f, "defaultgamemode {}", gamemode),
+            Self::Deop(selector) => write!(f, "deop {}", selector),
+            Self::Dialog(dialog_command) => write!(f, "dialog {}", dialog_command),
+            Self::Difficulty(difficulty) => {
                 f.write_str("difficulty")?;
 
                 if let Some(difficulty) = difficulty {
@@ -491,8 +490,8 @@ impl Display for Command {
 
                 Ok(())
             }
-            Command::Effect(effect_command) => write!(f, "effect {}", effect_command),
-            Command::Enchant(selector, enchantment, level) => {
+            Self::Effect(effect_command) => write!(f, "effect {}", effect_command),
+            Self::Enchant(selector, enchantment, level) => {
                 write!(f, "enchant {} {}", selector, enchantment)?;
 
                 if let Some(level) = level {
@@ -501,10 +500,10 @@ impl Display for Command {
 
                 Ok(())
             }
-            Command::Execute(subcommand) => write!(f, "execute {}", subcommand),
-            Command::Experience(command) => write!(f, "experience {}", command),
-            Command::FetchProfile(command) => write!(f, "fetchprofile {}", command),
-            Command::Fill(from, to, block_state, command) => {
+            Self::Execute(subcommand) => write!(f, "execute {}", subcommand),
+            Self::Experience(command) => write!(f, "experience {}", command),
+            Self::FetchProfile(command) => write!(f, "fetchprofile {}", command),
+            Self::Fill(from, to, block_state, command) => {
                 write!(f, "fill {} {} {}", from, to, block_state)?;
 
                 if let Some(command) = command {
@@ -513,7 +512,7 @@ impl Display for Command {
 
                 Ok(())
             }
-            Command::FillBiome(from, to, biome, filter) => {
+            Self::FillBiome(from, to, biome, filter) => {
                 write!(f, "fillbiome {} {} {}", from, to, biome)?;
 
                 if let Some(filter) = filter {
@@ -522,8 +521,8 @@ impl Display for Command {
 
                 Ok(())
             }
-            Command::Forceload(command) => write!(f, "forceload {}", command),
-            Command::Function(function, arguments) => {
+            Self::Forceload(command) => write!(f, "forceload {}", command),
+            Self::Function(function, arguments) => {
                 write!(f, "function {}", function)?;
 
                 if let Some(arguments) = arguments {
@@ -532,7 +531,7 @@ impl Display for Command {
 
                 Ok(())
             }
-            Command::Gamemode(gamemode, selector) => {
+            Self::Gamemode(gamemode, selector) => {
                 write!(f, "gamemode {}", gamemode)?;
 
                 if let Some(selector) = selector {
@@ -541,7 +540,7 @@ impl Display for Command {
 
                 Ok(())
             }
-            Command::Gamerule(name, value) => {
+            Self::Gamerule(name, value) => {
                 write!(f, "gamerule {}", name)?;
 
                 if let Some(value) = value {
@@ -550,7 +549,7 @@ impl Display for Command {
 
                 Ok(())
             }
-            Command::Give(selector, item, count) => {
+            Self::Give(selector, item, count) => {
                 write!(f, "give {} {}", selector, item)?;
 
                 if let Some(count) = count {
@@ -559,7 +558,7 @@ impl Display for Command {
 
                 Ok(())
             }
-            Command::Help(command) => {
+            Self::Help(command) => {
                 f.write_str("help")?;
 
                 if let Some(command) = command {
@@ -568,10 +567,10 @@ impl Display for Command {
 
                 Ok(())
             }
-            Command::Item(source, slot, command) => {
+            Self::Item(source, slot, command) => {
                 write!(f, "item {} {} {}", source, slot, command)
             }
-            Command::JFR(start) => {
+            Self::JFR(start) => {
                 f.write_str("jfr ")?;
 
                 if *start {
@@ -580,7 +579,7 @@ impl Display for Command {
                     f.write_str("stop")
                 }
             }
-            Command::Kick(selector, reason) => {
+            Self::Kick(selector, reason) => {
                 write!(f, "kick {}", selector)?;
 
                 if let Some(reason) = reason {
@@ -589,7 +588,7 @@ impl Display for Command {
 
                 Ok(())
             }
-            Command::Kill(selector) => {
+            Self::Kill(selector) => {
                 f.write_str("kill")?;
 
                 if let Some(selector) = selector {
@@ -598,7 +597,7 @@ impl Display for Command {
 
                 Ok(())
             }
-            Command::List(show_uuids) => {
+            Self::List(show_uuids) => {
                 f.write_str("list")?;
 
                 if *show_uuids {
@@ -607,31 +606,31 @@ impl Display for Command {
 
                 Ok(())
             }
-            Command::Locate(locate_type, id) => {
+            Self::Locate(locate_type, id) => {
                 write!(f, "locate {} {}", locate_type, id)
             }
-            Command::Loot(target, source) => {
+            Self::Loot(target, source) => {
                 write!(f, "loot {} {}", target, source)
             }
-            Command::Me(message) => {
+            Self::Me(message) => {
                 write!(f, "me {}", message)
             }
-            Command::Message(selector, message) => {
+            Self::Message(selector, message) => {
                 write!(f, "msg {} {}", selector, message)
             }
-            Command::Op(selector) => {
+            Self::Op(selector) => {
                 write!(f, "op {}", selector)
             }
-            Command::Pardon(selector) => {
+            Self::Pardon(selector) => {
                 write!(f, "pardon {}", selector)
             }
-            Command::PardonIp(selector) => {
+            Self::PardonIp(selector) => {
                 write!(f, "pardon-ip {}", selector)
             }
-            Command::Particle(command) => {
+            Self::Particle(command) => {
                 write!(f, "particle {}", command)
             }
-            Command::Perf(start) => {
+            Self::Perf(start) => {
                 f.write_str("perf ")?;
 
                 if *start {
@@ -640,10 +639,10 @@ impl Display for Command {
                     f.write_str("stop")
                 }
             }
-            Command::Place(command) => {
+            Self::Place(command) => {
                 write!(f, "place {}", command)
             }
-            Command::Playsound(sound, source, selector, pos, volume, pitch, minimum_volume) => {
+            Self::Playsound(sound, source, selector, pos, volume, pitch, minimum_volume) => {
                 write!(f, "playsound {}", sound)?;
 
                 if let Some(source) = source {
@@ -672,7 +671,7 @@ impl Display for Command {
 
                 Ok(())
             }
-            Command::Publish(allow_commands, gamemode, port) => {
+            Self::Publish(allow_commands, gamemode, port) => {
                 f.write_str("playsound")?;
 
                 if let Some(allow_commands) = allow_commands {
@@ -689,10 +688,10 @@ impl Display for Command {
 
                 Ok(())
             }
-            Command::Random(command) => {
+            Self::Random(command) => {
                 write!(f, "random {}", command)
             }
-            Command::Recipe(give, selector, recipe_type) => {
+            Self::Recipe(give, selector, recipe_type) => {
                 f.write_str("recipe ")?;
 
                 if *give {
@@ -703,17 +702,17 @@ impl Display for Command {
 
                 write!(f, " {} {}", selector, recipe_type)
             }
-            Command::Reload => f.write_str("reload"),
-            Command::Return(command) => {
+            Self::Reload => f.write_str("reload"),
+            Self::Return(command) => {
                 write!(f, "return {}", command)
             }
-            Command::Ride(selector, command) => {
+            Self::Ride(selector, command) => {
                 write!(f, "ride {} {}", selector, command)
             }
-            Command::Rotate(selector, command) => {
+            Self::Rotate(selector, command) => {
                 write!(f, "rotate {} {}", selector, command)
             }
-            Command::SaveAll(should_flush) => {
+            Self::SaveAll(should_flush) => {
                 f.write_str("save-all")?;
 
                 if *should_flush {
@@ -722,19 +721,19 @@ impl Display for Command {
 
                 Ok(())
             }
-            Command::SaveOff => f.write_str("save-off"),
-            Command::SaveOn => f.write_str("save-on"),
-            Command::Say(message) => {
+            Self::SaveOff => f.write_str("save-off"),
+            Self::SaveOn => f.write_str("save-on"),
+            Self::Say(message) => {
                 write!(f, "say {}", message)
             }
-            Command::Schedule(command) => {
+            Self::Schedule(command) => {
                 write!(f, "schedule {}", command)
             }
-            Command::Scoreboard(command) => {
+            Self::Scoreboard(command) => {
                 write!(f, "scoreboard {}", command)
             }
-            Command::Seed => f.write_str("seed"),
-            Command::Setblock(coordinates, block, mode) => {
+            Self::Seed => f.write_str("seed"),
+            Self::Setblock(coordinates, block, mode) => {
                 write!(f, "setblock {} {}", coordinates, block)?;
 
                 if let Some(mode) = mode {
@@ -743,10 +742,10 @@ impl Display for Command {
 
                 Ok(())
             }
-            Command::SetIdleTimeout(minutes) => {
+            Self::SetIdleTimeout(minutes) => {
                 write!(f, "setidletimeout {}", minutes)
             }
-            Command::SetWorldSpawn(coordinates, angle) => {
+            Self::SetWorldSpawn(coordinates, angle) => {
                 f.write_str("setworldspawn")?;
 
                 if let Some(coordinates) = coordinates {
@@ -759,7 +758,7 @@ impl Display for Command {
 
                 Ok(())
             }
-            Command::Spawnpoint(selector, coordinates, angle) => {
+            Self::Spawnpoint(selector, coordinates, angle) => {
                 f.write_str("spawnpoint")?;
 
                 if let Some(selector) = selector {
@@ -775,7 +774,7 @@ impl Display for Command {
 
                 Ok(())
             }
-            Command::Spectate(selector1, selector2) => {
+            Self::Spectate(selector1, selector2) => {
                 f.write_str("spectate")?;
 
                 if let Some(selector1) = selector1 {
@@ -788,7 +787,7 @@ impl Display for Command {
 
                 Ok(())
             }
-            Command::SpreadPlayers(
+            Self::SpreadPlayers(
                 center,
                 spread_distance,
                 max_range,
@@ -808,8 +807,8 @@ impl Display for Command {
 
                 write!(f, "{} {}", respect_teams, targets)
             }
-            Command::Stop => f.write_str("stop"),
-            Command::StopSound(selector, source, sound) => {
+            Self::Stop => f.write_str("stop"),
+            Self::StopSound(selector, source, sound) => {
                 write!(f, "stopsound {}", selector)?;
 
                 if let Some(source) = source {
@@ -822,10 +821,10 @@ impl Display for Command {
 
                 Ok(())
             }
-            Command::Stopwatch(command) => {
+            Self::Stopwatch(command) => {
                 write!(f, "stopwatch {}", command)
             }
-            Command::Summon(location, coordinates, snbt) => {
+            Self::Summon(location, coordinates, snbt) => {
                 write!(f, "summon {}", location)?;
 
                 if let Some(coordinates) = coordinates {
@@ -838,28 +837,28 @@ impl Display for Command {
 
                 Ok(())
             }
-            Command::Tag(selector, command) => {
+            Self::Tag(selector, command) => {
                 write!(f, "tag {} {}", selector, command)
             }
-            Command::Team(command) => {
+            Self::Team(command) => {
                 write!(f, "team {}", command)
             }
-            Command::TeamMessage(message) => {
+            Self::TeamMessage(message) => {
                 write!(f, "teammsg {}", message)
             }
-            Command::Teleport(command) => {
+            Self::Teleport(command) => {
                 write!(f, "teleport {}", command)
             }
-            Command::Tellraw(selector, message) => {
+            Self::Tellraw(selector, message) => {
                 write!(f, "tellraw {} {}", selector, message)
             }
-            Command::Test(command) => {
+            Self::Test(command) => {
                 write!(f, "test {}", command)
             }
-            Command::Tick(command) => write!(f, "tick {}", command),
-            Command::Time(command) => write!(f, "time {}", command),
-            Command::Title(selector, command) => write!(f, "title {} {}", selector, command),
-            Command::Transfer(hostname, port, selector) => {
+            Self::Tick(command) => write!(f, "tick {}", command),
+            Self::Time(command) => write!(f, "time {}", command),
+            Self::Title(selector, command) => write!(f, "title {} {}", selector, command),
+            Self::Transfer(hostname, port, selector) => {
                 write!(f, "transfer {}", hostname)?;
 
                 if let Some(port) = port {
@@ -872,7 +871,7 @@ impl Display for Command {
 
                 Ok(())
             }
-            Command::Trigger(objective, action) => {
+            Self::Trigger(objective, action) => {
                 write!(f, "trigger {}", objective)?;
 
                 if let Some(action) = action {
@@ -881,9 +880,9 @@ impl Display for Command {
 
                 Ok(())
             }
-            Command::Version => f.write_str("version"),
-            Command::Waypoint(command) => write!(f, "waypoint {}", command),
-            Command::Weather(type_, duration) => {
+            Self::Version => f.write_str("version"),
+            Self::Waypoint(command) => write!(f, "waypoint {}", command),
+            Self::Weather(type_, duration) => {
                 write!(f, "weather {}", type_)?;
 
                 if let Some(duration) = duration {
@@ -892,8 +891,8 @@ impl Display for Command {
 
                 Ok(())
             }
-            Command::Whitelist(command) => write!(f, "whitelist {}", command),
-            Command::Worldborder(command) => write!(f, "worldborder {}", command),
+            Self::Whitelist(command) => write!(f, "whitelist {}", command),
+            Self::Worldborder(command) => write!(f, "worldborder {}", command),
         }
     }
 }

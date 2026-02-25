@@ -9,29 +9,22 @@ use std::fmt::{Display, Formatter};
 
 #[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
 pub enum BossbarSetType {
-    /// Set the text color (if no color was specified as part of a text component) and bar color. Defaults to `white` upon creation.
     Color(BossbarColor),
-    /// Set the bossbar's maximum value. Defaults to `100` upon creation.
     Max(i32),
-    /// Set the bossbar's name.
     Name(SNBT),
-    /// Change the set of players to whom the bar is visible. Defaults to none upon creation.
     Players(Option<EntitySelector>),
-    /// Set the bossbar's visual amount of segments: continuous, 6 segments, 10 segments, 12 segments, or 20 segments. Defaults to `progress` upon creation.
     Style(BossbarStyle),
-    /// Set the bossbar's current value. Defaults to `0` upon creation.
     Value(i32),
-    /// Set the bossbar's visibility. Defaults to `true` upon creation.
     Visible(bool),
 }
 
 impl Display for BossbarSetType {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            BossbarSetType::Color(color) => write!(f, "color {}", color),
-            BossbarSetType::Max(max) => write!(f, "max {}", max),
-            BossbarSetType::Name(name) => write!(f, "name {}", name),
-            BossbarSetType::Players(players) => {
+            Self::Color(color) => write!(f, "color {}", color),
+            Self::Max(max) => write!(f, "max {}", max),
+            Self::Name(name) => write!(f, "name {}", name),
+            Self::Players(players) => {
                 f.write_str("players")?;
 
                 if let Some(players) = players {
@@ -40,9 +33,9 @@ impl Display for BossbarSetType {
 
                 Ok(())
             }
-            BossbarSetType::Style(style) => write!(f, "style {}", style),
-            BossbarSetType::Value(value) => write!(f, "value {}", value),
-            BossbarSetType::Visible(visible) => write!(f, "visible {}", visible),
+            Self::Style(style) => write!(f, "style {}", style),
+            Self::Value(value) => write!(f, "value {}", value),
+            Self::Visible(visible) => write!(f, "visible {}", visible),
         }
     }
 }
@@ -59,11 +52,11 @@ pub enum BossbarCommand {
 impl Display for BossbarCommand {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            BossbarCommand::Add(id, name) => write!(f, "add {} {}", id, name),
-            BossbarCommand::Get(id, type_) => write!(f, "get {} {}", id, type_),
-            BossbarCommand::List => f.write_str("list"),
-            BossbarCommand::Remove(id) => write!(f, "remove {}", id),
-            BossbarCommand::Set(id, set_type) => write!(f, "set {} {}", id, set_type),
+            Self::Add(id, name) => write!(f, "add {} {}", id, name),
+            Self::Get(id, type_) => write!(f, "get {} {}", id, type_),
+            Self::List => f.write_str("list"),
+            Self::Remove(id) => write!(f, "remove {}", id),
+            Self::Set(id, set_type) => write!(f, "set {} {}", id, set_type),
         }
     }
 }

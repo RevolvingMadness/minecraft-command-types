@@ -11,9 +11,9 @@ pub enum LocateType {
 impl Display for LocateType {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            LocateType::Structure => f.write_str("structure"),
-            LocateType::Biome => f.write_str("biome"),
-            LocateType::POI => f.write_str("poi"),
+            Self::Structure => f.write_str("structure"),
+            Self::Biome => f.write_str("biome"),
+            Self::POI => f.write_str("poi"),
         }
     }
 }

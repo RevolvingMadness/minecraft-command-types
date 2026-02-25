@@ -14,8 +14,8 @@ pub enum FacingRotateCommand {
 impl Display for FacingRotateCommand {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            FacingRotateCommand::Coordinates(coordinates) => coordinates.fmt(f),
-            FacingRotateCommand::Entity(selector, anchor) => {
+            Self::Coordinates(coordinates) => coordinates.fmt(f),
+            Self::Entity(selector, anchor) => {
                 write!(f, "entity {}", selector)?;
 
                 if let Some(anchor) = anchor {
@@ -37,8 +37,8 @@ pub enum RotateCommand {
 impl Display for RotateCommand {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            RotateCommand::Rotation(rotation) => rotation.fmt(f),
-            RotateCommand::Facing(command) => {
+            Self::Rotation(rotation) => rotation.fmt(f),
+            Self::Facing(command) => {
                 write!(f, "facing {}", command)
             }
         }

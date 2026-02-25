@@ -14,9 +14,9 @@ impl Serialize for Format {
         S: Serializer,
     {
         match self {
-            Format::Integer(i) => serializer.serialize_i32(*i),
+            Self::Integer(i) => serializer.serialize_i32(*i),
 
-            Format::Array(a, b) => {
+            Self::Array(a, b) => {
                 let mut seq = serializer.serialize_tuple(2)?;
 
                 seq.serialize_element(a)?;

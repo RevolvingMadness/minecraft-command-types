@@ -22,7 +22,7 @@ pub enum ParticleCommand {
 impl Display for ParticleCommand {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            ParticleCommand::Regular(name, pos) => {
+            Self::Regular(name, pos) => {
                 name.fmt(f)?;
 
                 if let Some(pos) = pos {
@@ -31,7 +31,7 @@ impl Display for ParticleCommand {
 
                 Ok(())
             }
-            ParticleCommand::Extra(name, pos, delta, speed, count, display_type, viewers) => {
+            Self::Extra(name, pos, delta, speed, count, display_type, viewers) => {
                 write!(f, "{} {} {} {} {}", name, pos, delta, speed, count)?;
 
                 if let Some(display_type) = display_type {

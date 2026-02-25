@@ -50,7 +50,7 @@ pub struct Tag {
 }
 
 impl Tag {
-    pub fn extend(&mut self, other: Tag) {
+    pub fn extend(&mut self, other: Self) {
         self.replace = other.replace;
 
         self.values.extend(other.values);
@@ -59,13 +59,10 @@ impl Tag {
 
 impl TagType {
     #[must_use]
-    pub fn is_worldgen(&self) -> bool {
+    pub const fn is_worldgen(&self) -> bool {
         matches!(
             self,
-            TagType::Biome
-                | TagType::FlatLevelGeneratorPreset
-                | TagType::Structure
-                | TagType::WorldPreset
+            Self::Biome | Self::FlatLevelGeneratorPreset | Self::Structure | Self::WorldPreset
         )
     }
 }
@@ -89,7 +86,7 @@ pub struct Worldgen {
 }
 
 impl Worldgen {
-    pub fn merge(&mut self, other: Worldgen) {
+    pub fn merge(&mut self, other: Self) {
         self.biome.extend(other.biome);
         self.configured_carver.extend(other.configured_carver);
         self.configured_feature.extend(other.configured_feature);

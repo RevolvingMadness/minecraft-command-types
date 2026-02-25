@@ -14,10 +14,10 @@ pub enum DatapackLoadPriority {
 impl Display for DatapackLoadPriority {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            DatapackLoadPriority::First => f.write_str("first"),
-            DatapackLoadPriority::Last => f.write_str("last"),
-            DatapackLoadPriority::Before(existing) => write!(f, "before {}", existing),
-            DatapackLoadPriority::After(existing) => write!(f, "after {}", existing),
+            Self::First => f.write_str("first"),
+            Self::Last => f.write_str("last"),
+            Self::Before(existing) => write!(f, "before {}", existing),
+            Self::After(existing) => write!(f, "after {}", existing),
         }
     }
 }
@@ -33,10 +33,10 @@ pub enum DatapackCommand {
 impl Display for DatapackCommand {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            DatapackCommand::Disable(name) => {
+            Self::Disable(name) => {
                 write!(f, "disable {}", name)
             }
-            DatapackCommand::Enable(name, load_priority) => {
+            Self::Enable(name, load_priority) => {
                 write!(f, "enable {}", name)?;
 
                 if let Some(load_priority) = load_priority {
@@ -45,7 +45,7 @@ impl Display for DatapackCommand {
 
                 Ok(())
             }
-            DatapackCommand::List(list_type) => {
+            Self::List(list_type) => {
                 f.write_str("list")?;
 
                 if let Some(list_type) = list_type {
@@ -54,7 +54,7 @@ impl Display for DatapackCommand {
 
                 Ok(())
             }
-            DatapackCommand::Create(id, description) => {
+            Self::Create(id, description) => {
                 write!(f, "create {} {}", id, description)
             }
         }

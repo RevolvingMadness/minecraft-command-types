@@ -12,9 +12,9 @@ pub enum ReturnCommand {
 impl Display for ReturnCommand {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            ReturnCommand::Value(v) => write!(f, "{}", v),
-            ReturnCommand::Fail => f.write_str("fail"),
-            ReturnCommand::Run(command) => write!(f, "run {}", command),
+            Self::Value(v) => write!(f, "{}", v),
+            Self::Fail => f.write_str("fail"),
+            Self::Run(command) => write!(f, "run {}", command),
         }
     }
 }

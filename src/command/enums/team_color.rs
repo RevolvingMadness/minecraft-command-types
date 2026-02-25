@@ -23,24 +23,24 @@ create_enum!(
 );
 
 impl From<TeamColor> for TeamColorWithReset {
-    fn from(team_color: TeamColor) -> TeamColorWithReset {
+    fn from(team_color: TeamColor) -> Self {
         match team_color {
-            TeamColor::Black => TeamColorWithReset::Black,
-            TeamColor::DarkBlue => TeamColorWithReset::DarkBlue,
-            TeamColor::DarkGreen => TeamColorWithReset::DarkGreen,
-            TeamColor::DarkAqua => TeamColorWithReset::DarkAqua,
-            TeamColor::DarkRed => TeamColorWithReset::DarkRed,
-            TeamColor::DarkPurple => TeamColorWithReset::DarkPurple,
-            TeamColor::Gold => TeamColorWithReset::Gold,
-            TeamColor::Gray => TeamColorWithReset::Gray,
-            TeamColor::DarkGray => TeamColorWithReset::DarkGray,
-            TeamColor::Blue => TeamColorWithReset::Blue,
-            TeamColor::Green => TeamColorWithReset::Green,
-            TeamColor::Aqua => TeamColorWithReset::Aqua,
-            TeamColor::Red => TeamColorWithReset::Red,
-            TeamColor::LightPurple => TeamColorWithReset::LightPurple,
-            TeamColor::Yellow => TeamColorWithReset::Yellow,
-            TeamColor::White => TeamColorWithReset::White,
+            TeamColor::Black => Self::Black,
+            TeamColor::DarkBlue => Self::DarkBlue,
+            TeamColor::DarkGreen => Self::DarkGreen,
+            TeamColor::DarkAqua => Self::DarkAqua,
+            TeamColor::DarkRed => Self::DarkRed,
+            TeamColor::DarkPurple => Self::DarkPurple,
+            TeamColor::Gold => Self::Gold,
+            TeamColor::Gray => Self::Gray,
+            TeamColor::DarkGray => Self::DarkGray,
+            TeamColor::Blue => Self::Blue,
+            TeamColor::Green => Self::Green,
+            TeamColor::Aqua => Self::Aqua,
+            TeamColor::Red => Self::Red,
+            TeamColor::LightPurple => Self::LightPurple,
+            TeamColor::Yellow => Self::Yellow,
+            TeamColor::White => Self::White,
         }
     }
 }

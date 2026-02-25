@@ -12,8 +12,8 @@ pub enum DamageType {
 impl Display for DamageType {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            DamageType::At(coordinates) => write!(f, "at {}", coordinates),
-            DamageType::By(by, from) => {
+            Self::At(coordinates) => write!(f, "at {}", coordinates),
+            Self::By(by, from) => {
                 write!(f, "by {}", by)?;
 
                 if let Some(from) = from {

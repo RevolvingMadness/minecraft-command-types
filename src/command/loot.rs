@@ -17,10 +17,10 @@ pub enum LootTarget {
 impl Display for LootTarget {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            LootTarget::Give(selector) => write!(f, "give {}", selector),
-            LootTarget::Insert(coords) => write!(f, "insert {}", coords),
-            LootTarget::Spawn(coords) => write!(f, "spawn {}", coords),
-            LootTarget::Replace(item_source, slot, count) => {
+            Self::Give(selector) => write!(f, "give {}", selector),
+            Self::Insert(coords) => write!(f, "insert {}", coords),
+            Self::Spawn(coords) => write!(f, "spawn {}", coords),
+            Self::Replace(item_source, slot, count) => {
                 write!(f, "replace {} {}", item_source, slot)?;
 
                 if let Some(count) = count {
@@ -43,9 +43,9 @@ pub enum LootItemSource {
 impl Display for LootItemSource {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            LootItemSource::Tool(tool) => tool.fmt(f),
-            LootItemSource::Mainhand => f.write_str("mainhand"),
-            LootItemSource::Offhand => f.write_str("offhand"),
+            Self::Tool(tool) => tool.fmt(f),
+            Self::Mainhand => f.write_str("mainhand"),
+            Self::Offhand => f.write_str("offhand"),
         }
     }
 }
@@ -61,7 +61,7 @@ pub enum LootSource {
 impl Display for LootSource {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            LootSource::Fish(loot_table, pos, item_source) => {
+            Self::Fish(loot_table, pos, item_source) => {
                 write!(f, "fish {} {}", loot_table, pos)?;
 
                 if let Some(item_source) = item_source {
@@ -70,13 +70,13 @@ impl Display for LootSource {
 
                 Ok(())
             }
-            LootSource::Loot(loot_table) => {
+            Self::Loot(loot_table) => {
                 write!(f, "loot {}", loot_table)
             }
-            LootSource::Kill(selector) => {
+            Self::Kill(selector) => {
                 write!(f, "kill {}", selector)
             }
-            LootSource::Mine(coordinates, item_source) => {
+            Self::Mine(coordinates, item_source) => {
                 write!(f, "mine {}", coordinates)?;
 
                 if let Some(item_source) = item_source {

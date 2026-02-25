@@ -11,12 +11,7 @@ pub enum RunfailedTestCommand {
 impl Display for RunfailedTestCommand {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            RunfailedTestCommand::NumberOfTimes(
-                number_of_times,
-                until_failed,
-                rotation_steps,
-                tests_per_row,
-            ) => {
+            Self::NumberOfTimes(number_of_times, until_failed, rotation_steps, tests_per_row) => {
                 if let Some(number_of_times) = number_of_times {
                     write!(f, " {}", number_of_times)?;
 
@@ -35,7 +30,7 @@ impl Display for RunfailedTestCommand {
 
                 Ok(())
             }
-            RunfailedTestCommand::OnlyRequiredTest(only_required_tests, number_of_times) => {
+            Self::OnlyRequiredTest(only_required_tests, number_of_times) => {
                 if let Some(only_required_tests) = only_required_tests {
                     write!(f, " {}", only_required_tests)?;
 
@@ -84,7 +79,7 @@ pub enum TestCommand {
 impl Display for TestCommand {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            TestCommand::ClearAll(radius) => {
+            Self::ClearAll(radius) => {
                 f.write_str("clearall")?;
 
                 if let Some(radius) = radius {
@@ -93,9 +88,9 @@ impl Display for TestCommand {
 
                 Ok(())
             }
-            TestCommand::ClearThat => f.write_str("clearthat"),
-            TestCommand::ClearThese => f.write_str("clearthese"),
-            TestCommand::Create(location, width, height_depth) => {
+            Self::ClearThat => f.write_str("clearthat"),
+            Self::ClearThese => f.write_str("clearthese"),
+            Self::Create(location, width, height_depth) => {
                 write!(f, "create {}", location)?;
 
                 if let Some(width) = width {
@@ -108,8 +103,8 @@ impl Display for TestCommand {
 
                 Ok(())
             }
-            TestCommand::Locate(location) => write!(f, "locate {}", location),
-            TestCommand::Pos(variable) => {
+            Self::Locate(location) => write!(f, "locate {}", location),
+            Self::Pos(variable) => {
                 f.write_str("pos")?;
 
                 if let Some(variable) = variable {
@@ -118,16 +113,10 @@ impl Display for TestCommand {
 
                 Ok(())
             }
-            TestCommand::ResetClosest => f.write_str("resetclosest"),
-            TestCommand::ResetThat => f.write_str("resetthat"),
-            TestCommand::ResetThese => f.write_str("resetthese"),
-            TestCommand::Run(
-                location,
-                number_of_times,
-                until_failed,
-                rotation_step,
-                tests_per_row,
-            ) => {
+            Self::ResetClosest => f.write_str("resetclosest"),
+            Self::ResetThat => f.write_str("resetthat"),
+            Self::ResetThese => f.write_str("resetthese"),
+            Self::Run(location, number_of_times, until_failed, rotation_step, tests_per_row) => {
                 write!(f, "run {}", location)?;
 
                 if let Some(number_of_times) = number_of_times {
@@ -148,7 +137,7 @@ impl Display for TestCommand {
 
                 Ok(())
             }
-            TestCommand::RunClosest(number_of_times, until_failed) => {
+            Self::RunClosest(number_of_times, until_failed) => {
                 f.write_str("runclosest")?;
 
                 if let Some(number_of_times) = number_of_times {
@@ -161,7 +150,7 @@ impl Display for TestCommand {
 
                 Ok(())
             }
-            TestCommand::RunThat(number_of_times, until_failed) => {
+            Self::RunThat(number_of_times, until_failed) => {
                 f.write_str("runthat")?;
 
                 if let Some(number_of_times) = number_of_times {
@@ -174,7 +163,7 @@ impl Display for TestCommand {
 
                 Ok(())
             }
-            TestCommand::RunThese(number_of_times, until_failed) => {
+            Self::RunThese(number_of_times, until_failed) => {
                 f.write_str("runthese")?;
 
                 if let Some(number_of_times) = number_of_times {
@@ -187,7 +176,7 @@ impl Display for TestCommand {
 
                 Ok(())
             }
-            TestCommand::RunMultiple(location, amount) => {
+            Self::RunMultiple(location, amount) => {
                 write!(f, "runmultiple {}", location)?;
 
                 if let Some(amount) = amount {
@@ -196,13 +185,13 @@ impl Display for TestCommand {
 
                 Ok(())
             }
-            TestCommand::RunFailed(command) => write!(f, "runfailed {}", command),
-            TestCommand::Stop => f.write_str("stop"),
-            TestCommand::Verify(location) => write!(f, "verify {}", location),
-            TestCommand::Export(location) => write!(f, "export {}", location),
-            TestCommand::ExportClosest => f.write_str("exportclosest"),
-            TestCommand::ExportThat => f.write_str("exportthat"),
-            TestCommand::ExportThese => f.write_str("exportthese"),
+            Self::RunFailed(command) => write!(f, "runfailed {}", command),
+            Self::Stop => f.write_str("stop"),
+            Self::Verify(location) => write!(f, "verify {}", location),
+            Self::Export(location) => write!(f, "export {}", location),
+            Self::ExportClosest => f.write_str("exportclosest"),
+            Self::ExportThat => f.write_str("exportthat"),
+            Self::ExportThese => f.write_str("exportthese"),
         }
     }
 }

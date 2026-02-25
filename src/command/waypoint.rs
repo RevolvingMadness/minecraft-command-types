@@ -14,9 +14,9 @@ pub enum WaypointColor {
 impl Display for WaypointColor {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            WaypointColor::Color(color) => color.fmt(f),
-            WaypointColor::Hex(hex) => write!(f, "hex {}", hex),
-            WaypointColor::Reset => f.write_str("reset"),
+            Self::Color(color) => color.fmt(f),
+            Self::Hex(hex) => write!(f, "hex {}", hex),
+            Self::Reset => f.write_str("reset"),
         }
     }
 }
@@ -30,8 +30,8 @@ pub enum WaypointStyleModification {
 impl Display for WaypointStyleModification {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            WaypointStyleModification::Set(style) => write!(f, "set {}", style),
-            WaypointStyleModification::Reset => f.write_str("reset"),
+            Self::Set(style) => write!(f, "set {}", style),
+            Self::Reset => f.write_str("reset"),
         }
     }
 }
@@ -45,8 +45,8 @@ pub enum WaypointModification {
 impl Display for WaypointModification {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            WaypointModification::Color(color) => write!(f, "color {}", color),
-            WaypointModification::Style(style) => write!(f, "style {}", style),
+            Self::Color(color) => write!(f, "color {}", color),
+            Self::Style(style) => write!(f, "style {}", style),
         }
     }
 }
@@ -60,8 +60,8 @@ pub enum WaypointCommand {
 impl Display for WaypointCommand {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            WaypointCommand::List => f.write_str("list"),
-            WaypointCommand::Modify(selector, modification) => {
+            Self::List => f.write_str("list"),
+            Self::Modify(selector, modification) => {
                 write!(f, "modify {} {}", selector, modification)
             }
         }

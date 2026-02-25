@@ -13,8 +13,8 @@ pub enum RandomResetType {
 impl Display for RandomResetType {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            RandomResetType::All => f.write_str("*"),
-            RandomResetType::Sequence(sequence) => sequence.fmt(f),
+            Self::All => f.write_str("*"),
+            Self::Sequence(sequence) => sequence.fmt(f),
         }
     }
 }
@@ -28,7 +28,7 @@ pub enum RandomCommand {
 impl Display for RandomCommand {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            RandomCommand::ValueRoll(random_type, range, sequence) => {
+            Self::ValueRoll(random_type, range, sequence) => {
                 write!(f, "{} {}", random_type, range)?;
 
                 if let Some(sequence) = sequence {
@@ -37,7 +37,7 @@ impl Display for RandomCommand {
 
                 Ok(())
             }
-            RandomCommand::Reset(reset_type, seed, include_world_seed, include_sequence_id) => {
+            Self::Reset(reset_type, seed, include_world_seed, include_sequence_id) => {
                 write!(f, "reset {}", reset_type)?;
 
                 if let Some(seed) = seed {

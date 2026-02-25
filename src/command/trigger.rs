@@ -10,8 +10,8 @@ pub enum TriggerAction {
 impl Display for TriggerAction {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            TriggerAction::Add(amount) => write!(f, "add {}", amount),
-            TriggerAction::Set(amount) => write!(f, "set {}", amount),
+            Self::Add(amount) => write!(f, "add {}", amount),
+            Self::Set(amount) => write!(f, "set {}", amount),
         }
     }
 }

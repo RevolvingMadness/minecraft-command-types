@@ -14,10 +14,10 @@ pub enum StopwatchCommand {
 impl Display for StopwatchCommand {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            StopwatchCommand::Create(location) => {
+            Self::Create(location) => {
                 write!(f, "create {}", location)
             }
-            StopwatchCommand::Query(location, scale) => {
+            Self::Query(location, scale) => {
                 write!(f, "query {}", location)?;
 
                 if let Some(scale) = scale {
@@ -26,10 +26,10 @@ impl Display for StopwatchCommand {
 
                 Ok(())
             }
-            StopwatchCommand::Restart(location) => {
+            Self::Restart(location) => {
                 write!(f, "restart {}", location)
             }
-            StopwatchCommand::Remove(location) => {
+            Self::Remove(location) => {
                 write!(f, "remove {}", location)
             }
         }

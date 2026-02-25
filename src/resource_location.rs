@@ -88,10 +88,8 @@ pub enum ResourceLocationParseError {
 impl Display for ResourceLocationParseError {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            ResourceLocationParseError::EmptyString => {
-                f.write_str("Resource location string cannot be empty")
-            }
-            ResourceLocationParseError::InvalidFormat(msg) => {
+            Self::EmptyString => f.write_str("Resource location string cannot be empty"),
+            Self::InvalidFormat(msg) => {
                 write!(f, "Invalid resource location format: {}", msg)
             }
         }
@@ -148,7 +146,7 @@ impl FromStr for ResourceLocation {
 
         let namespace = namespace_raw.map(ToString::to_string);
 
-        Ok(ResourceLocation {
+        Ok(Self {
             is_tag,
             namespace,
             paths,

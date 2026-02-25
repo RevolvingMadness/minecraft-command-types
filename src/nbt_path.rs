@@ -28,16 +28,14 @@ pub enum NbtPathNode {
 }
 
 impl NbtPathNode {
-    #[inline]
     #[must_use]
-    pub fn named(name: SNBTString) -> Self {
-        NbtPathNode::Named(name, None)
+    pub const fn named(name: SNBTString) -> Self {
+        Self::Named(name, None)
     }
 
-    #[inline]
     #[must_use]
-    pub fn named_string(name: String) -> Self {
-        NbtPathNode::named(SNBTString(false, name))
+    pub const fn named_string(name: String) -> Self {
+        Self::named(SNBTString(false, name))
     }
 }
 
@@ -73,8 +71,8 @@ impl NbtPath {
 impl Display for NbtPathNode {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            NbtPathNode::RootCompound(compound) => fmt_snbt_compound(f, compound),
-            NbtPathNode::Named(SNBTString(_, name), filter) => {
+            Self::RootCompound(compound) => fmt_snbt_compound(f, compound),
+            Self::Named(SNBTString(_, name), filter) => {
                 f.write_str(&escape_nbt_path_key(name))?;
 
                 if let Some(filter) = filter
@@ -84,8 +82,8 @@ impl Display for NbtPathNode {
                 }
                 Ok(())
             }
-            NbtPathNode::Index(Some(snbt)) => write!(f, "[{}]", snbt),
-            NbtPathNode::Index(None) => write!(f, "[]"),
+            Self::Index(Some(snbt)) => write!(f, "[{}]", snbt),
+            Self::Index(None) => write!(f, "[]"),
         }
     }
 }

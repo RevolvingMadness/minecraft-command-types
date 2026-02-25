@@ -12,10 +12,10 @@ pub enum DialogCommand {
 impl Display for DialogCommand {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            DialogCommand::Show(selector, dialog) => {
+            Self::Show(selector, dialog) => {
                 write!(f, "show {} {}", selector, dialog)
             }
-            DialogCommand::Clear(selector) => {
+            Self::Clear(selector) => {
                 write!(f, "clear {}", selector)
             }
         }

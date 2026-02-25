@@ -12,9 +12,9 @@ pub enum CloneMaskMode {
 impl Display for CloneMaskMode {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            CloneMaskMode::Replace => write!(f, "replace"),
-            CloneMaskMode::Masked => write!(f, "masked"),
-            CloneMaskMode::Filtered(block) => write!(f, "filtered {}", block),
+            Self::Replace => write!(f, "replace"),
+            Self::Masked => write!(f, "masked"),
+            Self::Filtered(block) => write!(f, "filtered {}", block),
         }
     }
 }

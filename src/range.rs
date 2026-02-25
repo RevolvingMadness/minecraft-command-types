@@ -11,7 +11,7 @@ pub struct IntegerRange {
 
 impl IntegerRange {
     #[must_use]
-    pub fn new(min: Option<i32>, max: Option<i32>) -> IntegerRange {
+    pub fn new(min: Option<i32>, max: Option<i32>) -> Self {
         assert!(
             min.is_some() || max.is_some(),
             "min and/or max must be Some"
@@ -23,30 +23,30 @@ impl IntegerRange {
             panic!("min must be smaller or equal to max");
         }
 
-        IntegerRange { min, max }
+        Self { min, max }
     }
 
     #[inline]
     #[must_use]
-    pub fn new_min(min: i32) -> IntegerRange {
+    pub fn new_min(min: i32) -> Self {
         Self::new(Some(min), None)
     }
 
     #[inline]
     #[must_use]
-    pub fn new_max(max: i32) -> IntegerRange {
+    pub fn new_max(max: i32) -> Self {
         Self::new(None, Some(max))
     }
 
     #[inline]
     #[must_use]
-    pub fn new_min_max(min: i32, max: i32) -> IntegerRange {
+    pub fn new_min_max(min: i32, max: i32) -> Self {
         Self::new(Some(min), Some(max))
     }
 
     #[inline]
     #[must_use]
-    pub fn new_single(value: i32) -> IntegerRange {
+    pub fn new_single(value: i32) -> Self {
         Self::new(Some(value), Some(value))
     }
 }
@@ -76,37 +76,37 @@ impl Display for IntegerRange {
 
 impl From<(i32, i32)> for IntegerRange {
     fn from(value: (i32, i32)) -> Self {
-        IntegerRange::new_min_max(value.0, value.1)
+        Self::new_min_max(value.0, value.1)
     }
 }
 
 impl From<(Option<i32>, i32)> for IntegerRange {
     fn from(value: (Option<i32>, i32)) -> Self {
-        IntegerRange::new(value.0, Some(value.1))
+        Self::new(value.0, Some(value.1))
     }
 }
 
 impl From<(i32, Option<i32>)> for IntegerRange {
     fn from(value: (i32, Option<i32>)) -> Self {
-        IntegerRange::new(Some(value.0), value.1)
+        Self::new(Some(value.0), value.1)
     }
 }
 
 impl From<(Option<i32>, Option<i32>)> for IntegerRange {
     fn from(value: (Option<i32>, Option<i32>)) -> Self {
-        IntegerRange::new(value.0, value.1)
+        Self::new(value.0, value.1)
     }
 }
 
 impl From<Range<i32>> for IntegerRange {
     fn from(value: Range<i32>) -> Self {
-        IntegerRange::new_min_max(value.start, value.end)
+        Self::new_min_max(value.start, value.end)
     }
 }
 
 impl From<Range<Option<i32>>> for IntegerRange {
     fn from(value: Range<Option<i32>>) -> Self {
-        IntegerRange::new(value.start, value.end)
+        Self::new(value.start, value.end)
     }
 }
 
@@ -118,7 +118,7 @@ pub struct FloatRange {
 
 impl FloatRange {
     #[must_use]
-    pub fn new(min: Option<NotNan<f32>>, max: Option<NotNan<f32>>) -> FloatRange {
+    pub fn new(min: Option<NotNan<f32>>, max: Option<NotNan<f32>>) -> Self {
         assert!(
             min.is_some() || max.is_some(),
             "min and/or max must be Some"
@@ -130,30 +130,30 @@ impl FloatRange {
             panic!("min must be smaller or equal to max");
         }
 
-        FloatRange { min, max }
+        Self { min, max }
     }
 
     #[inline]
     #[must_use]
-    pub fn new_min(min: NotNan<f32>) -> FloatRange {
+    pub fn new_min(min: NotNan<f32>) -> Self {
         Self::new(Some(min), None)
     }
 
     #[inline]
     #[must_use]
-    pub fn new_max(max: NotNan<f32>) -> FloatRange {
+    pub fn new_max(max: NotNan<f32>) -> Self {
         Self::new(None, Some(max))
     }
 
     #[inline]
     #[must_use]
-    pub fn new_min_max(min: NotNan<f32>, max: NotNan<f32>) -> FloatRange {
+    pub fn new_min_max(min: NotNan<f32>, max: NotNan<f32>) -> Self {
         Self::new(Some(min), Some(max))
     }
 
     #[inline]
     #[must_use]
-    pub fn new_single(value: NotNan<f32>) -> FloatRange {
+    pub fn new_single(value: NotNan<f32>) -> Self {
         Self::new(Some(value), Some(value))
     }
 }
@@ -183,36 +183,36 @@ impl Display for FloatRange {
 
 impl From<(NotNan<f32>, NotNan<f32>)> for FloatRange {
     fn from(value: (NotNan<f32>, NotNan<f32>)) -> Self {
-        FloatRange::new_min_max(value.0, value.1)
+        Self::new_min_max(value.0, value.1)
     }
 }
 
 impl From<(Option<NotNan<f32>>, NotNan<f32>)> for FloatRange {
     fn from(value: (Option<NotNan<f32>>, NotNan<f32>)) -> Self {
-        FloatRange::new(value.0, Some(value.1))
+        Self::new(value.0, Some(value.1))
     }
 }
 
 impl From<(NotNan<f32>, Option<NotNan<f32>>)> for FloatRange {
     fn from(value: (NotNan<f32>, Option<NotNan<f32>>)) -> Self {
-        FloatRange::new(Some(value.0), value.1)
+        Self::new(Some(value.0), value.1)
     }
 }
 
 impl From<(Option<NotNan<f32>>, Option<NotNan<f32>>)> for FloatRange {
     fn from(value: (Option<NotNan<f32>>, Option<NotNan<f32>>)) -> Self {
-        FloatRange::new(value.0, value.1)
+        Self::new(value.0, value.1)
     }
 }
 
 impl From<Range<NotNan<f32>>> for FloatRange {
     fn from(value: Range<NotNan<f32>>) -> Self {
-        FloatRange::new_min_max(value.start, value.end)
+        Self::new_min_max(value.start, value.end)
     }
 }
 
 impl From<Range<Option<NotNan<f32>>>> for FloatRange {
     fn from(value: Range<Option<NotNan<f32>>>) -> Self {
-        FloatRange::new(value.start, value.end)
+        Self::new(value.start, value.end)
     }
 }

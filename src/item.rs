@@ -13,9 +13,9 @@ pub enum ItemTest {
 impl Display for ItemTest {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            ItemTest::Component(id) => id.fmt(f),
-            ItemTest::ComponentMatches(id, value) => write!(f, "{}={}", id, value),
-            ItemTest::Predicate(id, value) => write!(f, "{}~{}", id, value),
+            Self::Component(id) => id.fmt(f),
+            Self::ComponentMatches(id, value) => write!(f, "{}={}", id, value),
+            Self::Predicate(id, value) => write!(f, "{}~{}", id, value),
         }
     }
 }
@@ -29,8 +29,8 @@ pub enum ItemType {
 impl Display for ItemType {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            ItemType::ResourceLocation(resource_location) => resource_location.fmt(f),
-            ItemType::Wildcard => f.write_str("*"),
+            Self::ResourceLocation(resource_location) => resource_location.fmt(f),
+            Self::Wildcard => f.write_str("*"),
         }
     }
 }
@@ -77,9 +77,8 @@ impl Display for ItemPredicate {
 }
 
 impl ItemPredicate {
-    #[inline]
     #[must_use]
-    pub fn new(id: ItemType) -> Self {
+    pub const fn new(id: ItemType) -> Self {
         Self {
             id,
             or_groups: Vec::new(),
@@ -110,10 +109,10 @@ pub enum ItemComponent {
 impl Display for ItemComponent {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            ItemComponent::KeyValue(component, value) => {
+            Self::KeyValue(component, value) => {
                 write!(f, "{}={}", component, value)
             }
-            ItemComponent::Remove(component) => write!(f, "!{}", component),
+            Self::Remove(component) => write!(f, "!{}", component),
         }
     }
 }

@@ -16,9 +16,9 @@ pub enum ScoreboardNumberFormat {
 impl Display for ScoreboardNumberFormat {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            ScoreboardNumberFormat::Blank => f.write_str("blank"),
-            ScoreboardNumberFormat::Fixed(snbt) => write!(f, "fixed {}", snbt),
-            ScoreboardNumberFormat::Styled(style) => write!(f, "styled {}", style),
+            Self::Blank => f.write_str("blank"),
+            Self::Fixed(snbt) => write!(f, "fixed {}", snbt),
+            Self::Styled(style) => write!(f, "styled {}", style),
         }
     }
 }
@@ -34,13 +34,13 @@ pub enum ScoreboardModification {
 impl Display for ScoreboardModification {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            ScoreboardModification::DisplayAutoUpdate(value) => {
+            Self::DisplayAutoUpdate(value) => {
                 write!(f, "displayautoupdate {}", value)
             }
-            ScoreboardModification::DisplayName(display_name) => {
+            Self::DisplayName(display_name) => {
                 write!(f, "displayname {}", display_name)
             }
-            ScoreboardModification::NumberFormat(number_format) => {
+            Self::NumberFormat(number_format) => {
                 f.write_str("numberformat")?;
 
                 if let Some(number_format) = number_format {
@@ -49,7 +49,7 @@ impl Display for ScoreboardModification {
 
                 Ok(())
             }
-            ScoreboardModification::RenderType(render_type) => {
+            Self::RenderType(render_type) => {
                 write!(f, "rendertype {}", render_type)
             }
         }
@@ -68,8 +68,8 @@ pub enum ObjectivesScoreboardCommand {
 impl Display for ObjectivesScoreboardCommand {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            ObjectivesScoreboardCommand::List => f.write_str("list"),
-            ObjectivesScoreboardCommand::Add(name, criterion, display_name) => {
+            Self::List => f.write_str("list"),
+            Self::Add(name, criterion, display_name) => {
                 write!(f, "add {} {}", name, criterion)?;
 
                 if let Some(display_name) = display_name {
@@ -78,10 +78,10 @@ impl Display for ObjectivesScoreboardCommand {
 
                 Ok(())
             }
-            ObjectivesScoreboardCommand::Remove(name) => {
+            Self::Remove(name) => {
                 write!(f, "remove {}", name)
             }
-            ObjectivesScoreboardCommand::SetDisplay(slot, name) => {
+            Self::SetDisplay(slot, name) => {
                 write!(f, "setdisplay {}", slot)?;
 
                 if let Some(name) = name {
@@ -90,7 +90,7 @@ impl Display for ObjectivesScoreboardCommand {
 
                 Ok(())
             }
-            ObjectivesScoreboardCommand::Modify(name, modification) => {
+            Self::Modify(name, modification) => {
                 write!(f, "modify {} {}", name, modification)
             }
         }
@@ -106,7 +106,7 @@ pub enum PlayersDisplayScoreboardCommand {
 impl Display for PlayersDisplayScoreboardCommand {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            PlayersDisplayScoreboardCommand::Name(score, text) => {
+            Self::Name(score, text) => {
                 write!(f, "name {}", score)?;
 
                 if let Some(text) = text {
@@ -115,7 +115,7 @@ impl Display for PlayersDisplayScoreboardCommand {
 
                 Ok(())
             }
-            PlayersDisplayScoreboardCommand::NumberFormat(score, number_format) => {
+            Self::NumberFormat(score, number_format) => {
                 write!(f, "numberformat {}", score)?;
 
                 if let Some(number_format) = number_format {
@@ -144,7 +144,7 @@ pub enum PlayersScoreboardCommand {
 impl Display for PlayersScoreboardCommand {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            PlayersScoreboardCommand::List(selector) => {
+            Self::List(selector) => {
                 f.write_str("list")?;
 
                 if let Some(selector) = selector {
@@ -153,27 +153,27 @@ impl Display for PlayersScoreboardCommand {
 
                 Ok(())
             }
-            PlayersScoreboardCommand::Get(score) => {
+            Self::Get(score) => {
                 write!(f, "get {}", score)
             }
-            PlayersScoreboardCommand::Set(score, value) => {
+            Self::Set(score, value) => {
                 write!(f, "set {} {}", score, value)
             }
-            PlayersScoreboardCommand::Add(score, value) => {
+            Self::Add(score, value) => {
                 if *value >= 0 {
                     write!(f, "add {} {}", score, value)
                 } else {
                     write!(f, "remove {} {}", score, -value)
                 }
             }
-            PlayersScoreboardCommand::Remove(score, value) => {
+            Self::Remove(score, value) => {
                 if *value >= 0 {
                     write!(f, "remove {} {}", score, value)
                 } else {
                     write!(f, "add {} {}", score, -value)
                 }
             }
-            PlayersScoreboardCommand::Reset(selector, objective) => {
+            Self::Reset(selector, objective) => {
                 write!(f, "reset {}", selector)?;
 
                 if let Some(objective) = objective {
@@ -182,13 +182,13 @@ impl Display for PlayersScoreboardCommand {
 
                 Ok(())
             }
-            PlayersScoreboardCommand::Enable(score) => {
+            Self::Enable(score) => {
                 write!(f, "enable {}", score)
             }
-            PlayersScoreboardCommand::Operation(left, operator, right) => {
+            Self::Operation(left, operator, right) => {
                 write!(f, "operation {} {} {}", left, operator, right)
             }
-            PlayersScoreboardCommand::Display(command) => {
+            Self::Display(command) => {
                 write!(f, "display {}", command)
             }
         }
@@ -204,8 +204,8 @@ pub enum ScoreboardCommand {
 impl Display for ScoreboardCommand {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            ScoreboardCommand::Objectives(command) => write!(f, "objectives {}", command),
-            ScoreboardCommand::Players(command) => write!(f, "players {}", command),
+            Self::Objectives(command) => write!(f, "objectives {}", command),
+            Self::Players(command) => write!(f, "players {}", command),
         }
     }
 }

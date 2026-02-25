@@ -10,8 +10,8 @@ pub enum GameruleValue {
 impl Display for GameruleValue {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            GameruleValue::Integer(value) => value.fmt(f),
-            GameruleValue::Boolean(value) => value.fmt(f),
+            Self::Integer(value) => value.fmt(f),
+            Self::Boolean(value) => value.fmt(f),
         }
     }
 }

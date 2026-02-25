@@ -11,9 +11,9 @@ pub enum TagCommand {
 impl Display for TagCommand {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            TagCommand::Add(tag) => write!(f, "add {}", tag),
-            TagCommand::Remove(tag) => write!(f, "remove {}", tag),
-            TagCommand::List => f.write_str("list"),
+            Self::Add(tag) => write!(f, "add {}", tag),
+            Self::Remove(tag) => write!(f, "remove {}", tag),
+            Self::List => f.write_str("list"),
         }
     }
 }

@@ -9,10 +9,9 @@ pub struct ColumnPosition {
 }
 
 impl ColumnPosition {
-    #[inline]
     #[must_use]
-    pub fn new(x: WorldCoordinate, z: WorldCoordinate) -> ColumnPosition {
-        ColumnPosition { x, z }
+    pub const fn new(x: WorldCoordinate, z: WorldCoordinate) -> Self {
+        Self { x, z }
     }
 }
 

@@ -13,7 +13,7 @@ pub enum ScheduleCommand {
 impl Display for ScheduleCommand {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            ScheduleCommand::Function(location, time, mode) => {
+            Self::Function(location, time, mode) => {
                 write!(f, "function {} {}", location, time)?;
 
                 if let Some(mode) = mode {
@@ -22,7 +22,7 @@ impl Display for ScheduleCommand {
 
                 Ok(())
             }
-            ScheduleCommand::Clear(location) => write!(f, "clear {}", location),
+            Self::Clear(location) => write!(f, "clear {}", location),
         }
     }
 }

@@ -82,10 +82,9 @@ pub enum Coordinates {
 }
 
 impl Coordinates {
-    #[inline]
     #[must_use]
-    pub fn new_world(x: WorldCoordinate, y: WorldCoordinate, z: WorldCoordinate) -> Self {
-        Coordinates::World(x, y, z)
+    pub const fn new_world(x: WorldCoordinate, y: WorldCoordinate, z: WorldCoordinate) -> Self {
+        Self::World(x, y, z)
     }
 
     #[inline]
@@ -98,19 +97,17 @@ impl Coordinates {
         )
     }
 
-    #[inline]
     #[must_use]
-    pub fn new_local(
+    pub const fn new_local(
         x: Option<NotNan<f32>>,
         y: Option<NotNan<f32>>,
         z: Option<NotNan<f32>>,
     ) -> Self {
-        Coordinates::Local(x, y, z)
+        Self::Local(x, y, z)
     }
 
-    #[inline]
     #[must_use]
-    pub fn new_local_zero() -> Self {
+    pub const fn new_local_zero() -> Self {
         Self::new_local(None, None, None)
     }
 }
@@ -118,10 +115,10 @@ impl Coordinates {
 impl Display for Coordinates {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            Coordinates::World(x, y, z) => {
+            Self::World(x, y, z) => {
                 write!(f, "{} {} {}", x, y, z)
             }
-            Coordinates::Local(x, y, z) => {
+            Self::Local(x, y, z) => {
                 f.write_str("^")?;
 
                 if let Some(x) = x {
