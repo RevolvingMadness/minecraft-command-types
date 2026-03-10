@@ -287,6 +287,15 @@ impl Datapack {
             namespaces: BTreeMap::new(),
         }
     }
+
+    #[must_use]
+    pub const fn new_pack(pack: PackMCMeta) -> Self {
+        Self {
+            pack,
+            namespaces: BTreeMap::new(),
+        }
+    }
+
     pub fn write(&self, datapack_directory: &Path) -> io::Result<()> {
         fs::create_dir_all(datapack_directory)?;
 
