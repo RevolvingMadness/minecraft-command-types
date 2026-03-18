@@ -1,5 +1,8 @@
 use nonempty::NonEmpty;
-use std::collections::{BTreeMap, BTreeSet};
+use std::{
+    collections::{BTreeMap, BTreeSet, HashMap, HashSet},
+    hash::BuildHasher,
+};
 
 pub trait HasMacro {
     fn has_macro(&self) -> bool;
@@ -93,6 +96,26 @@ impl<K, V: HasMacro> HasMacro for BTreeMap<K, V> {
 }
 
 impl<T: HasMacro> HasMacro for BTreeSet<T> {
+    fn has_macro(&self) -> bool {
+        self.iter().any(HasMacro::has_macro)
+    }
+
+    fn has_macro_conflict(&self) -> bool {
+        self.iter().any(HasMacro::has_macro_conflict)
+    }
+}
+
+impl<K, V: HasMacro, S: BuildHasher> HasMacro for HashMap<K, V, S> {
+    fn has_macro(&self) -> bool {
+        self.values().any(HasMacro::has_macro)
+    }
+
+    fn has_macro_conflict(&self) -> bool {
+        self.values().any(HasMacro::has_macro_conflict)
+    }
+}
+
+impl<T: HasMacro, S: BuildHasher> HasMacro for HashSet<T, S> {
     fn has_macro(&self) -> bool {
         self.iter().any(HasMacro::has_macro)
     }
