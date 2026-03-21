@@ -1,8 +1,8 @@
-use crate::coordinate::Coordinates;
 use crate::entity_selector::EntitySelector;
 use crate::nbt_path::NbtPath;
 use crate::resource_location::ResourceLocation;
 use crate::snbt::SNBT;
+use crate::{coordinate::Coordinates, macroable::Macroable};
 use minecraft_command_types_derive::HasMacro;
 use ordered_float::NotNan;
 use std::fmt::{Display, Formatter};
@@ -34,7 +34,7 @@ impl Display for DataTarget {
 pub enum DataCommandModification {
     From(DataTarget, Option<NbtPath>),
     String(DataTarget, Option<NbtPath>, Option<i32>, Option<i32>),
-    Value(SNBT),
+    Value(Macroable<SNBT>),
 }
 
 impl Display for DataCommandModification {
@@ -97,7 +97,7 @@ impl Display for DataCommandModificationMode {
 #[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
 pub enum DataCommand {
     Get(DataTarget, Option<NbtPath>, Option<NotNan<f32>>),
-    Merge(DataTarget, SNBT),
+    Merge(DataTarget, Macroable<SNBT>),
     Modify(
         DataTarget,
         NbtPath,

@@ -94,6 +94,7 @@ use crate::command::worldborder::WorldborderCommand;
 use crate::coordinate::{Coordinates, WorldCoordinate};
 use crate::entity_selector::EntitySelector;
 use crate::item::{ItemPredicate, ItemStack};
+use crate::macroable::Macroable;
 use crate::resource_location::ResourceLocation;
 use crate::snbt::SNBT;
 use crate::time::Time;
@@ -240,7 +241,11 @@ pub enum Command {
         Option<ResourceLocation>,
     ),
     Stopwatch(StopwatchCommand),
-    Summon(ResourceLocation, Option<Coordinates>, Option<SNBT>),
+    Summon(
+        ResourceLocation,
+        Option<Coordinates>,
+        Option<Macroable<SNBT>>,
+    ),
     Tag(EntitySelector, TagCommand),
     Team(TeamCommand),
     TeamMessage(String),

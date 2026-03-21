@@ -1,5 +1,6 @@
 use crate::command::enums::gamemode::Gamemode;
 use crate::command::enums::sort::Sort;
+use crate::macroable::Macroable;
 use crate::range::{FloatRange, IntegerRange};
 use crate::resource_location::ResourceLocation;
 use crate::snbt::SNBT;
@@ -96,7 +97,7 @@ pub enum EntitySelectorOption {
     Name(bool, String),
     Type(bool, ResourceLocation),
     Predicate(bool, ResourceLocation),
-    Nbt(bool, SNBT),
+    Nbt(bool, Macroable<SNBT>),
     Gamemode(bool, Gamemode),
     Level(IntegerRange),
     Advancements(BTreeMap<ResourceLocation, AdvancementChoiceType>),
@@ -467,15 +468,15 @@ mod tests {
             "@a[gamemode=!creative]"
         );
         let mut compound = BTreeMap::new();
-        compound.insert(SNBTString(false, "OnGround".to_string()), SNBT::Byte(1));
-        let nbt = SNBT::Compound(compound);
+        compound.insert(SNBTString(false, "OnGround".to_string()), SNBT::byte(1));
+        let nbt = SNBT::macroable_compound(compound);
         assert_eq!(
             EntitySelector::e(vec![EntitySelectorOption::Nbt(false, nbt)]).to_string(),
             "@e[nbt={OnGround:1b}]"
         );
         let mut compound = BTreeMap::new();
-        compound.insert(SNBTString(false, "Air".to_string()), SNBT::Short(300));
-        let nbt = SNBT::Compound(compound);
+        compound.insert(SNBTString(false, "Air".to_string()), SNBT::short(300));
+        let nbt = SNBT::macroable_compound(compound);
         assert_eq!(
             EntitySelector::e(vec![EntitySelectorOption::Nbt(true, nbt)]).to_string(),
             "@e[nbt=!{Air:300s}]"

@@ -2,16 +2,18 @@ use minecraft_command_types_derive::HasMacro;
 use ordered_float::NotNan;
 use std::fmt::{Display, Formatter};
 
-#[derive(Debug, Clone, Copy, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
+use crate::macroable::Macroable;
+
+#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
 pub struct WorldCoordinate {
     pub relative: bool,
-    pub value: Option<NotNan<f32>>,
+    pub value: Option<Macroable<NotNan<f64>>>,
 }
 
 impl WorldCoordinate {
     #[inline]
     #[must_use]
-    pub fn new(relative: bool, value: Option<NotNan<f32>>) -> Self {
+    pub fn new(relative: bool, value: Option<Macroable<NotNan<f64>>>) -> Self {
         assert!(
             relative || value.is_some(),
             "A world coordinate must have a relative coordinate and/or have a value"
@@ -22,25 +24,25 @@ impl WorldCoordinate {
 
     #[inline]
     #[must_use]
-    pub fn relative(value: NotNan<f32>) -> Self {
+    pub fn relative(value: Macroable<NotNan<f64>>) -> Self {
         Self::new(true, Some(value))
     }
 
     #[inline]
     #[must_use]
-    pub fn relative_optional(value: Option<NotNan<f32>>) -> Self {
+    pub fn relative_optional(value: Option<Macroable<NotNan<f64>>>) -> Self {
         Self::new(true, value)
     }
 
     #[inline]
     #[must_use]
-    pub fn absolute(value: NotNan<f32>) -> Self {
+    pub fn absolute(value: Macroable<NotNan<f64>>) -> Self {
         Self::new(false, Some(value))
     }
 
     #[inline]
     #[must_use]
-    pub fn absolute_optional(value: Option<NotNan<f32>>) -> Self {
+    pub fn absolute_optional(value: Option<Macroable<NotNan<f64>>>) -> Self {
         Self::new(false, value)
     }
 
@@ -53,7 +55,7 @@ impl WorldCoordinate {
     #[inline]
     #[must_use]
     pub fn absolute_zero() -> Self {
-        Self::absolute(NotNan::new(0.0).unwrap())
+        Self::absolute(Macroable::Regular(NotNan::new(0.0).unwrap()))
     }
 }
 
@@ -63,7 +65,7 @@ impl Display for WorldCoordinate {
             f.write_str("~")?;
         }
 
-        if let Some(value) = self.value {
+        if let Some(value) = &self.value {
             value.fmt(f)?;
         }
 
@@ -71,13 +73,13 @@ impl Display for WorldCoordinate {
     }
 }
 
-#[derive(Debug, Clone, Copy, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
+#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
 pub enum Coordinates {
     World(WorldCoordinate, WorldCoordinate, WorldCoordinate),
     Local(
-        Option<NotNan<f32>>,
-        Option<NotNan<f32>>,
-        Option<NotNan<f32>>,
+        Option<Macroable<NotNan<f64>>>,
+        Option<Macroable<NotNan<f64>>>,
+        Option<Macroable<NotNan<f64>>>,
     ),
 }
 
@@ -99,9 +101,9 @@ impl Coordinates {
 
     #[must_use]
     pub const fn new_local(
-        x: Option<NotNan<f32>>,
-        y: Option<NotNan<f32>>,
-        z: Option<NotNan<f32>>,
+        x: Option<Macroable<NotNan<f64>>>,
+        y: Option<Macroable<NotNan<f64>>>,
+        z: Option<Macroable<NotNan<f64>>>,
     ) -> Self {
         Self::Local(x, y, z)
     }

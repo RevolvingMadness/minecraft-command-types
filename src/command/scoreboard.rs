@@ -1,16 +1,16 @@
-use crate::command::PlayerScore;
 use crate::command::enums::score_operation_operator::ScoreOperationOperator;
 use crate::command::enums::scoreboard_render_type::ScoreboardRenderType;
 use crate::entity_selector::EntitySelector;
 use crate::snbt::SNBT;
+use crate::{command::PlayerScore, macroable::Macroable};
 use minecraft_command_types_derive::HasMacro;
 use std::fmt::{Display, Formatter};
 
 #[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
 pub enum ScoreboardNumberFormat {
     Blank,
-    Fixed(SNBT),
-    Styled(SNBT),
+    Fixed(Macroable<SNBT>),
+    Styled(Macroable<SNBT>),
 }
 
 impl Display for ScoreboardNumberFormat {
@@ -26,7 +26,7 @@ impl Display for ScoreboardNumberFormat {
 #[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
 pub enum ScoreboardModification {
     DisplayAutoUpdate(bool),
-    DisplayName(SNBT),
+    DisplayName(Macroable<SNBT>),
     NumberFormat(Option<ScoreboardNumberFormat>),
     RenderType(ScoreboardRenderType),
 }
@@ -59,7 +59,7 @@ impl Display for ScoreboardModification {
 #[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
 pub enum ObjectivesScoreboardCommand {
     List,
-    Add(String, String, Option<SNBT>),
+    Add(String, String, Option<Macroable<SNBT>>),
     Remove(String),
     SetDisplay(String, Option<String>),
     Modify(String, ScoreboardModification),
@@ -99,7 +99,7 @@ impl Display for ObjectivesScoreboardCommand {
 
 #[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
 pub enum PlayersDisplayScoreboardCommand {
-    Name(PlayerScore, Option<SNBT>),
+    Name(PlayerScore, Option<Macroable<SNBT>>),
     NumberFormat(PlayerScore, Option<ScoreboardNumberFormat>),
 }
 

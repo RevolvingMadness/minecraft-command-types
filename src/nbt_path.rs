@@ -1,11 +1,12 @@
 use crate::has_macro::HasMacro;
+use crate::macroable::Macroable;
 use crate::snbt::{SNBT, SNBTString, fmt_snbt_compound};
 use minecraft_command_types_derive::HasMacro;
 use nonempty::NonEmpty;
 use std::collections::BTreeMap;
 use std::fmt::{Display, Formatter};
 
-pub type SNBTCompound = BTreeMap<SNBTString, SNBT>;
+pub type SNBTCompound = BTreeMap<SNBTString, Macroable<SNBT>>;
 
 fn escape_nbt_path_key(name: &str) -> String {
     let needs_quotes = name
@@ -24,7 +25,7 @@ fn escape_nbt_path_key(name: &str) -> String {
 pub enum NbtPathNode {
     RootCompound(SNBTCompound),
     Named(SNBTString, Option<SNBTCompound>),
-    Index(Option<SNBT>),
+    Index(Option<Macroable<SNBT>>),
 }
 
 impl NbtPathNode {
@@ -64,7 +65,10 @@ impl NbtPath {
     #[inline]
     #[must_use]
     pub fn to_snbt_string(&self) -> SNBT {
-        SNBT::String(SNBTString(self.has_macro(), self.to_string()))
+        SNBT::String(Macroable::Regular(SNBTString(
+            self.has_macro(),
+            self.to_string(),
+        )))
     }
 }
 

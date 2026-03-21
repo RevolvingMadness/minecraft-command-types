@@ -8,6 +8,7 @@ pub mod datapack;
 pub mod entity_selector;
 pub mod has_macro;
 pub mod item;
+pub mod macroable;
 pub mod nbt_path;
 pub mod range;
 pub mod resource_location;

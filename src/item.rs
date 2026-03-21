@@ -1,13 +1,13 @@
-use crate::resource_location::ResourceLocation;
 use crate::snbt::SNBT;
+use crate::{macroable::Macroable, resource_location::ResourceLocation};
 use minecraft_command_types_derive::HasMacro;
 use std::fmt::{Display, Formatter};
 
 #[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
 pub enum ItemTest {
     Component(ResourceLocation),
-    ComponentMatches(ResourceLocation, SNBT),
-    Predicate(ResourceLocation, SNBT),
+    ComponentMatches(ResourceLocation, Macroable<SNBT>),
+    Predicate(ResourceLocation, Macroable<SNBT>),
 }
 
 impl Display for ItemTest {
