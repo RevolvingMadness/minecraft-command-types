@@ -8,9 +8,19 @@ use crate::{
 };
 
 #[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash)]
-pub enum Macroable<T: HasMacro> {
+pub enum Macroable<T> {
     Regular(T),
     Macro(String),
+}
+
+pub trait RegularMacroableExt: Sized {
+    fn regular_macroable(self) -> Macroable<Self>;
+}
+
+impl<T> RegularMacroableExt for T {
+    fn regular_macroable(self) -> Macroable<Self> {
+        Macroable::Regular(self)
+    }
 }
 
 impl<T: HasMacro + Serialize> Serialize for Macroable<T> {
