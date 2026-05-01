@@ -197,75 +197,59 @@ pub enum EntitySelector {
 }
 
 impl EntitySelector {
+    pub const A: Self = Self::Variable(EntitySelectorVariable::A, Vec::new());
+    pub const E: Self = Self::Variable(EntitySelectorVariable::E, Vec::new());
+    pub const N: Self = Self::Variable(EntitySelectorVariable::N, Vec::new());
+    pub const P: Self = Self::Variable(EntitySelectorVariable::P, Vec::new());
+    pub const R: Self = Self::Variable(EntitySelectorVariable::R, Vec::new());
+    pub const S: Self = Self::Variable(EntitySelectorVariable::S, Vec::new());
+
+    #[inline]
     #[must_use]
     pub const fn new(variable: EntitySelectorVariable, options: Vec<EntitySelectorOption>) -> Self {
         Self::Variable(variable, options)
     }
 
+    #[inline]
     #[must_use]
     pub const fn p(options: Vec<EntitySelectorOption>) -> Self {
         Self::new(EntitySelectorVariable::P, options)
     }
 
-    #[must_use]
-    pub const fn p_no_options() -> Self {
-        Self::p(vec![])
-    }
-
+    #[inline]
     #[must_use]
     pub const fn r(options: Vec<EntitySelectorOption>) -> Self {
         Self::new(EntitySelectorVariable::R, options)
     }
 
-    #[must_use]
-    pub const fn r_no_options() -> Self {
-        Self::r(vec![])
-    }
-
+    #[inline]
     #[must_use]
     pub const fn a(options: Vec<EntitySelectorOption>) -> Self {
         Self::new(EntitySelectorVariable::A, options)
     }
 
-    #[must_use]
-    pub const fn a_no_options() -> Self {
-        Self::a(vec![])
-    }
-
+    #[inline]
     #[must_use]
     pub const fn e(options: Vec<EntitySelectorOption>) -> Self {
         Self::new(EntitySelectorVariable::E, options)
     }
 
-    #[must_use]
-    pub const fn e_no_options() -> Self {
-        Self::e(vec![])
-    }
-
+    #[inline]
     #[must_use]
     pub const fn s(options: Vec<EntitySelectorOption>) -> Self {
         Self::new(EntitySelectorVariable::S, options)
     }
 
-    #[must_use]
-    pub const fn s_no_options() -> Self {
-        Self::s(vec![])
-    }
-
+    #[inline]
     #[must_use]
     pub const fn n(options: Vec<EntitySelectorOption>) -> Self {
         Self::new(EntitySelectorVariable::N, options)
-    }
-
-    #[must_use]
-    pub const fn n_no_options() -> Self {
-        Self::n(vec![])
     }
 }
 
 impl Default for EntitySelector {
     fn default() -> Self {
-        Self::s_no_options()
+        Self::S
     }
 }
 
@@ -299,6 +283,18 @@ impl Display for EntitySelector {
     }
 }
 
+impl From<EntitySelectorVariable> for EntitySelector {
+    fn from(value: EntitySelectorVariable) -> Self {
+        Self::Variable(value, Vec::new())
+    }
+}
+
+impl From<String> for EntitySelector {
+    fn from(value: String) -> Self {
+        Self::Name(value)
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use crate::snbt::SNBTString;
@@ -313,12 +309,12 @@ mod tests {
 
     #[test]
     fn test_format_no_options() {
-        assert_eq!(EntitySelector::p_no_options().to_string(), "@p");
-        assert_eq!(EntitySelector::r_no_options().to_string(), "@r");
-        assert_eq!(EntitySelector::a_no_options().to_string(), "@a");
-        assert_eq!(EntitySelector::e_no_options().to_string(), "@e");
-        assert_eq!(EntitySelector::s_no_options().to_string(), "@s");
-        assert_eq!(EntitySelector::n_no_options().to_string(), "@n");
+        assert_eq!(EntitySelector::P.to_string(), "@p");
+        assert_eq!(EntitySelector::R.to_string(), "@r");
+        assert_eq!(EntitySelector::A.to_string(), "@a");
+        assert_eq!(EntitySelector::E.to_string(), "@e");
+        assert_eq!(EntitySelector::S.to_string(), "@s");
+        assert_eq!(EntitySelector::N.to_string(), "@n");
     }
 
     #[test]
@@ -553,7 +549,7 @@ mod tests {
 
     #[test]
     fn test_default() {
-        assert_eq!(EntitySelector::default(), EntitySelector::s_no_options());
+        assert_eq!(EntitySelector::default(), EntitySelector::S);
         assert_eq!(EntitySelector::default().to_string(), "@s");
     }
 }
