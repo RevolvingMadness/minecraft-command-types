@@ -35,7 +35,7 @@ impl<T: HasMacro + Serialize> Serialize for Macroable<T> {
     }
 }
 
-impl<'de, T: HasMacro + Deserialize<'de>> Deserialize<'de> for Macroable<T> {
+impl<'de, T: Deserialize<'de>> Deserialize<'de> for Macroable<T> {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
         D: serde::Deserializer<'de>,
@@ -46,13 +46,13 @@ impl<'de, T: HasMacro + Deserialize<'de>> Deserialize<'de> for Macroable<T> {
     }
 }
 
-impl<T: HasMacro> From<T> for Macroable<T> {
+impl<T> From<T> for Macroable<T> {
     fn from(value: T) -> Self {
         Self::Regular(value)
     }
 }
 
-impl<T: HasMacro> FromIterator<Macroable<T>> for Macroable<Vec<Macroable<T>>> {
+impl<T> FromIterator<Macroable<T>> for Macroable<Vec<Macroable<T>>> {
     fn from_iter<I: IntoIterator<Item = Macroable<T>>>(iter: I) -> Self {
         let collected: Vec<Macroable<T>> = iter.into_iter().collect();
 
@@ -72,7 +72,7 @@ impl FromIterator<(SNBTString, Macroable<SNBT>)>
     }
 }
 
-impl<T: HasMacro + Display> Display for Macroable<T> {
+impl<T: Display> Display for Macroable<T> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             Self::Regular(value) => value.fmt(f),

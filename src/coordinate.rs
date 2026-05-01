@@ -1,75 +1,48 @@
 use minecraft_command_types_derive::HasMacro;
 use ordered_float::NotNan;
-use std::fmt::{Display, Formatter};
+use std::fmt::{Display, Formatter, Write};
 
 use crate::macroable::Macroable;
 
 #[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
-pub struct WorldCoordinate {
-    pub relative: bool,
-    pub value: Option<Macroable<NotNan<f64>>>,
+pub enum WorldCoordinate {
+    Relative(Option<Macroable<NotNan<f64>>>),
+    Absolute(Macroable<NotNan<f64>>),
+}
+
+impl Default for WorldCoordinate {
+    fn default() -> Self {
+        Self::RELATIVE_NONE
+    }
 }
 
 impl WorldCoordinate {
-    #[inline]
-    #[must_use]
-    pub fn new(relative: bool, value: Option<Macroable<NotNan<f64>>>) -> Self {
-        assert!(
-            relative || value.is_some(),
-            "A world coordinate must have a relative coordinate and/or have a value"
-        );
+    pub const RELATIVE_NONE: Self = Self::Relative(None);
 
-        Self { relative, value }
-    }
+    pub const ABSOLUTE_ZERO: Self =
+        Self::Absolute(Macroable::Regular(unsafe { NotNan::new_unchecked(0.0) }));
 
     #[inline]
     #[must_use]
-    pub fn relative(value: Macroable<NotNan<f64>>) -> Self {
-        Self::new(true, Some(value))
-    }
-
-    #[inline]
-    #[must_use]
-    pub fn relative_optional(value: Option<Macroable<NotNan<f64>>>) -> Self {
-        Self::new(true, value)
-    }
-
-    #[inline]
-    #[must_use]
-    pub fn absolute(value: Macroable<NotNan<f64>>) -> Self {
-        Self::new(false, Some(value))
-    }
-
-    #[inline]
-    #[must_use]
-    pub fn absolute_optional(value: Option<Macroable<NotNan<f64>>>) -> Self {
-        Self::new(false, value)
-    }
-
-    #[inline]
-    #[must_use]
-    pub fn relative_zero() -> Self {
-        Self::relative_optional(None)
-    }
-
-    #[inline]
-    #[must_use]
-    pub fn absolute_zero() -> Self {
-        Self::absolute(Macroable::Regular(NotNan::new(0.0).unwrap()))
+    pub const fn absolute_zero() -> Self {
+        Self::ABSOLUTE_ZERO
     }
 }
 
 impl Display for WorldCoordinate {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        if self.relative {
-            f.write_str("~")?;
-        }
+        match self {
+            Self::Relative(offset) => {
+                f.write_char('~')?;
 
-        if let Some(value) = &self.value {
-            value.fmt(f)?;
-        }
+                if let Some(offset) = offset {
+                    offset.fmt(f)?;
+                }
 
-        Ok(())
+                Ok(())
+            }
+            Self::Absolute(value) => value.fmt(f),
+        }
     }
 }
 
@@ -83,35 +56,24 @@ pub enum Coordinates {
     ),
 }
 
-impl Coordinates {
-    #[must_use]
-    pub const fn new_world(x: WorldCoordinate, y: WorldCoordinate, z: WorldCoordinate) -> Self {
-        Self::World(x, y, z)
-    }
-
-    #[inline]
-    #[must_use]
-    pub fn new_world_all_relative_zero() -> Self {
-        Self::new_world(
-            WorldCoordinate::relative_zero(),
-            WorldCoordinate::relative_zero(),
-            WorldCoordinate::relative_zero(),
+impl Default for Coordinates {
+    fn default() -> Self {
+        Self::World(
+            WorldCoordinate::default(),
+            WorldCoordinate::default(),
+            WorldCoordinate::default(),
         )
     }
+}
 
-    #[must_use]
-    pub const fn new_local(
-        x: Option<Macroable<NotNan<f64>>>,
-        y: Option<Macroable<NotNan<f64>>>,
-        z: Option<Macroable<NotNan<f64>>>,
-    ) -> Self {
-        Self::Local(x, y, z)
-    }
+impl Coordinates {
+    pub const WORLD_RELATIVE_NONE: Self = Self::World(
+        WorldCoordinate::RELATIVE_NONE,
+        WorldCoordinate::RELATIVE_NONE,
+        WorldCoordinate::RELATIVE_NONE,
+    );
 
-    #[must_use]
-    pub const fn new_local_zero() -> Self {
-        Self::new_local(None, None, None)
-    }
+    pub const LOCAL_NONE: Self = Self::Local(None, None, None);
 }
 
 impl Display for Coordinates {
