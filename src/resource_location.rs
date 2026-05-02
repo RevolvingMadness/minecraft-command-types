@@ -35,8 +35,8 @@ impl ResourceLocation {
 
     #[inline]
     #[must_use]
-    pub fn new_namespace_paths<N: ToString, P: ToString>(
-        namespace: N,
+    pub fn new_namespace_paths<P: ToString>(
+        namespace: &str,
         paths: impl IntoIterator<Item = P>,
     ) -> Self {
         Self::new(false, Some(namespace), paths)
@@ -44,7 +44,7 @@ impl ResourceLocation {
 
     #[inline]
     #[must_use]
-    pub fn new_namespace_path<N: ToString, P: ToString>(namespace: N, path: P) -> Self {
+    pub fn new_namespace_path<P: ToString>(namespace: &str, path: P) -> Self {
         Self::new_namespace_paths(namespace, once(path))
     }
 

@@ -3,7 +3,6 @@ use minecraft_command_types::datapack::pack::format::Format;
 use minecraft_command_types::datapack::tag::{Tag, TagType, TagValue};
 use minecraft_command_types::datapack::{Datapack, Namespace, PackMCMeta};
 use minecraft_command_types::resource_location::ResourceLocation;
-use nonempty::nonempty;
 
 fn main() {
     use std::collections::BTreeMap;
@@ -25,16 +24,16 @@ fn main() {
 
     let mut my_namespace = Namespace::default();
 
-    my_namespace.add_function(&nonempty!["main".to_string()], "say Datapack loaded!");
+    my_namespace.add_function(&vec!["main".to_string()], "say Datapack loaded!");
 
     my_namespace.add_function(
-        &nonempty!["utils".to_string(), "teleport".to_string()],
+        &vec!["utils".to_string(), "teleport".to_string()],
         "tp @s ~ ~10 ~",
     );
 
     my_namespace.add_tag(
         TagType::Block,
-        &nonempty!["cool_blocks".to_string()],
+        &vec!["cool_blocks".to_string()],
         Tag {
             replace: Some(false),
             values: vec![
