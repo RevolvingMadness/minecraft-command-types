@@ -265,6 +265,10 @@ pub enum Command {
 }
 
 impl Command {
+    pub const RETURN_VALUE_0: Self = Self::Return(ReturnCommand::VALUE_0);
+    pub const RETURN_VALUE_1: Self = Self::Return(ReturnCommand::VALUE_1);
+    pub const RETURN_FAIL: Self = Self::Return(ReturnCommand::FAIL);
+
     #[must_use]
     pub fn get_permission_level(&self, is_multiplayer: bool) -> PermissionLevel {
         match self {

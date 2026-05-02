@@ -18,3 +18,9 @@ impl Display for ReturnCommand {
         }
     }
 }
+
+impl ReturnCommand {
+    pub const VALUE_0: Self = Self::Value(0);
+    pub const VALUE_1: Self = Self::Value(1);
+    pub const FAIL: Self = Self::Fail;
+}
