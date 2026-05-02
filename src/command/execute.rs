@@ -479,6 +479,24 @@ impl Display for ExecuteSubcommand {
 }
 
 impl ExecuteSubcommand {
+    #[inline]
+    #[must_use]
+    pub fn run_return_value_0() -> Self {
+        Self::Run(Box::new(Command::RETURN_VALUE_0))
+    }
+
+    #[inline]
+    #[must_use]
+    pub fn run_return_value_1() -> Self {
+        Self::Run(Box::new(Command::RETURN_VALUE_1))
+    }
+
+    #[inline]
+    #[must_use]
+    pub fn run_return_fail() -> Self {
+        Self::Run(Box::new(Command::RETURN_FAIL))
+    }
+
     #[must_use]
     pub fn then(self, next: Self) -> Self {
         match self {
