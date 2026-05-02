@@ -2,7 +2,6 @@ use crate::has_macro::HasMacro;
 use crate::macroable::Macroable;
 use crate::snbt::{SNBT, SNBTString, fmt_snbt_compound};
 use minecraft_command_types_derive::HasMacro;
-use nonempty::NonEmpty;
 use std::collections::BTreeMap;
 use std::fmt::{Display, Formatter};
 
@@ -41,7 +40,7 @@ impl NbtPathNode {
 }
 
 #[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
-pub struct NbtPath(pub NonEmpty<NbtPathNode>);
+pub struct NbtPath(pub Vec<NbtPathNode>);
 
 impl NbtPath {
     #[must_use]
@@ -53,9 +52,7 @@ impl NbtPath {
 
     #[must_use]
     pub fn with_named_compound(mut self, compound: SNBTCompound) -> Self {
-        if let NbtPathNode::Named(_, inner_compound) = self.0.last_mut()
-            && inner_compound.is_none()
-        {
+        if let Some(NbtPathNode::Named(_, inner_compound @ None)) = self.0.last_mut() {
             *inner_compound = Some(compound);
         }
 

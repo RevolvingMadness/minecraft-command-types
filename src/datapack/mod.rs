@@ -7,7 +7,6 @@ use crate::datapack::pack::filter::Filter;
 use crate::datapack::pack::language::Language;
 use crate::datapack::pack::overlay::Overlays;
 use crate::datapack::tag::{Tag, TagType, Worldgen};
-use nonempty::NonEmpty;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use std::collections::BTreeMap;
@@ -48,7 +47,7 @@ impl<T> FilePathNode<T> {
         current_node
     }
 
-    pub fn from_nonempty_vec_string(vec: NonEmpty<String>, value: T) -> Self {
+    pub fn from_vec_string(vec: Vec<String>, value: T) -> Self {
         let mut vec = vec.into_iter().rev();
 
         let file_name = vec.next().expect("Path cannot be empty");
@@ -64,50 +63,50 @@ impl<T> FilePathNode<T> {
 
 #[derive(Debug, Clone, Default)]
 pub struct Namespace {
-    pub functions: BTreeMap<NonEmpty<String>, String>,
-    pub tags: BTreeMap<TagType, BTreeMap<NonEmpty<String>, Tag>>,
+    pub functions: BTreeMap<Vec<String>, String>,
+    pub tags: BTreeMap<TagType, BTreeMap<Vec<String>, Tag>>,
 
-    pub advancements: BTreeMap<NonEmpty<String>, Value>,
-    pub banner_patterns: BTreeMap<NonEmpty<String>, Value>,
-    pub cat_variants: BTreeMap<NonEmpty<String>, Value>,
-    pub chat_types: BTreeMap<NonEmpty<String>, Value>,
-    pub chicken_variants: BTreeMap<NonEmpty<String>, Value>,
-    pub cow_variants: BTreeMap<NonEmpty<String>, Value>,
-    pub damage_types: BTreeMap<NonEmpty<String>, Value>,
-    pub dialogs: BTreeMap<NonEmpty<String>, Value>,
-    pub dimensions: BTreeMap<NonEmpty<String>, Value>,
-    pub dimension_types: BTreeMap<NonEmpty<String>, Value>,
-    pub enchantments: BTreeMap<NonEmpty<String>, Value>,
-    pub enchantment_providers: BTreeMap<NonEmpty<String>, Value>,
-    pub frog_variants: BTreeMap<NonEmpty<String>, Value>,
-    pub instruments: BTreeMap<NonEmpty<String>, Value>,
-    pub item_modifiers: BTreeMap<NonEmpty<String>, Value>,
-    pub jukebox_songs: BTreeMap<NonEmpty<String>, Value>,
-    pub loot_tables: BTreeMap<NonEmpty<String>, Value>,
-    pub painting_variants: BTreeMap<NonEmpty<String>, Value>,
-    pub pig_variants: BTreeMap<NonEmpty<String>, Value>,
-    pub predicates: BTreeMap<NonEmpty<String>, Value>,
-    pub recipes: BTreeMap<NonEmpty<String>, Value>,
-    pub test_environments: BTreeMap<NonEmpty<String>, Value>,
-    pub test_instances: BTreeMap<NonEmpty<String>, Value>,
-    pub timelines: BTreeMap<NonEmpty<String>, Value>,
-    pub trial_spawners: BTreeMap<NonEmpty<String>, Value>,
-    pub trim_materials: BTreeMap<NonEmpty<String>, Value>,
-    pub trim_patterns: BTreeMap<NonEmpty<String>, Value>,
-    pub wolf_sound_variants: BTreeMap<NonEmpty<String>, Value>,
-    pub wolf_variants: BTreeMap<NonEmpty<String>, Value>,
+    pub advancements: BTreeMap<Vec<String>, Value>,
+    pub banner_patterns: BTreeMap<Vec<String>, Value>,
+    pub cat_variants: BTreeMap<Vec<String>, Value>,
+    pub chat_types: BTreeMap<Vec<String>, Value>,
+    pub chicken_variants: BTreeMap<Vec<String>, Value>,
+    pub cow_variants: BTreeMap<Vec<String>, Value>,
+    pub damage_types: BTreeMap<Vec<String>, Value>,
+    pub dialogs: BTreeMap<Vec<String>, Value>,
+    pub dimensions: BTreeMap<Vec<String>, Value>,
+    pub dimension_types: BTreeMap<Vec<String>, Value>,
+    pub enchantments: BTreeMap<Vec<String>, Value>,
+    pub enchantment_providers: BTreeMap<Vec<String>, Value>,
+    pub frog_variants: BTreeMap<Vec<String>, Value>,
+    pub instruments: BTreeMap<Vec<String>, Value>,
+    pub item_modifiers: BTreeMap<Vec<String>, Value>,
+    pub jukebox_songs: BTreeMap<Vec<String>, Value>,
+    pub loot_tables: BTreeMap<Vec<String>, Value>,
+    pub painting_variants: BTreeMap<Vec<String>, Value>,
+    pub pig_variants: BTreeMap<Vec<String>, Value>,
+    pub predicates: BTreeMap<Vec<String>, Value>,
+    pub recipes: BTreeMap<Vec<String>, Value>,
+    pub test_environments: BTreeMap<Vec<String>, Value>,
+    pub test_instances: BTreeMap<Vec<String>, Value>,
+    pub timelines: BTreeMap<Vec<String>, Value>,
+    pub trial_spawners: BTreeMap<Vec<String>, Value>,
+    pub trim_materials: BTreeMap<Vec<String>, Value>,
+    pub trim_patterns: BTreeMap<Vec<String>, Value>,
+    pub wolf_sound_variants: BTreeMap<Vec<String>, Value>,
+    pub wolf_variants: BTreeMap<Vec<String>, Value>,
     pub worldgen: Worldgen,
 }
 fn write_file_path_nodes<T>(
     base_path: &Path,
-    nodes: &BTreeMap<NonEmpty<String>, T>,
+    nodes: &BTreeMap<Vec<String>, T>,
     extension: &str,
     serializer: &impl Fn(&T) -> io::Result<String>,
 ) -> io::Result<()> {
     for (path, content) in nodes {
         let mut file_path = PathBuf::from(base_path);
 
-        for segment in path.iter() {
+        for segment in path {
             file_path.push(segment);
         }
 
@@ -238,7 +237,7 @@ impl Namespace {
         Ok(())
     }
 
-    pub fn add_tag(&mut self, tag_type: TagType, path: &NonEmpty<String>, new_tag: Tag) {
+    pub fn add_tag(&mut self, tag_type: TagType, path: &Vec<String>, new_tag: Tag) {
         if let Some(tags) = self.tags.get_mut(&tag_type) {
             if let Some(tag) = tags.get_mut(path) {
                 tag.extend(new_tag);
@@ -251,7 +250,7 @@ impl Namespace {
         }
     }
 
-    pub fn add_function(&mut self, path: &NonEmpty<String>, new_function: &str) {
+    pub fn add_function(&mut self, path: &Vec<String>, new_function: &str) {
         if let Some(functions) = self.functions.get_mut(path) {
             functions.push('\n');
             functions.push_str(new_function);

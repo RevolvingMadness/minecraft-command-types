@@ -1,4 +1,3 @@
-use nonempty::NonEmpty;
 use std::{
     collections::{BTreeMap, BTreeSet, HashMap, HashSet},
     hash::BuildHasher,
@@ -56,16 +55,6 @@ impl<T: HasMacro> HasMacro for Option<T> {
 }
 
 impl<T: HasMacro> HasMacro for Vec<T> {
-    fn has_macro(&self) -> bool {
-        self.iter().any(HasMacro::has_macro)
-    }
-
-    fn has_macro_conflict(&self) -> bool {
-        self.iter().any(HasMacro::has_macro_conflict)
-    }
-}
-
-impl<T: HasMacro> HasMacro for NonEmpty<T> {
     fn has_macro(&self) -> bool {
         self.iter().any(HasMacro::has_macro)
     }

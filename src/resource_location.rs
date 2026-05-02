@@ -1,16 +1,16 @@
 use itertools::Itertools;
 use minecraft_command_types_derive::HasMacro;
-use nonempty::{NonEmpty, nonempty};
 use serde::de::Visitor;
 use serde::{Deserialize, Deserializer, Serialize, Serializer, de};
 use std::fmt::{Display, Formatter};
+use std::iter::once;
 use std::str::FromStr;
 
 #[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
 pub struct ResourceLocation {
     pub is_tag: bool,
     namespace: Option<String>,
-    pub paths: NonEmpty<String>,
+    pub paths: Vec<String>,
 }
 
 impl ResourceLocation {
@@ -24,37 +24,40 @@ impl ResourceLocation {
     pub fn new<N: ToString, P: ToString>(
         is_tag: bool,
         namespace: Option<N>,
-        paths: NonEmpty<P>,
+        paths: impl IntoIterator<Item = P>,
     ) -> Self {
         Self {
             is_tag,
             namespace: namespace.map(|namespace| namespace.to_string()),
-            paths: paths.map(|path| path.to_string()),
+            paths: paths.into_iter().map(|path| path.to_string()).collect(),
         }
     }
 
     #[inline]
     #[must_use]
-    pub fn new_namespace_paths<N: ToString, P: ToString>(namespace: N, paths: NonEmpty<P>) -> Self {
+    pub fn new_namespace_paths<N: ToString, P: ToString>(
+        namespace: N,
+        paths: impl IntoIterator<Item = P>,
+    ) -> Self {
         Self::new(false, Some(namespace), paths)
     }
 
     #[inline]
     #[must_use]
     pub fn new_namespace_path<N: ToString, P: ToString>(namespace: N, path: P) -> Self {
-        Self::new_namespace_paths(namespace, nonempty![path])
+        Self::new_namespace_paths(namespace, once(path))
     }
 
     #[inline]
     #[must_use]
-    pub fn new_paths<N: ToString, P: ToString>(paths: NonEmpty<P>) -> Self {
+    pub fn new_paths<N: ToString, P: ToString>(paths: impl IntoIterator<Item = P>) -> Self {
         Self::new::<N, _>(false, None, paths)
     }
 
     #[inline]
     #[must_use]
     pub fn new_path<N: ToString, P: ToString>(path: P) -> Self {
-        Self::new_paths::<N, _>(nonempty![path])
+        Self::new_paths::<N, _>(once(path))
     }
 
     #[must_use]
@@ -139,10 +142,7 @@ impl FromStr for ResourceLocation {
             ));
         }
 
-        let path_components: Vec<String> = path_raw.split('/').map(ToString::to_string).collect();
-
-        let paths = NonEmpty::from_vec(path_components)
-            .expect("Path component check guarantees paths are not empty");
+        let paths: Vec<String> = path_raw.split('/').map(ToString::to_string).collect();
 
         let namespace = namespace_raw.map(ToString::to_string);
 
