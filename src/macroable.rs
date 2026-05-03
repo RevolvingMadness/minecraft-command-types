@@ -96,3 +96,13 @@ impl<T: HasMacro> HasMacro for Macroable<T> {
         }
     }
 }
+
+impl<T> Macroable<T> {
+    #[must_use]
+    pub fn map<R>(self, f: impl FnOnce(T) -> R) -> Macroable<R> {
+        match self {
+            Self::Regular(value) => Macroable::Regular(f(value)),
+            Self::Macro(name) => Macroable::Macro(name),
+        }
+    }
+}
