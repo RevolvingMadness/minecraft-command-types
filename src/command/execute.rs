@@ -524,7 +524,7 @@ impl ExecuteSubcommand {
             }
             Self::If(inverted, subcommand) => Self::If(inverted, subcommand.then(next)),
             Self::Store(store_type, subcommand) => Self::Store(store_type, subcommand.then(next)),
-            Self::Run(_) => next.then(self),
+            Self::Run(..) => next.then(self),
         }
     }
 }

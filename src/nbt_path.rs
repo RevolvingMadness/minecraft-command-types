@@ -93,7 +93,7 @@ impl Display for NbtPath {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         let mut first = true;
         for node in &self.0 {
-            if !first && !matches!(node, NbtPathNode::Index(_)) {
+            if !first && !matches!(node, NbtPathNode::Index(..)) {
                 write!(f, ".")?;
             }
             first = false;

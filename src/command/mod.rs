@@ -309,7 +309,7 @@ impl Command {
             | Self::Particle(..)
             | Self::Place(..)
             | Self::Playsound(..)
-            | Self::Random(RandomCommand::ValueRoll(_, _, Some(_)))
+            | Self::Random(RandomCommand::ValueRoll(..))
             | Self::Recipe(..)
             | Self::Reload
             | Self::Return(..)

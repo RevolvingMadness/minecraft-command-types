@@ -141,6 +141,6 @@ fn generate_body(data: &Data, method_name: &str) -> proc_macro2::TokenStream {
                 }
             }
         }
-        Data::Union(_) => panic!("HasMacro derive macro cannot be used on unions"),
+        Data::Union(..) => panic!("HasMacro derive macro cannot be used on unions"),
     }
 }

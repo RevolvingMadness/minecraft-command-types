@@ -85,14 +85,14 @@ impl<T: HasMacro> HasMacro for Macroable<T> {
     fn has_macro(&self) -> bool {
         match self {
             Self::Regular(value) => value.has_macro(),
-            Self::Macro(_) => true,
+            Self::Macro(..) => true,
         }
     }
 
     fn has_macro_conflict(&self) -> bool {
         match self {
             Self::Regular(value) => value.has_macro_conflict(),
-            Self::Macro(_) => false,
+            Self::Macro(..) => false,
         }
     }
 }
