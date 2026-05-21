@@ -18,7 +18,7 @@ use crate::nbt_path::NbtPath;
 use crate::range::{FloatRange, IntegerRange};
 use crate::resource_location::ResourceLocation;
 use crate::rotation::Rotation;
-use minecraft_command_types_derive::HasMacro;
+use minecraft_command_types_procederal_macros::HasMacro;
 use ordered_float::NotNan;
 use std::collections::BTreeSet;
 use std::fmt::{Display, Formatter};

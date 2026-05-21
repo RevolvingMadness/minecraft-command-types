@@ -3,7 +3,7 @@ use crate::coordinate::Coordinates;
 use crate::entity_selector::EntitySelector;
 use crate::item::ItemStack;
 use crate::resource_location::ResourceLocation;
-use minecraft_command_types_derive::HasMacro;
+use minecraft_command_types_procederal_macros::HasMacro;
 use std::fmt::{Display, Formatter};
 
 #[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]

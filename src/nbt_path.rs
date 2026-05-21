@@ -1,7 +1,7 @@
 use crate::has_macro::HasMacro;
 use crate::macroable::Macroable;
 use crate::snbt::{SNBT, SNBTString, fmt_snbt_compound};
-use minecraft_command_types_derive::HasMacro;
+use minecraft_command_types_procederal_macros::HasMacro;
 use std::collections::BTreeMap;
 use std::fmt::{Display, Formatter};
 

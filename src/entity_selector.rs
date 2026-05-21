@@ -4,7 +4,7 @@ use crate::macroable::Macroable;
 use crate::range::{FloatRange, IntegerRange};
 use crate::resource_location::ResourceLocation;
 use crate::snbt::SNBT;
-use minecraft_command_types_derive::HasMacro;
+use minecraft_command_types_procederal_macros::HasMacro;
 use ordered_float::NotNan;
 use std::collections::BTreeMap;
 use std::fmt::{Display, Formatter};

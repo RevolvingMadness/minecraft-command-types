@@ -1,7 +1,7 @@
 use crate::command::item_source::ItemSource;
 use crate::item::ItemStack;
 use crate::snbt::SNBT;
-use minecraft_command_types_derive::HasMacro;
+use minecraft_command_types_procederal_macros::HasMacro;
 use std::fmt::{Display, Formatter};
 
 #[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]

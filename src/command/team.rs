@@ -3,7 +3,7 @@ use crate::command::enums::team_color::TeamColor;
 use crate::command::enums::team_visibility::TeamVisibility;
 use crate::entity_selector::EntitySelector;
 use crate::snbt::SNBT;
-use minecraft_command_types_derive::HasMacro;
+use minecraft_command_types_procederal_macros::HasMacro;
 use std::fmt::{Display, Formatter};
 
 #[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]

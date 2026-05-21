@@ -1,7 +1,7 @@
 use crate::command::enums::time_of_day::TimeOfDay;
 use crate::command::enums::time_query_type::TimeQueryType;
 use crate::time::Time;
-use minecraft_command_types_derive::HasMacro;
+use minecraft_command_types_procederal_macros::HasMacro;
 use std::fmt::{Display, Formatter};
 
 #[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]

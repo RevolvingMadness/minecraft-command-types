@@ -1,6 +1,6 @@
 use crate::column_position::ColumnPosition;
 use crate::time::Time;
-use minecraft_command_types_derive::HasMacro;
+use minecraft_command_types_procederal_macros::HasMacro;
 use ordered_float::NotNan;
 use std::fmt::{Display, Formatter};
 

@@ -103,7 +103,7 @@ use enums::banlist_type::BanlistType;
 use enums::clone_mode::CloneMode;
 use enums::difficulty::Difficulty;
 use enums::gamemode::Gamemode;
-use minecraft_command_types_derive::HasMacro;
+use minecraft_command_types_procederal_macros::HasMacro;
 use ordered_float::NotNan;
 use std::fmt::{Display, Formatter};
 
