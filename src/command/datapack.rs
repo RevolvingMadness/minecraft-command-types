@@ -1,6 +1,6 @@
 use crate::command::enums::datapack_list_type::DatapackListType;
 use crate::snbt::SNBT;
-use minecraft_command_types_procederal_macros::HasMacro;
+use minecraft_command_types_procedural_macros::HasMacro;
 use std::fmt::{Display, Formatter};
 
 #[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]

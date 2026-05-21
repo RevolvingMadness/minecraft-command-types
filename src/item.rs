@@ -1,6 +1,6 @@
 use crate::snbt::SNBT;
 use crate::{macroable::Macroable, resource_location::ResourceLocation};
-use minecraft_command_types_procederal_macros::HasMacro;
+use minecraft_command_types_procedural_macros::HasMacro;
 use std::fmt::{Display, Formatter};
 
 #[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]

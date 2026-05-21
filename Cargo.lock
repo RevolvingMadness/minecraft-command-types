@@ -46,7 +46,7 @@ name = "minecraft-command-types"
 version = "0.1.0"
 dependencies = [
  "itertools",
- "minecraft-command-types_procederal-macros",
+ "minecraft-command-types_procedural-macros",
  "ordered-float",
  "serde",
  "serde_json",
@@ -54,7 +54,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "minecraft-command-types_procederal-macros"
+name = "minecraft-command-types_procedural-macros"
 version = "0.1.0"
 dependencies = [
  "proc-macro2",

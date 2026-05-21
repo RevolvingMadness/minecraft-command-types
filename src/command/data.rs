@@ -3,7 +3,7 @@ use crate::nbt_path::NbtPath;
 use crate::resource_location::ResourceLocation;
 use crate::snbt::SNBT;
 use crate::{coordinate::Coordinates, macroable::Macroable};
-use minecraft_command_types_procederal_macros::HasMacro;
+use minecraft_command_types_procedural_macros::HasMacro;
 use ordered_float::NotNan;
 use std::fmt::{Display, Formatter};
 

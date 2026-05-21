@@ -1,7 +1,7 @@
 use crate::has_macro::HasMacro;
 use crate::macroable::Macroable;
 use crate::nbt_path::SNBTCompound;
-use minecraft_command_types_procederal_macros::HasMacro;
+use minecraft_command_types_procedural_macros::HasMacro;
 use ordered_float::NotNan;
 use serde::de::{Deserialize, Deserializer, MapAccess, SeqAccess, Visitor};
 use serde::{Serialize, Serializer, de};

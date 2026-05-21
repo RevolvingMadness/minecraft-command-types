@@ -3,7 +3,7 @@ use crate::command::enums::scoreboard_render_type::ScoreboardRenderType;
 use crate::entity_selector::EntitySelector;
 use crate::snbt::SNBT;
 use crate::{command::PlayerScore, macroable::Macroable};
-use minecraft_command_types_procederal_macros::HasMacro;
+use minecraft_command_types_procedural_macros::HasMacro;
 use std::fmt::{Display, Formatter};
 
 #[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
