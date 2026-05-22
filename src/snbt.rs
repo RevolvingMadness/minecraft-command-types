@@ -6,8 +6,8 @@ use ordered_float::NotNan;
 use serde::de::{Deserialize, Deserializer, MapAccess, SeqAccess, Visitor};
 use serde::{Serialize, Serializer, de};
 use std::collections::BTreeMap;
-use std::fmt::Display;
 use std::fmt::Formatter;
+use std::fmt::{Display, Write};
 
 #[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash)]
 pub struct SNBTString(pub bool, pub String);
@@ -34,6 +34,12 @@ impl Serialize for SNBTString {
                 serializer.serialize_str(&formatted)
             }
         }
+    }
+}
+
+impl Display for SNBTString {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        self.1.fmt(f)
     }
 }
 
@@ -198,101 +204,119 @@ impl SNBT {
     }
 }
 
-pub fn fmt_snbt_compound(f: &mut Formatter<'_>, compound: &SNBTCompound) -> std::fmt::Result {
+#[must_use]
+pub fn is_valid_unquoted_compound_key(string: &str) -> bool {
+    string.chars().all(|char| {
+        char.is_ascii_alphanumeric() || char == '_' || char == '-' || char == '.' || char == '+'
+    })
+}
+
+pub(crate) fn fmt_snbt_compound(
+    f: &mut Formatter<'_>,
+    compound: &SNBTCompound,
+) -> std::fmt::Result {
     f.write_str("{")?;
 
-    for (i, (SNBTString(_, k), v)) in compound.iter().enumerate() {
+    for (i, (SNBTString(_, key), value)) in compound.iter().enumerate() {
         if i > 0 {
             f.write_str(", ")?;
         }
 
-        write!(f, "\"{}\":{}", escape(k), v)?;
+        let should_quote = !is_valid_unquoted_compound_key(key);
+
+        if should_quote {
+            f.write_char('"')?;
+        }
+
+        key.fmt(f)?;
+
+        if should_quote {
+            f.write_char('"')?;
+        }
+
+        write!(f, ": {}", value)?;
     }
 
     f.write_str("}")
 }
 
-#[inline]
-#[must_use]
-fn escape(input: &str) -> String {
-    input.chars().flat_map(char::escape_default).collect()
-}
-
 impl Display for SNBT {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            Self::Byte(v) => write!(f, "{}b", v),
-            Self::Short(v) => write!(f, "{}s", v),
-            Self::Integer(v) => write!(f, "{}", v),
-            Self::Long(v) => write!(f, "{}l", v),
-            Self::Float(v) => write!(f, "{}f", v),
-            Self::Double(v) => write!(f, "{}d", v),
+            Self::Byte(byte) => write!(f, "{}b", byte),
+            Self::Short(short) => write!(f, "{}s", short),
+            Self::Integer(integer) => write!(f, "{}", integer),
+            Self::Long(long) => write!(f, "{}l", long),
+            Self::Float(float) => write!(f, "{}f", float),
+            Self::Double(double) => write!(f, "{}d", double),
             Self::String(macroable) => match macroable {
-                Macroable::Regular(SNBTString(_, s)) => write!(f, "\"{}\"", escape(s)),
+                Macroable::Regular(SNBTString(_, string)) => {
+                    write!(f, "\"{}\"", string.escape_default())
+                }
                 Macroable::Macro(name) => f.write_str(name),
             },
-            Self::List(macroable) => match macroable {
-                Macroable::Regular(values) => {
+            Self::List(list) => match list {
+                Macroable::Regular(list) => {
                     f.write_str("[")?;
 
-                    for (i, v) in values.iter().enumerate() {
-                        if i > 0 {
+                    for (index, snbt) in list.iter().enumerate() {
+                        if index > 0 {
                             f.write_str(", ")?;
                         }
 
-                        v.fmt(f)?;
+                        snbt.fmt(f)?;
                     }
 
                     f.write_str("]")
                 }
                 Macroable::Macro(name) => f.write_str(name),
             },
-            Self::Compound(macroable) => match macroable {
-                Macroable::Regular(map) => fmt_snbt_compound(f, map),
+            Self::Compound(compound) => match compound {
+                Macroable::Regular(compound) => fmt_snbt_compound(f, compound),
                 Macroable::Macro(name) => f.write_str(name),
             },
-            Self::ByteArray(macroable) => match macroable {
-                Macroable::Regular(arr) => {
+            Self::ByteArray(byte_array) => match byte_array {
+                Macroable::Regular(byte_array) => {
                     f.write_str("[B; ")?;
 
-                    for (i, v) in arr.iter().enumerate() {
+                    for (i, byte) in byte_array.iter().enumerate() {
                         if i > 0 {
                             f.write_str(", ")?;
                         }
 
-                        write!(f, "{}b", v)?;
+                        write!(f, "{}b", byte)?;
                     }
 
                     f.write_str("]")
                 }
                 Macroable::Macro(name) => f.write_str(name),
             },
-            Self::IntegerArray(macroable) => match macroable {
-                Macroable::Regular(arr) => {
+            Self::IntegerArray(integer_array) => match integer_array {
+                Macroable::Regular(integer_array) => {
                     f.write_str("[I; ")?;
 
-                    for (i, v) in arr.iter().enumerate() {
+                    for (i, integer) in integer_array.iter().enumerate() {
                         if i > 0 {
                             f.write_str(", ")?;
                         }
 
-                        v.fmt(f)?;
+                        integer.fmt(f)?;
                     }
 
                     f.write_str("]")
                 }
                 Macroable::Macro(name) => f.write_str(name),
             },
-            Self::LongArray(macroable) => match macroable {
-                Macroable::Regular(arr) => {
+            Self::LongArray(long_array) => match long_array {
+                Macroable::Regular(long_array) => {
                     f.write_str("[L; ")?;
 
-                    for (i, v) in arr.iter().enumerate() {
+                    for (i, long) in long_array.iter().enumerate() {
                         if i > 0 {
                             f.write_str(", ")?;
                         }
 
-                        write!(f, "{}L", v)?;
+                        write!(f, "{}L", long)?;
                     }
 
                     f.write_str("]")

@@ -125,7 +125,7 @@ macro_rules! write_entity_selector_option {
     ($f:expr, $key:literal, $inverted:expr, $value:expr) => {{
         write!($f, "{}=", $key)?;
 
-        if *$inverted {
+        if $inverted {
             $f.write_str("!")?;
         }
 
@@ -157,33 +157,35 @@ impl Display for EntitySelectorOption {
             Self::Sort(sort) => write_entity_selector_option!(f, "sort", sort),
 
             Self::Tag(inv, val) => {
-                write_entity_selector_option!(f, "tag", inv, val)
+                write_entity_selector_option!(f, "tag", *inv, val)
             }
             Self::Team(inv, val) => {
-                write_entity_selector_option!(f, "team", inv, val)
+                write_entity_selector_option!(f, "team", *inv, val)
             }
             Self::Name(inv, val) => {
-                write_entity_selector_option!(f, "name", inv, val)
+                write_entity_selector_option!(f, "name", *inv, val)
             }
             Self::Type(inv, val) => {
-                write_entity_selector_option!(f, "type", inv, val)
+                write_entity_selector_option!(f, "type", *inv, val)
             }
             Self::Predicate(inv, val) => {
-                write_entity_selector_option!(f, "predicate", inv, val)
+                write_entity_selector_option!(f, "predicate", *inv, val)
             }
             Self::Nbt(inv, val) => {
-                write_entity_selector_option!(f, "nbt", inv, val)
+                write_entity_selector_option!(f, "nbt", *inv, val)
             }
             Self::Gamemode(inv, val) => {
-                write_entity_selector_option!(f, "gamemode", inv, val)
+                write_entity_selector_option!(f, "gamemode", *inv, val)
             }
 
             Self::Scores(scores) => {
                 f.write_str("scores=")?;
+
                 fmt_hash_map(f, scores)
             }
             Self::Advancements(advancements) => {
                 f.write_str("advancements=")?;
+
                 fmt_hash_map(f, advancements)
             }
         }
@@ -468,14 +470,14 @@ mod tests {
         let nbt = SNBT::macroable_compound(compound);
         assert_eq!(
             EntitySelector::e(vec![EntitySelectorOption::Nbt(false, nbt)]).to_string(),
-            "@e[nbt={OnGround:1b}]"
+            "@e[nbt={OnGround: 1b}]"
         );
         let mut compound = BTreeMap::new();
         compound.insert(SNBTString(false, "Air".to_string()), SNBT::short(300));
         let nbt = SNBT::macroable_compound(compound);
         assert_eq!(
             EntitySelector::e(vec![EntitySelectorOption::Nbt(true, nbt)]).to_string(),
-            "@e[nbt=!{Air:300s}]"
+            "@e[nbt=!{Air: 300s}]"
         );
     }
 
