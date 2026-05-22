@@ -205,10 +205,29 @@ impl SNBT {
 }
 
 #[must_use]
-pub fn is_valid_unquoted_compound_key(string: &str) -> bool {
-    string.chars().all(|char| {
+pub fn is_valid_unquoted_compound_key(key: &str) -> bool {
+    key.chars().all(|char| {
         char.is_ascii_alphanumeric() || char == '_' || char == '-' || char == '.' || char == '+'
     })
+}
+
+#[must_use]
+pub fn is_valid_unquoted_string(string: &str) -> bool {
+    let mut chars = string.chars();
+
+    let Some(first) = chars.next() else {
+        return false;
+    };
+
+    if first.is_ascii_digit() || matches!(first, '-' | '.' | '+') {
+        return false;
+    }
+
+    if !first.is_ascii_alphanumeric() && !matches!(first, '_' | '-' | '.' | '+') {
+        return false;
+    }
+
+    chars.all(|c| c.is_ascii_alphanumeric() || matches!(c, '_' | '-' | '.' | '+'))
 }
 
 pub(crate) fn fmt_snbt_compound(
@@ -249,9 +268,21 @@ impl Display for SNBT {
             Self::Long(long) => write!(f, "{}l", long),
             Self::Float(float) => write!(f, "{}f", float),
             Self::Double(double) => write!(f, "{}d", double),
-            Self::String(macroable) => match macroable {
+            Self::String(string) => match string {
                 Macroable::Regular(SNBTString(_, string)) => {
-                    write!(f, "\"{}\"", string.escape_default())
+                    let should_quote = !is_valid_unquoted_string(string);
+
+                    if should_quote {
+                        f.write_char('"')?;
+                    }
+
+                    string.escape_default().fmt(f)?;
+
+                    if should_quote {
+                        f.write_char('"')?;
+                    }
+
+                    Ok(())
                 }
                 Macroable::Macro(name) => f.write_str(name),
             },
