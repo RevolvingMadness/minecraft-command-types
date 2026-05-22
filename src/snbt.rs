@@ -45,90 +45,66 @@ impl Display for SNBTString {
 
 #[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
 pub enum SNBT {
-    Byte(Macroable<i8>),
-    Short(Macroable<i16>),
-    Integer(Macroable<i32>),
-    Long(Macroable<i64>),
-    Float(Macroable<NotNan<f32>>),
-    Double(Macroable<NotNan<f64>>),
-    String(Macroable<SNBTString>),
-    List(Macroable<Vec<Macroable<Self>>>),
-    Compound(Macroable<SNBTCompound>),
-    ByteArray(Macroable<Vec<Macroable<i8>>>),
-    IntegerArray(Macroable<Vec<Macroable<i32>>>),
-    LongArray(Macroable<Vec<Macroable<i64>>>),
+    Byte(i8),
+    Short(i16),
+    Integer(i32),
+    Long(i64),
+    Float(NotNan<f32>),
+    Double(NotNan<f64>),
+    String(SNBTString),
+    List(Vec<Macroable<Self>>),
+    Compound(SNBTCompound),
+    ByteArray(Vec<Macroable<i8>>),
+    IntegerArray(Vec<Macroable<i32>>),
+    LongArray(Vec<Macroable<i64>>),
 }
 
 impl SNBT {
     #[inline]
     #[must_use]
-    pub fn byte<T: Into<Macroable<i8>>>(value: T) -> Self {
-        Self::Byte(value.into())
+    pub const fn macroable_byte(value: i8) -> Macroable<Self> {
+        Macroable::Regular(Self::Byte(value))
     }
 
     #[inline]
     #[must_use]
-    pub fn macroable_byte<T: Into<Macroable<i8>>>(value: T) -> Macroable<Self> {
-        Macroable::Regular(Self::byte(value))
+    pub const fn macroable_short(value: i16) -> Macroable<Self> {
+        Macroable::Regular(Self::Short(value))
     }
 
     #[inline]
     #[must_use]
-    pub fn short<T: Into<Macroable<i16>>>(value: T) -> Self {
-        Self::Short(value.into())
+    pub const fn macroable_integer(value: i32) -> Macroable<Self> {
+        Macroable::Regular(Self::Integer(value))
     }
 
     #[inline]
     #[must_use]
-    pub fn macroable_short<T: Into<Macroable<i16>>>(value: T) -> Macroable<Self> {
-        Macroable::Regular(Self::short(value))
+    pub const fn macroable_long(value: i64) -> Macroable<Self> {
+        Macroable::Regular(Self::Long(value))
     }
 
     #[inline]
     #[must_use]
-    pub fn integer<T: Into<Macroable<i32>>>(value: T) -> Self {
-        Self::Integer(value.into())
-    }
-
-    #[inline]
-    #[must_use]
-    pub fn macroable_integer<T: Into<Macroable<i32>>>(value: T) -> Macroable<Self> {
-        Macroable::Regular(Self::integer(value))
-    }
-
-    #[inline]
-    #[must_use]
-    pub fn long<T: Into<Macroable<i64>>>(value: T) -> Self {
-        Self::Long(value.into())
-    }
-
-    #[inline]
-    #[must_use]
-    pub fn macroable_long<T: Into<Macroable<i64>>>(value: T) -> Macroable<Self> {
-        Macroable::Regular(Self::long(value))
-    }
-
-    #[inline]
-    #[must_use]
-    pub fn float<T: Into<Macroable<NotNan<f32>>>>(value: T) -> Self {
+    pub fn float<T: Into<NotNan<f32>>>(value: T) -> Self {
         Self::Float(value.into())
     }
 
     #[inline]
     #[must_use]
-    pub fn macroable_float<T: Into<Macroable<NotNan<f32>>>>(value: T) -> Macroable<Self> {
+    pub fn macroable_float<T: Into<NotNan<f32>>>(value: T) -> Macroable<Self> {
         Macroable::Regular(Self::float(value))
     }
 
     #[inline]
     #[must_use]
-    pub fn double<T: Into<Macroable<NotNan<f64>>>>(value: T) -> Self {
+    pub fn double<T: Into<NotNan<f64>>>(value: T) -> Self {
         Self::Double(value.into())
     }
 
     #[inline]
     #[must_use]
-    pub fn macroable_double<T: Into<Macroable<NotNan<f64>>>>(value: T) -> Macroable<Self> {
+    pub fn macroable_double<T: Into<NotNan<f64>>>(value: T) -> Macroable<Self> {
         Macroable::Regular(Self::double(value))
     }
 
@@ -174,29 +150,26 @@ impl SNBT {
     #[must_use]
     #[allow(clippy::needless_pass_by_value)]
     pub fn string(string: impl ToString) -> Self {
-        Self::String(Macroable::Regular(SNBTString(false, string.to_string())))
+        Self::String(SNBTString(false, string.to_string()))
     }
 
     #[inline]
     #[must_use]
     #[allow(clippy::needless_pass_by_value)]
     pub fn macroable_string(string: impl ToString) -> Macroable<Self> {
-        Macroable::Regular(Self::String(Macroable::Regular(SNBTString(
-            false,
-            string.to_string(),
-        ))))
+        Macroable::Regular(Self::String(SNBTString(false, string.to_string())))
     }
 
     #[inline]
     #[must_use]
     #[allow(clippy::needless_pass_by_value)]
     pub const fn snbt_string(string: SNBTString) -> Self {
-        Self::String(Macroable::Regular(string))
+        Self::String(string)
     }
 
     #[must_use]
     pub fn get(&self, key: &SNBTString) -> Option<&Macroable<Self>> {
-        if let Self::Compound(Macroable::Regular(compound)) = self {
+        if let Self::Compound(compound) = self {
             compound.get(key)
         } else {
             None
@@ -268,92 +241,76 @@ impl Display for SNBT {
             Self::Long(long) => write!(f, "{}l", long),
             Self::Float(float) => write!(f, "{}f", float),
             Self::Double(double) => write!(f, "{}d", double),
-            Self::String(string) => match string {
-                Macroable::Regular(SNBTString(_, string)) => {
-                    let should_quote = !is_valid_unquoted_string(string);
+            Self::String(string) => {
+                let string = &string.1;
 
-                    if should_quote {
-                        f.write_char('"')?;
-                    }
+                let should_quote = !is_valid_unquoted_string(string);
 
-                    string.escape_default().fmt(f)?;
-
-                    if should_quote {
-                        f.write_char('"')?;
-                    }
-
-                    Ok(())
+                if should_quote {
+                    f.write_char('"')?;
                 }
-                Macroable::Macro(name) => f.write_str(name),
-            },
-            Self::List(list) => match list {
-                Macroable::Regular(list) => {
-                    f.write_str("[")?;
 
-                    for (index, snbt) in list.iter().enumerate() {
-                        if index > 0 {
-                            f.write_str(", ")?;
-                        }
+                string.escape_default().fmt(f)?;
 
-                        snbt.fmt(f)?;
+                if should_quote {
+                    f.write_char('"')?;
+                }
+
+                Ok(())
+            }
+            Self::List(list) => {
+                f.write_str("[")?;
+
+                for (index, snbt) in list.iter().enumerate() {
+                    if index > 0 {
+                        f.write_str(", ")?;
                     }
 
-                    f.write_str("]")
+                    snbt.fmt(f)?;
                 }
-                Macroable::Macro(name) => f.write_str(name),
-            },
-            Self::Compound(compound) => match compound {
-                Macroable::Regular(compound) => fmt_snbt_compound(f, compound),
-                Macroable::Macro(name) => f.write_str(name),
-            },
-            Self::ByteArray(byte_array) => match byte_array {
-                Macroable::Regular(byte_array) => {
-                    f.write_str("[B; ")?;
 
-                    for (i, byte) in byte_array.iter().enumerate() {
-                        if i > 0 {
-                            f.write_str(", ")?;
-                        }
+                f.write_str("]")
+            }
+            Self::Compound(compound) => fmt_snbt_compound(f, compound),
+            Self::ByteArray(byte_array) => {
+                f.write_str("[B; ")?;
 
-                        write!(f, "{}b", byte)?;
+                for (i, byte) in byte_array.iter().enumerate() {
+                    if i > 0 {
+                        f.write_str(", ")?;
                     }
 
-                    f.write_str("]")
+                    write!(f, "{}b", byte)?;
                 }
-                Macroable::Macro(name) => f.write_str(name),
-            },
-            Self::IntegerArray(integer_array) => match integer_array {
-                Macroable::Regular(integer_array) => {
-                    f.write_str("[I; ")?;
 
-                    for (i, integer) in integer_array.iter().enumerate() {
-                        if i > 0 {
-                            f.write_str(", ")?;
-                        }
+                f.write_str("]")
+            }
+            Self::IntegerArray(integer_array) => {
+                f.write_str("[I; ")?;
 
-                        integer.fmt(f)?;
+                for (i, integer) in integer_array.iter().enumerate() {
+                    if i > 0 {
+                        f.write_str(", ")?;
                     }
 
-                    f.write_str("]")
+                    integer.fmt(f)?;
                 }
-                Macroable::Macro(name) => f.write_str(name),
-            },
-            Self::LongArray(long_array) => match long_array {
-                Macroable::Regular(long_array) => {
-                    f.write_str("[L; ")?;
 
-                    for (i, long) in long_array.iter().enumerate() {
-                        if i > 0 {
-                            f.write_str(", ")?;
-                        }
+                f.write_str("]")
+            }
+            Self::LongArray(long_array) => {
+                f.write_str("[L; ")?;
 
-                        write!(f, "{}L", long)?;
+                for (i, long) in long_array.iter().enumerate() {
+                    if i > 0 {
+                        f.write_str(", ")?;
                     }
 
-                    f.write_str("]")
+                    write!(f, "{}L", long)?;
                 }
-                Macroable::Macro(name) => f.write_str(name),
-            },
+
+                f.write_str("]")
+            }
         }
     }
 }
@@ -368,14 +325,8 @@ impl Serialize for SNBT {
             Self::Short(v) => v.serialize(serializer),
             Self::Integer(v) => v.serialize(serializer),
             Self::Long(v) => v.serialize(serializer),
-            Self::Float(macroable) => match macroable {
-                Macroable::Regular(value) => serializer.serialize_f32(value.into_inner()),
-                Macroable::Macro(name) => serializer.serialize_str(name),
-            },
-            Self::Double(macroable) => match macroable {
-                Macroable::Regular(value) => serializer.serialize_f64(value.into_inner()),
-                Macroable::Macro(name) => serializer.serialize_str(name),
-            },
+            Self::Float(value) => serializer.serialize_f32(value.into_inner()),
+            Self::Double(value) => serializer.serialize_f64(value.into_inner()),
             Self::String(v) => v.serialize(serializer),
             Self::List(v) => v.serialize(serializer),
             Self::Compound(v) => v.serialize(serializer),
@@ -405,7 +356,7 @@ impl<'de> Visitor<'de> for SNBTVisitor {
     }
 
     fn visit_i64<E>(self, value: i64) -> Result<Self::Value, E> {
-        Ok(SNBT::Long(Macroable::Regular(value)))
+        Ok(SNBT::Long(value))
     }
 
     fn visit_u64<E>(self, value: u64) -> Result<Self::Value, E>
@@ -414,7 +365,7 @@ impl<'de> Visitor<'de> for SNBTVisitor {
     {
         i64::try_from(value).map_or_else(
             |_| Err(E::custom(format!("u64 out of range for i64: {}", value))),
-            |value| Ok(SNBT::Long(Macroable::Regular(value))),
+            |value| Ok(SNBT::Long(value)),
         )
     }
 
@@ -423,15 +374,12 @@ impl<'de> Visitor<'de> for SNBTVisitor {
         E: de::Error,
     {
         NotNan::new(value)
-            .map(|value| SNBT::Double(Macroable::Regular(value)))
+            .map(SNBT::Double)
             .map_err(|_| E::custom("f64 value was NaN"))
     }
 
     fn visit_str<E>(self, value: &str) -> Result<Self::Value, E> {
-        Ok(SNBT::String(Macroable::Regular(SNBTString(
-            false,
-            value.to_owned(),
-        ))))
+        Ok(SNBT::String(SNBTString(false, value.to_owned())))
     }
 
     fn visit_seq<A>(self, mut seq: A) -> Result<Self::Value, A::Error>
@@ -444,7 +392,7 @@ impl<'de> Visitor<'de> for SNBTVisitor {
             list.push(element);
         }
 
-        Ok(SNBT::List(Macroable::Regular(list)))
+        Ok(SNBT::List(list))
     }
 
     fn visit_map<M>(self, mut map: M) -> Result<Self::Value, M::Error>
@@ -455,84 +403,78 @@ impl<'de> Visitor<'de> for SNBTVisitor {
         while let Some((key, value)) = map.next_entry()? {
             compound.insert(SNBTString(false, key), value);
         }
-        Ok(SNBT::Compound(Macroable::Regular(compound)))
+        Ok(SNBT::Compound(compound))
     }
 }
 
 impl From<i8> for SNBT {
     fn from(i: i8) -> Self {
-        Self::Byte(Macroable::Regular(i))
+        Self::Byte(i)
     }
 }
 
 impl From<i16> for SNBT {
     fn from(i: i16) -> Self {
-        Self::Short(Macroable::Regular(i))
+        Self::Short(i)
     }
 }
 
 impl From<i32> for SNBT {
     fn from(i: i32) -> Self {
-        Self::Integer(Macroable::Regular(i))
+        Self::Integer(i)
     }
 }
 
 impl From<i64> for SNBT {
     fn from(i: i64) -> Self {
-        Self::Long(Macroable::Regular(i))
+        Self::Long(i)
     }
 }
 
 impl From<NotNan<f32>> for SNBT {
     fn from(f: NotNan<f32>) -> Self {
-        Self::Float(Macroable::Regular(f))
+        Self::Float(f)
     }
 }
 
 impl From<NotNan<f64>> for SNBT {
     fn from(f: NotNan<f64>) -> Self {
-        Self::Double(Macroable::Regular(f))
+        Self::Double(f)
     }
 }
 
 impl From<String> for SNBT {
     fn from(s: String) -> Self {
-        Self::String(Macroable::Regular(SNBTString(false, s)))
+        Self::String(SNBTString(false, s))
     }
 }
 
 impl From<Vec<Macroable<Self>>> for SNBT {
     fn from(v: Vec<Macroable<Self>>) -> Self {
-        Self::List(Macroable::Regular(v))
+        Self::List(v)
     }
 }
 
 impl From<BTreeMap<SNBTString, Macroable<Self>>> for SNBT {
     fn from(m: BTreeMap<SNBTString, Macroable<Self>>) -> Self {
-        Self::Compound(Macroable::Regular(m))
+        Self::Compound(m)
     }
 }
 
 impl From<Vec<i8>> for SNBT {
     fn from(v: Vec<i8>) -> Self {
-        Self::ByteArray(Macroable::Regular(
-            v.into_iter().map(Macroable::Regular).collect(),
-        ))
+        Self::ByteArray(v.into_iter().map(Macroable::Regular).collect())
     }
 }
 
 impl From<Vec<i32>> for SNBT {
     fn from(v: Vec<i32>) -> Self {
-        Self::IntegerArray(Macroable::Regular(
-            v.into_iter().map(Macroable::Regular).collect(),
-        ))
+        Self::IntegerArray(v.into_iter().map(Macroable::Regular).collect())
     }
 }
 
 impl From<Vec<i64>> for SNBT {
     fn from(v: Vec<i64>) -> Self {
-        Self::LongArray(Macroable::Regular(
-            v.into_iter().map(Macroable::Regular).collect(),
-        ))
+        Self::LongArray(v.into_iter().map(Macroable::Regular).collect())
     }
 }

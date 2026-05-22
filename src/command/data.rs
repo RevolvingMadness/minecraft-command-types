@@ -129,3 +129,22 @@ impl From<DataCommand> for Command {
         Self::Data(value)
     }
 }
+
+impl DataCommand {
+    #[must_use]
+    pub fn has_side_effects(&self) -> bool {
+        match self {
+            Self::Get(..) => false,
+            Self::Merge(_, Macroable::Regular(SNBT::Compound(compound))) => !compound.is_empty(),
+            Self::Merge(..) => true,
+            Self::Modify(
+                _,
+                _,
+                DataCommandModificationMode::Merge,
+                DataCommandModification::Value(Macroable::Regular(SNBT::Compound(compound))),
+            ) => !compound.is_empty(),
+            Self::Modify(..) => true,
+            Self::Remove(..) => true,
+        }
+    }
+}

@@ -105,4 +105,20 @@ impl<T> Macroable<T> {
             Self::Macro(name) => Macroable::Macro(name),
         }
     }
+
+    #[must_use]
+    pub fn is_regular_and(&self, f: impl FnOnce(&T) -> bool) -> bool {
+        match self {
+            Self::Regular(value) => f(value),
+            Self::Macro(_) => false,
+        }
+    }
+
+    #[must_use]
+    pub fn is_macro_or(&self, f: impl FnOnce(&T) -> bool) -> bool {
+        match self {
+            Self::Macro(_) => true,
+            Self::Regular(value) => f(value),
+        }
+    }
 }

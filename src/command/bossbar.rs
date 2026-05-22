@@ -65,3 +65,16 @@ impl From<BossbarCommand> for Command {
         Self::Bossbar(value)
     }
 }
+
+impl BossbarCommand {
+    #[must_use]
+    pub const fn has_side_effects(&self) -> bool {
+        match self {
+            Self::Add(..) => true,
+            Self::Get(..) => false,
+            Self::List => false,
+            Self::Remove(..) => true,
+            Self::Set(..) => true,
+        }
+    }
+}

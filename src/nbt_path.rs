@@ -62,10 +62,7 @@ impl NbtPath {
     #[inline]
     #[must_use]
     pub fn to_snbt_string(&self) -> SNBT {
-        SNBT::String(Macroable::Regular(SNBTString(
-            self.has_macro(),
-            self.to_string(),
-        )))
+        SNBT::String(SNBTString(self.has_macro(), self.to_string()))
     }
 }
 

@@ -466,14 +466,14 @@ mod tests {
             "@a[gamemode=!creative]"
         );
         let mut compound = BTreeMap::new();
-        compound.insert(SNBTString(false, "OnGround".to_string()), SNBT::byte(1));
+        compound.insert(SNBTString(false, "OnGround".to_string()), SNBT::Byte(1));
         let nbt = SNBT::macroable_compound(compound);
         assert_eq!(
             EntitySelector::e(vec![EntitySelectorOption::Nbt(false, nbt)]).to_string(),
             "@e[nbt={OnGround: 1b}]"
         );
         let mut compound = BTreeMap::new();
-        compound.insert(SNBTString(false, "Air".to_string()), SNBT::short(300));
+        compound.insert(SNBTString(false, "Air".to_string()), SNBT::Short(300));
         let nbt = SNBT::macroable_compound(compound);
         assert_eq!(
             EntitySelector::e(vec![EntitySelectorOption::Nbt(true, nbt)]).to_string(),

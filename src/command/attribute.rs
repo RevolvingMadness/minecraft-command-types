@@ -29,6 +29,17 @@ impl Display for BaseAttributeCommand {
     }
 }
 
+impl BaseAttributeCommand {
+    #[must_use]
+    pub const fn has_side_effects(&self) -> bool {
+        match self {
+            Self::Get(..) => false,
+            Self::Set(..) => true,
+            Self::Reset => true,
+        }
+    }
+}
+
 #[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
 pub enum ModifierAttributeCommand {
     Add(ResourceLocation, F32, AttributeAddModifier),
@@ -56,6 +67,17 @@ impl Display for ModifierAttributeCommand {
     }
 }
 
+impl ModifierAttributeCommand {
+    #[must_use]
+    pub const fn has_side_effects(&self) -> bool {
+        match self {
+            Self::Add(..) => true,
+            Self::Remove(..) => true,
+            Self::Get(..) => false,
+        }
+    }
+}
+
 #[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
 pub enum AttributeCommand {
     Get(Option<F32>),
@@ -79,6 +101,17 @@ impl Display for AttributeCommand {
             Self::Modifier(modifier_command) => {
                 write!(f, "modifier {}", modifier_command)
             }
+        }
+    }
+}
+
+impl AttributeCommand {
+    #[must_use]
+    pub const fn has_side_effects(&self) -> bool {
+        match self {
+            Self::Get(..) => false,
+            Self::Base(command) => command.has_side_effects(),
+            Self::Modifier(command) => command.has_side_effects(),
         }
     }
 }
