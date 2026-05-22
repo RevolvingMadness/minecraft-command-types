@@ -1,4 +1,5 @@
-use crate::command::enums::datapack_list_type::DatapackListType;
+use crate::command::{Command, enums::datapack_list_type::DatapackListType};
+use crate::option_write_chain;
 use crate::snbt::SNBT;
 use minecraft_command_types_procedural_macros::HasMacro;
 use std::fmt::{Display, Formatter};
@@ -39,18 +40,14 @@ impl Display for DatapackCommand {
             Self::Enable(name, load_priority) => {
                 write!(f, "enable {}", name)?;
 
-                if let Some(load_priority) = load_priority {
-                    write!(f, " {}", load_priority)?;
-                }
+                option_write_chain!(f, load_priority);
 
                 Ok(())
             }
             Self::List(list_type) => {
                 f.write_str("list")?;
 
-                if let Some(list_type) = list_type {
-                    write!(f, " {}", list_type)?;
-                }
+                option_write_chain!(f, list_type);
 
                 Ok(())
             }
@@ -58,5 +55,11 @@ impl Display for DatapackCommand {
                 write!(f, "create {} {}", id, description)
             }
         }
+    }
+}
+
+impl From<DatapackCommand> for Command {
+    fn from(value: DatapackCommand) -> Self {
+        Self::Datapack(value)
     }
 }

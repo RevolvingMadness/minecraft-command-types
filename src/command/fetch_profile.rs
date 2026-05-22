@@ -1,6 +1,8 @@
 use minecraft_command_types_procedural_macros::HasMacro;
 use std::fmt::{Display, Formatter};
 
+use crate::command::Command;
+
 #[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
 pub enum FetchProfileCommand {
     Name(String),
@@ -13,5 +15,11 @@ impl Display for FetchProfileCommand {
             Self::Name(name) => write!(f, "name {}", name),
             Self::Id(id) => write!(f, "id {}", id),
         }
+    }
+}
+
+impl From<FetchProfileCommand> for Command {
+    fn from(value: FetchProfileCommand) -> Self {
+        Self::FetchProfile(value)
     }
 }

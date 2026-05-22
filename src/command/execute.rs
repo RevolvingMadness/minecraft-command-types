@@ -15,6 +15,7 @@ use crate::coordinate::Coordinates;
 use crate::entity_selector::EntitySelector;
 use crate::item::ItemPredicate;
 use crate::nbt_path::NbtPath;
+use crate::option_write_chain;
 use crate::range::{FloatRange, IntegerRange};
 use crate::resource_location::ResourceLocation;
 use crate::rotation::Rotation;
@@ -139,54 +140,42 @@ impl Display for ExecuteIfSubcommand {
             Self::Biome(coords, id, next) => {
                 write!(f, "biome {} {}", coords, id)?;
 
-                if let Some(next_sub) = next {
-                    write!(f, " {}", next_sub)?;
-                }
+                option_write_chain!(f, next);
 
                 Ok(())
             }
             Self::Block(coords, predicate, next) => {
                 write!(f, "block {} {}", coords, predicate)?;
 
-                if let Some(next_sub) = next {
-                    write!(f, " {}", next_sub)?;
-                }
+                option_write_chain!(f, next);
 
                 Ok(())
             }
             Self::Blocks(start, end, dest, mode, next) => {
                 write!(f, "blocks {} {} {} {}", start, end, dest, mode)?;
 
-                if let Some(next_sub) = next {
-                    write!(f, " {}", next_sub)?;
-                }
+                option_write_chain!(f, next);
 
                 Ok(())
             }
             Self::Data(target, path, next) => {
                 write!(f, "data {} {}", target, path)?;
 
-                if let Some(next_sub) = next {
-                    write!(f, " {}", next_sub)?;
-                }
+                option_write_chain!(f, next);
 
                 Ok(())
             }
             Self::Dimension(id, next) => {
                 write!(f, "dimension {}", id)?;
 
-                if let Some(next_sub) = next {
-                    write!(f, " {}", next_sub)?;
-                }
+                option_write_chain!(f, next);
 
                 Ok(())
             }
             Self::Entity(selector, next) => {
                 write!(f, "entity {}", selector)?;
 
-                if let Some(next_sub) = next {
-                    write!(f, " {}", next_sub)?;
-                }
+                option_write_chain!(f, next);
 
                 Ok(())
             }
@@ -196,41 +185,35 @@ impl Display for ExecuteIfSubcommand {
             Self::Items(source, slot, predicate, next) => {
                 write!(f, "items {} {} {}", source, slot, predicate)?;
 
-                if let Some(next_sub) = next {
-                    write!(f, " {}", next_sub)?;
-                }
+                option_write_chain!(f, next);
 
                 Ok(())
             }
             Self::Loaded(coords, next) => {
                 write!(f, "loaded {}", coords)?;
-                if let Some(next_sub) = next {
-                    write!(f, " {}", next_sub)?;
-                }
+
+                option_write_chain!(f, next);
 
                 Ok(())
             }
             Self::Predicate(id, next) => {
                 write!(f, "predicate {}", id)?;
-                if let Some(next_sub) = next {
-                    write!(f, " {}", next_sub)?;
-                }
+
+                option_write_chain!(f, next);
 
                 Ok(())
             }
             Self::Score(score, comparison, next) => {
                 write!(f, "score {} {}", score, comparison)?;
-                if let Some(next_sub) = next {
-                    write!(f, " {}", next_sub)?;
-                }
+
+                option_write_chain!(f, next);
 
                 Ok(())
             }
             Self::Stopwatch(location, range, next) => {
                 write!(f, "stopwatch {} {}", location, range)?;
-                if let Some(next_sub) = next {
-                    write!(f, " {}", next_sub)?;
-                }
+
+                option_write_chain!(f, next);
 
                 Ok(())
             }
@@ -631,38 +614,23 @@ impl ExecuteSubcommand {
 
     #[inline]
     #[must_use]
-    pub fn condition_score_range(
-        self,
-        inverted: bool,
-        score: PlayerScore,
-        min: Option<i32>,
-        max: Option<i32>,
-    ) -> Self {
+    pub fn condition_data(self, inverted: bool, target: DataTarget, path: NbtPath) -> Self {
         Self::If(
             inverted,
-            ExecuteIfSubcommand::Score(
-                score,
-                ScoreComparison::Range(IntegerRange { min, max }),
-                Some(Box::new(self)),
-            ),
+            ExecuteIfSubcommand::Data(target, path, Some(Box::new(self))),
         )
     }
 
     #[inline]
     #[must_use]
-    pub fn if_score_range(self, score: PlayerScore, min: Option<i32>, max: Option<i32>) -> Self {
-        self.condition_score_range(false, score, min, max)
+    pub fn if_data(self, target: DataTarget, path: NbtPath) -> Self {
+        self.condition_data(false, target, path)
     }
 
     #[inline]
     #[must_use]
-    pub fn unless_score_range(
-        self,
-        score: PlayerScore,
-        min: Option<i32>,
-        max: Option<i32>,
-    ) -> Self {
-        self.condition_score_range(true, score, min, max)
+    pub fn unless_data(self, target: DataTarget, path: NbtPath) -> Self {
+        self.condition_data(true, target, path)
     }
 
     #[inline]
@@ -702,5 +670,150 @@ impl ExecuteSubcommand {
     #[must_use]
     pub fn unless(self, subcommand: ExecuteIfSubcommand) -> Self {
         self.conditionally(true, subcommand)
+    }
+}
+
+impl ExecuteSubcommand {
+    #[inline]
+    #[must_use]
+    pub fn condition_score_range(
+        self,
+        inverted: bool,
+        score: PlayerScore,
+        min: Option<i32>,
+        max: Option<i32>,
+    ) -> Self {
+        Self::If(
+            inverted,
+            ExecuteIfSubcommand::Score(
+                score,
+                ScoreComparison::Range(IntegerRange { min, max }),
+                Some(Box::new(self)),
+            ),
+        )
+    }
+
+    #[inline]
+    #[must_use]
+    pub fn if_score_range(self, score: PlayerScore, min: Option<i32>, max: Option<i32>) -> Self {
+        self.condition_score_range(false, score, min, max)
+    }
+
+    #[inline]
+    #[must_use]
+    pub fn unless_score_range(
+        self,
+        score: PlayerScore,
+        min: Option<i32>,
+        max: Option<i32>,
+    ) -> Self {
+        self.condition_score_range(true, score, min, max)
+    }
+}
+
+impl ExecuteSubcommand {
+    #[inline]
+    #[must_use]
+    pub fn condition_operator(
+        self,
+        inverted: bool,
+        left: PlayerScore,
+        operator: ScoreComparisonOperator,
+        right: PlayerScore,
+    ) -> Self {
+        Self::If(
+            inverted,
+            ExecuteIfSubcommand::Score(
+                left,
+                ScoreComparison::Score(operator, right),
+                Some(Box::new(self)),
+            ),
+        )
+    }
+
+    #[inline]
+    #[must_use]
+    pub fn if_score_operator(
+        self,
+        left: PlayerScore,
+        operator: ScoreComparisonOperator,
+        right: PlayerScore,
+    ) -> Self {
+        self.condition_operator(false, left, operator, right)
+    }
+
+    #[inline]
+    #[must_use]
+    pub fn if_score_less_than(self, left: PlayerScore, right: PlayerScore) -> Self {
+        self.if_score_operator(left, ScoreComparisonOperator::LessThan, right)
+    }
+
+    #[inline]
+    #[must_use]
+    pub fn if_score_less_than_or_equal_to(self, left: PlayerScore, right: PlayerScore) -> Self {
+        self.if_score_operator(left, ScoreComparisonOperator::LessThanOrEqualTo, right)
+    }
+
+    #[inline]
+    #[must_use]
+    pub fn if_score_equal_to(self, left: PlayerScore, right: PlayerScore) -> Self {
+        self.if_score_operator(left, ScoreComparisonOperator::EqualTo, right)
+    }
+
+    #[inline]
+    #[must_use]
+    pub fn if_score_greater_than(self, left: PlayerScore, right: PlayerScore) -> Self {
+        self.if_score_operator(left, ScoreComparisonOperator::GreaterThan, right)
+    }
+
+    #[inline]
+    #[must_use]
+    pub fn if_score_greater_than_or_equal_to(self, left: PlayerScore, right: PlayerScore) -> Self {
+        self.if_score_operator(left, ScoreComparisonOperator::GreaterThanOrEqualTo, right)
+    }
+
+    #[inline]
+    #[must_use]
+    pub fn unless_score_operator(
+        self,
+        left: PlayerScore,
+        operator: ScoreComparisonOperator,
+        right: PlayerScore,
+    ) -> Self {
+        self.condition_operator(true, left, operator, right)
+    }
+
+    #[inline]
+    #[must_use]
+    pub fn unless_score_less_than(self, left: PlayerScore, right: PlayerScore) -> Self {
+        self.unless_score_operator(left, ScoreComparisonOperator::LessThan, right)
+    }
+
+    #[inline]
+    #[must_use]
+    pub fn unless_score_less_than_or_equal_to(self, left: PlayerScore, right: PlayerScore) -> Self {
+        self.unless_score_operator(left, ScoreComparisonOperator::LessThanOrEqualTo, right)
+    }
+
+    #[inline]
+    #[must_use]
+    pub fn unless_score_equal_to(self, left: PlayerScore, right: PlayerScore) -> Self {
+        self.unless_score_operator(left, ScoreComparisonOperator::EqualTo, right)
+    }
+
+    #[inline]
+    #[must_use]
+    pub fn unless_score_greater_than(self, left: PlayerScore, right: PlayerScore) -> Self {
+        self.unless_score_operator(left, ScoreComparisonOperator::GreaterThan, right)
+    }
+
+    #[inline]
+    #[must_use]
+    pub fn unless_score_greater_than_or_equal_to(
+        self,
+        left: PlayerScore,
+        right: PlayerScore,
+    ) -> Self {
+        self.unless_score_operator(left, ScoreComparisonOperator::GreaterThanOrEqualTo, right)
     }
 }

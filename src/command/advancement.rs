@@ -1,4 +1,4 @@
-use crate::resource_location::ResourceLocation;
+use crate::{option_write_chain, resource_location::ResourceLocation};
 use minecraft_command_types_procedural_macros::HasMacro;
 use std::fmt::{Display, Formatter};
 
@@ -18,9 +18,7 @@ impl Display for AdvancementCommand {
             Self::Only(advancement, criterion) => {
                 advancement.fmt(f)?;
 
-                if let Some(criterion) = criterion {
-                    write!(f, " {}", criterion)?;
-                }
+                option_write_chain!(f, criterion);
 
                 Ok(())
             }

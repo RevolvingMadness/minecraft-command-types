@@ -1,4 +1,4 @@
-use crate::column_position::ColumnPosition;
+use crate::{column_position::ColumnPosition, command::Command, option_write_chain};
 use minecraft_command_types_procedural_macros::HasMacro;
 use std::fmt::{Display, Formatter};
 
@@ -14,9 +14,7 @@ impl Display for ForceloadRemoveType {
             Self::ColumnPosition(from, to) => {
                 from.fmt(f)?;
 
-                if let Some(to) = to {
-                    write!(f, " {}", to)?;
-                }
+                option_write_chain!(f, to);
 
                 Ok(())
             }
@@ -38,9 +36,7 @@ impl Display for ForceloadCommand {
             Self::Add(from, to) => {
                 write!(f, "add {}", from)?;
 
-                if let Some(to) = to {
-                    write!(f, " {}", to)?;
-                }
+                option_write_chain!(f, to);
 
                 Ok(())
             }
@@ -50,12 +46,16 @@ impl Display for ForceloadCommand {
             Self::Query(position) => {
                 f.write_str("query")?;
 
-                if let Some(position) = position {
-                    write!(f, " {}", position)?;
-                }
+                option_write_chain!(f, position);
 
                 Ok(())
             }
         }
+    }
+}
+
+impl From<ForceloadCommand> for Command {
+    fn from(value: ForceloadCommand) -> Self {
+        Self::Forceload(value)
     }
 }

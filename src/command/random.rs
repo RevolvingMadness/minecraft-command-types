@@ -1,4 +1,5 @@
-use crate::command::enums::random_type::RandomType;
+use crate::command::{Command, enums::random_type::RandomType};
+use crate::option_write_chain;
 use crate::range::IntegerRange;
 use crate::resource_location::ResourceLocation;
 use minecraft_command_types_procedural_macros::HasMacro;
@@ -31,29 +32,23 @@ impl Display for RandomCommand {
             Self::ValueRoll(random_type, range, sequence) => {
                 write!(f, "{} {}", random_type, range)?;
 
-                if let Some(sequence) = sequence {
-                    write!(f, " {}", sequence)?;
-                }
+                option_write_chain!(f, sequence);
 
                 Ok(())
             }
             Self::Reset(reset_type, seed, include_world_seed, include_sequence_id) => {
                 write!(f, "reset {}", reset_type)?;
 
-                if let Some(seed) = seed {
-                    write!(f, " {}", seed)?;
-
-                    if let Some(include_world_seed) = include_world_seed {
-                        write!(f, " {}", include_world_seed)?;
-
-                        if let Some(include_sequence_id) = include_sequence_id {
-                            write!(f, " {}", include_sequence_id)?;
-                        }
-                    }
-                }
+                option_write_chain!(f, seed, include_world_seed, include_sequence_id);
 
                 Ok(())
             }
         }
+    }
+}
+
+impl From<RandomCommand> for Command {
+    fn from(value: RandomCommand) -> Self {
+        Self::Random(value)
     }
 }

@@ -1,6 +1,7 @@
-use crate::command::enums::particle_display_type::ParticleDisplayType;
+use crate::command::{Command, enums::particle_display_type::ParticleDisplayType};
 use crate::coordinate::Coordinates;
 use crate::entity_selector::EntitySelector;
+use crate::option_write_chain;
 use minecraft_command_types_procedural_macros::HasMacro;
 use ordered_float::NotNan;
 use std::fmt::{Display, Formatter};
@@ -25,25 +26,23 @@ impl Display for ParticleCommand {
             Self::Regular(name, pos) => {
                 name.fmt(f)?;
 
-                if let Some(pos) = pos {
-                    write!(f, " {}", pos)?;
-                }
+                option_write_chain!(f, pos);
 
                 Ok(())
             }
             Self::Extra(name, pos, delta, speed, count, display_type, viewers) => {
                 write!(f, "{} {} {} {} {}", name, pos, delta, speed, count)?;
 
-                if let Some(display_type) = display_type {
-                    write!(f, " {}", display_type)?;
-
-                    if let Some(viewers) = viewers {
-                        write!(f, " {}", viewers)?;
-                    }
-                }
+                option_write_chain!(f, display_type, viewers);
 
                 Ok(())
             }
         }
+    }
+}
+
+impl From<ParticleCommand> for Command {
+    fn from(value: ParticleCommand) -> Self {
+        Self::Particle(value)
     }
 }

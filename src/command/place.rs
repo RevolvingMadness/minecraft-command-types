@@ -1,6 +1,7 @@
-use crate::command::enums::template_mirror::TemplateMirror;
 use crate::command::enums::template_rotation::TemplateRotation;
+use crate::command::{Command, enums::template_mirror::TemplateMirror};
 use crate::coordinate::Coordinates;
+use crate::option_write_chain;
 use crate::resource_location::ResourceLocation;
 use minecraft_command_types_procedural_macros::HasMacro;
 use ordered_float::NotNan;
@@ -28,59 +29,37 @@ impl Display for PlaceCommand {
             Self::Feature(feature, pos) => {
                 write!(f, "feature {}", feature)?;
 
-                if let Some(pos) = pos {
-                    write!(f, " {}", pos)?;
-                }
+                option_write_chain!(f, pos);
 
                 Ok(())
             }
             Self::Jigsaw(pool, target, max_depth, position) => {
                 write!(f, "jigsaw {} {} {}", pool, target, max_depth)?;
 
-                if let Some(position) = position {
-                    write!(f, " {}", position)?;
-                }
+                option_write_chain!(f, position);
 
                 Ok(())
             }
             Self::Structure(structure, pos) => {
                 write!(f, "structure {}", structure)?;
 
-                if let Some(pos) = pos {
-                    write!(f, " {}", pos)?;
-                }
+                option_write_chain!(f, pos);
 
                 Ok(())
             }
             Self::Template(template, pos, rotation, mirror, integrity, seed, strict) => {
                 write!(f, "template {}", template)?;
 
-                if let Some(pos) = pos {
-                    write!(f, " {}", pos)?;
-
-                    if let Some(rotation) = rotation {
-                        write!(f, " {}", rotation)?;
-
-                        if let Some(mirror) = mirror {
-                            write!(f, " {}", mirror)?;
-
-                            if let Some(integrity) = integrity {
-                                write!(f, " {}", integrity)?;
-
-                                if let Some(seed) = seed {
-                                    write!(f, " {}", seed)?;
-
-                                    if let Some(strict) = strict {
-                                        write!(f, " {}", strict)?;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+                option_write_chain!(f, pos, rotation, mirror, integrity, seed, strict);
 
                 Ok(())
             }
         }
+    }
+}
+
+impl From<PlaceCommand> for Command {
+    fn from(value: PlaceCommand) -> Self {
+        Self::Place(value)
     }
 }

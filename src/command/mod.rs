@@ -52,7 +52,7 @@ use crate::command::clone::CloneMaskMode;
 use crate::command::damage::DamageType;
 use crate::command::data::DataCommand;
 use crate::command::datapack::DatapackCommand;
-use crate::command::debug::DebugCommandType;
+use crate::command::debug::DebugCommand;
 use crate::command::dialog::DialogCommand;
 use crate::command::effect::EffectCommand;
 use crate::command::enums::score_operation_operator::ScoreOperationOperator;
@@ -74,7 +74,7 @@ use crate::command::particle::ParticleCommand;
 use crate::command::permission_level::PermissionLevel;
 use crate::command::place::PlaceCommand;
 use crate::command::random::RandomCommand;
-use crate::command::recipe::RecipeType;
+use crate::command::recipe::{RecipeMode, RecipeType};
 use crate::command::r#return::ReturnCommand;
 use crate::command::ride::RideCommand;
 use crate::command::rotate::RotateCommand;
@@ -96,6 +96,7 @@ use crate::coordinate::{Coordinates, WorldCoordinate};
 use crate::entity_selector::EntitySelector;
 use crate::item::{ItemPredicate, ItemStack};
 use crate::macroable::Macroable;
+use crate::option_write_chain;
 use crate::resource_location::ResourceLocation;
 use crate::snbt::SNBT;
 use crate::time::Time;
@@ -133,6 +134,14 @@ impl PlayerScore {
 
     #[inline]
     #[must_use]
+    pub const fn get(self) -> Command {
+        Command::Scoreboard(ScoreboardCommand::Players(PlayersScoreboardCommand::Get(
+            self,
+        )))
+    }
+
+    #[inline]
+    #[must_use]
     pub const fn set_value(self, value: ScoreValue) -> Command {
         Command::Scoreboard(ScoreboardCommand::Players(PlayersScoreboardCommand::Set(
             self, value,
@@ -161,6 +170,12 @@ impl PlayerScore {
         Command::Scoreboard(ScoreboardCommand::Players(
             PlayersScoreboardCommand::Operation(self, operator, other),
         ))
+    }
+
+    #[inline]
+    #[must_use]
+    pub const fn set(self, other: Self) -> Command {
+        self.operation(ScoreOperationOperator::Set, other)
     }
 
     #[inline]
@@ -221,7 +236,7 @@ pub enum Command {
     ),
     Data(DataCommand),
     Datapack(DatapackCommand),
-    Debug(DebugCommandType),
+    Debug(DebugCommand),
     DefaultGamemode(Gamemode),
     Deop(EntitySelector),
     Dialog(DialogCommand),
@@ -270,7 +285,7 @@ pub enum Command {
     ),
     Publish(Option<bool>, Option<Gamemode>, Option<i32>),
     Random(RandomCommand),
-    Recipe(bool, EntitySelector, RecipeType),
+    Recipe(RecipeMode, EntitySelector, RecipeType),
     Reload,
     Return(ReturnCommand),
     Ride(EntitySelector, RideCommand),
@@ -476,27 +491,21 @@ impl Display for Command {
             Self::Ban(selectors, reason) => {
                 write!(f, "ban {}", selectors)?;
 
-                if let Some(reason) = reason {
-                    write!(f, " {}", reason)?;
-                }
+                option_write_chain!(f, reason);
 
                 Ok(())
             }
             Self::BanIP(target, reason) => {
                 write!(f, "ban-ip {}", target)?;
 
-                if let Some(reason) = reason {
-                    write!(f, " {}", reason)?;
-                }
+                option_write_chain!(f, reason);
 
                 Ok(())
             }
             Self::Banlist(type_) => {
                 f.write_str("banlist")?;
 
-                if let Some(type_) = type_ {
-                    write!(f, " {}", type_)?;
-                }
+                option_write_chain!(f, type_);
 
                 Ok(())
             }
@@ -504,17 +513,7 @@ impl Display for Command {
             Self::Clear(selector, item, max_count) => {
                 f.write_str("clear")?;
 
-                if let Some(selector) = selector {
-                    write!(f, " {}", selector)?;
-
-                    if let Some(item) = item {
-                        write!(f, " {}", item)?;
-
-                        if let Some(max_count) = max_count {
-                            write!(f, " {}", max_count)?;
-                        }
-                    }
-                }
+                option_write_chain!(f, selector, item, max_count);
 
                 Ok(())
             }
@@ -551,13 +550,7 @@ impl Display for Command {
             Self::Damage(target, amount, type_, command_type) => {
                 write!(f, "damage {} {}", target, amount)?;
 
-                if let Some(type_) = type_ {
-                    write!(f, " {}", type_)?;
-
-                    if let Some(command_type) = command_type {
-                        write!(f, " {}", command_type)?;
-                    }
-                }
+                option_write_chain!(f, type_, command_type);
 
                 Ok(())
             }
@@ -570,9 +563,7 @@ impl Display for Command {
             Self::Difficulty(difficulty) => {
                 f.write_str("difficulty")?;
 
-                if let Some(difficulty) = difficulty {
-                    write!(f, " {}", difficulty)?;
-                }
+                option_write_chain!(f, difficulty);
 
                 Ok(())
             }
@@ -580,9 +571,7 @@ impl Display for Command {
             Self::Enchant(selector, enchantment, level) => {
                 write!(f, "enchant {} {}", selector, enchantment)?;
 
-                if let Some(level) = level {
-                    write!(f, " {}", level)?;
-                }
+                option_write_chain!(f, level);
 
                 Ok(())
             }
@@ -592,18 +581,14 @@ impl Display for Command {
             Self::Fill(from, to, block_state, command) => {
                 write!(f, "fill {} {} {}", from, to, block_state)?;
 
-                if let Some(command) = command {
-                    write!(f, " {}", command)?;
-                }
+                option_write_chain!(f, command);
 
                 Ok(())
             }
             Self::FillBiome(from, to, biome, filter) => {
                 write!(f, "fillbiome {} {} {}", from, to, biome)?;
 
-                if let Some(filter) = filter {
-                    write!(f, " {}", filter)?;
-                }
+                option_write_chain!(f, filter);
 
                 Ok(())
             }
@@ -611,45 +596,35 @@ impl Display for Command {
             Self::Function(function, arguments) => {
                 write!(f, "function {}", function)?;
 
-                if let Some(arguments) = arguments {
-                    write!(f, " {}", arguments)?;
-                }
+                option_write_chain!(f, arguments);
 
                 Ok(())
             }
             Self::Gamemode(gamemode, selector) => {
                 write!(f, "gamemode {}", gamemode)?;
 
-                if let Some(selector) = selector {
-                    write!(f, " {}", selector)?;
-                }
+                option_write_chain!(f, selector);
 
                 Ok(())
             }
             Self::Gamerule(name, value) => {
                 write!(f, "gamerule {}", name)?;
 
-                if let Some(value) = value {
-                    write!(f, " {}", value)?;
-                }
+                option_write_chain!(f, value);
 
                 Ok(())
             }
             Self::Give(selector, item, count) => {
                 write!(f, "give {} {}", selector, item)?;
 
-                if let Some(count) = count {
-                    write!(f, " {}", count)?;
-                }
+                option_write_chain!(f, count);
 
                 Ok(())
             }
             Self::Help(command) => {
                 f.write_str("help")?;
 
-                if let Some(command) = command {
-                    write!(f, " {}", command)?;
-                }
+                option_write_chain!(f, command);
 
                 Ok(())
             }
@@ -668,18 +643,14 @@ impl Display for Command {
             Self::Kick(selector, reason) => {
                 write!(f, "kick {}", selector)?;
 
-                if let Some(reason) = reason {
-                    write!(f, " {}", reason)?;
-                }
+                option_write_chain!(f, reason);
 
                 Ok(())
             }
             Self::Kill(selector) => {
                 f.write_str("kill")?;
 
-                if let Some(selector) = selector {
-                    write!(f, " {}", selector)?;
-                }
+                option_write_chain!(f, selector);
 
                 Ok(())
             }
@@ -731,62 +702,22 @@ impl Display for Command {
             Self::Playsound(sound, source, selector, pos, volume, pitch, minimum_volume) => {
                 write!(f, "playsound {}", sound)?;
 
-                if let Some(source) = source {
-                    write!(f, " {}", source)?;
-
-                    if let Some(selector) = selector {
-                        write!(f, " {}", selector)?;
-
-                        if let Some(pos) = pos {
-                            write!(f, " {}", pos)?;
-
-                            if let Some(volume) = volume {
-                                write!(f, " {}", volume)?;
-
-                                if let Some(pitch) = pitch {
-                                    write!(f, " {}", pitch)?;
-
-                                    if let Some(minimum_volume) = minimum_volume {
-                                        write!(f, " {}", minimum_volume)?;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+                option_write_chain!(f, source, selector, pos, volume, pitch, minimum_volume);
 
                 Ok(())
             }
             Self::Publish(allow_commands, gamemode, port) => {
                 f.write_str("playsound")?;
 
-                if let Some(allow_commands) = allow_commands {
-                    write!(f, " {}", allow_commands)?;
-
-                    if let Some(gamemode) = gamemode {
-                        write!(f, " {}", gamemode)?;
-
-                        if let Some(port) = port {
-                            write!(f, " {}", port)?;
-                        }
-                    }
-                }
+                option_write_chain!(f, allow_commands, gamemode, port);
 
                 Ok(())
             }
             Self::Random(command) => {
                 write!(f, "random {}", command)
             }
-            Self::Recipe(give, selector, recipe_type) => {
-                f.write_str("recipe ")?;
-
-                if *give {
-                    f.write_str("give")?;
-                } else {
-                    f.write_str("take")?;
-                }
-
-                write!(f, " {} {}", selector, recipe_type)
+            Self::Recipe(mode, selector, recipe_type) => {
+                write!(f, "recipe {} {} {}", mode, selector, recipe_type)
             }
             Self::Reload => f.write_str("reload"),
             Self::Return(command) => {
@@ -822,9 +753,7 @@ impl Display for Command {
             Self::Setblock(coordinates, block, mode) => {
                 write!(f, "setblock {} {}", coordinates, block)?;
 
-                if let Some(mode) = mode {
-                    write!(f, " {}", mode)?;
-                }
+                option_write_chain!(f, mode);
 
                 Ok(())
             }
@@ -834,42 +763,21 @@ impl Display for Command {
             Self::SetWorldSpawn(coordinates, angle) => {
                 f.write_str("setworldspawn")?;
 
-                if let Some(coordinates) = coordinates {
-                    write!(f, " {}", coordinates)?;
-
-                    if let Some(angle) = angle {
-                        write!(f, " {}", angle)?;
-                    }
-                }
+                option_write_chain!(f, coordinates, angle);
 
                 Ok(())
             }
             Self::Spawnpoint(selector, coordinates, angle) => {
                 f.write_str("spawnpoint")?;
 
-                if let Some(selector) = selector {
-                    write!(f, " {}", selector)?;
-                    if let Some(coordinates) = coordinates {
-                        write!(f, " {}", coordinates)?;
-
-                        if let Some(angle) = angle {
-                            write!(f, " {}", angle)?;
-                        }
-                    }
-                }
+                option_write_chain!(f, selector, coordinates, angle);
 
                 Ok(())
             }
-            Self::Spectate(selector1, selector2) => {
+            Self::Spectate(target, player) => {
                 f.write_str("spectate")?;
 
-                if let Some(selector1) = selector1 {
-                    write!(f, " {}", selector1)?;
-
-                    if let Some(selector2) = selector2 {
-                        write!(f, " {}", selector2)?;
-                    }
-                }
+                option_write_chain!(f, target, player);
 
                 Ok(())
             }
@@ -887,9 +795,7 @@ impl Display for Command {
                     center, spread_distance, max_range
                 )?;
 
-                if let Some(max_height) = max_height {
-                    write!(f, "under {} ", max_height)?;
-                }
+                option_write_chain!(f, max_height);
 
                 write!(f, "{} {}", respect_teams, targets)
             }
@@ -897,13 +803,7 @@ impl Display for Command {
             Self::StopSound(selector, source, sound) => {
                 write!(f, "stopsound {}", selector)?;
 
-                if let Some(source) = source {
-                    write!(f, " {}", source)?;
-
-                    if let Some(sound) = sound {
-                        write!(f, " {}", sound)?;
-                    }
-                }
+                option_write_chain!(f, source, sound);
 
                 Ok(())
             }
@@ -913,13 +813,7 @@ impl Display for Command {
             Self::Summon(location, coordinates, snbt) => {
                 write!(f, "summon {}", location)?;
 
-                if let Some(coordinates) = coordinates {
-                    write!(f, " {}", coordinates)?;
-
-                    if let Some(snbt) = snbt {
-                        write!(f, " {}", snbt)?;
-                    }
-                }
+                option_write_chain!(f, coordinates, snbt);
 
                 Ok(())
             }
@@ -947,22 +841,14 @@ impl Display for Command {
             Self::Transfer(hostname, port, selector) => {
                 write!(f, "transfer {}", hostname)?;
 
-                if let Some(port) = port {
-                    write!(f, " {}", port)?;
-
-                    if let Some(selector) = selector {
-                        write!(f, " {}", selector)?;
-                    }
-                }
+                option_write_chain!(f, port, selector);
 
                 Ok(())
             }
             Self::Trigger(objective, action) => {
                 write!(f, "trigger {}", objective)?;
 
-                if let Some(action) = action {
-                    write!(f, " {}", action)?;
-                }
+                option_write_chain!(f, action);
 
                 Ok(())
             }
@@ -971,9 +857,7 @@ impl Display for Command {
             Self::Weather(type_, duration) => {
                 write!(f, "weather {}", type_)?;
 
-                if let Some(duration) = duration {
-                    write!(f, " {}", duration)?;
-                }
+                option_write_chain!(f, duration);
 
                 Ok(())
             }

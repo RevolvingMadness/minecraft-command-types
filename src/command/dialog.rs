@@ -1,5 +1,5 @@
-use crate::entity_selector::EntitySelector;
 use crate::resource_location::ResourceLocation;
+use crate::{command::Command, entity_selector::EntitySelector};
 use minecraft_command_types_procedural_macros::HasMacro;
 use std::fmt::{Display, Formatter};
 
@@ -19,5 +19,11 @@ impl Display for DialogCommand {
                 write!(f, "clear {}", selector)
             }
         }
+    }
+}
+
+impl From<DialogCommand> for Command {
+    fn from(value: DialogCommand) -> Self {
+        Self::Dialog(value)
     }
 }

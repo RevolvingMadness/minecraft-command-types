@@ -1,4 +1,4 @@
-use crate::command::enums::experience_type::ExperienceType;
+use crate::command::{Command, enums::experience_type::ExperienceType};
 use crate::entity_selector::EntitySelector;
 use minecraft_command_types_procedural_macros::HasMacro;
 use std::fmt::{Display, Formatter};
@@ -23,5 +23,11 @@ impl Display for ExperienceCommand {
                 write!(f, "query {} {}", selector, experience_type)
             }
         }
+    }
+}
+
+impl From<ExperienceCommand> for Command {
+    fn from(value: ExperienceCommand) -> Self {
+        Self::Experience(value)
     }
 }

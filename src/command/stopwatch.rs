@@ -1,4 +1,4 @@
-use crate::resource_location::ResourceLocation;
+use crate::{command::Command, option_write_chain, resource_location::ResourceLocation};
 use minecraft_command_types_procedural_macros::HasMacro;
 use ordered_float::NotNan;
 use std::fmt::{Display, Formatter};
@@ -20,9 +20,7 @@ impl Display for StopwatchCommand {
             Self::Query(location, scale) => {
                 write!(f, "query {}", location)?;
 
-                if let Some(scale) = scale {
-                    write!(f, " {}", scale)?;
-                }
+                option_write_chain!(f, scale);
 
                 Ok(())
             }
@@ -33,5 +31,11 @@ impl Display for StopwatchCommand {
                 write!(f, "remove {}", location)
             }
         }
+    }
+}
+
+impl From<StopwatchCommand> for Command {
+    fn from(value: StopwatchCommand) -> Self {
+        Self::Stopwatch(value)
     }
 }

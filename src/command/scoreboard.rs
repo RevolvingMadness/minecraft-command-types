@@ -2,6 +2,7 @@ use crate::command::enums::score_operation_operator::ScoreOperationOperator;
 use crate::command::enums::scoreboard_render_type::ScoreboardRenderType;
 use crate::command::{Command, ScoreValue};
 use crate::entity_selector::EntitySelector;
+use crate::option_write_chain;
 use crate::snbt::SNBT;
 use crate::{command::PlayerScore, macroable::Macroable};
 use minecraft_command_types_procedural_macros::HasMacro;
@@ -44,9 +45,7 @@ impl Display for ScoreboardModification {
             Self::NumberFormat(number_format) => {
                 f.write_str("numberformat")?;
 
-                if let Some(number_format) = number_format {
-                    write!(f, " {}", number_format)?;
-                }
+                option_write_chain!(f, number_format);
 
                 Ok(())
             }
@@ -73,9 +72,7 @@ impl Display for ObjectivesScoreboardCommand {
             Self::Add(name, criterion, display_name) => {
                 write!(f, "add {} {}", name, criterion)?;
 
-                if let Some(display_name) = display_name {
-                    write!(f, " {}", display_name)?;
-                }
+                option_write_chain!(f, display_name);
 
                 Ok(())
             }
@@ -85,9 +82,7 @@ impl Display for ObjectivesScoreboardCommand {
             Self::SetDisplay(slot, name) => {
                 write!(f, "setdisplay {}", slot)?;
 
-                if let Some(name) = name {
-                    write!(f, " {}", name)?;
-                }
+                option_write_chain!(f, name);
 
                 Ok(())
             }
@@ -95,6 +90,18 @@ impl Display for ObjectivesScoreboardCommand {
                 write!(f, "modify {} {}", name, modification)
             }
         }
+    }
+}
+
+impl From<ObjectivesScoreboardCommand> for ScoreboardCommand {
+    fn from(value: ObjectivesScoreboardCommand) -> Self {
+        Self::Objectives(value)
+    }
+}
+
+impl From<ObjectivesScoreboardCommand> for Command {
+    fn from(value: ObjectivesScoreboardCommand) -> Self {
+        Self::Scoreboard(value.into())
     }
 }
 
@@ -110,22 +117,36 @@ impl Display for PlayersDisplayScoreboardCommand {
             Self::Name(score, text) => {
                 write!(f, "name {}", score)?;
 
-                if let Some(text) = text {
-                    write!(f, " {}", text)?;
-                }
+                option_write_chain!(f, text);
 
                 Ok(())
             }
             Self::NumberFormat(score, number_format) => {
                 write!(f, "numberformat {}", score)?;
 
-                if let Some(number_format) = number_format {
-                    write!(f, " {}", number_format)?;
-                }
+                option_write_chain!(f, number_format);
 
                 Ok(())
             }
         }
+    }
+}
+
+impl From<PlayersDisplayScoreboardCommand> for PlayersScoreboardCommand {
+    fn from(value: PlayersDisplayScoreboardCommand) -> Self {
+        Self::Display(value)
+    }
+}
+
+impl From<PlayersDisplayScoreboardCommand> for ScoreboardCommand {
+    fn from(value: PlayersDisplayScoreboardCommand) -> Self {
+        Self::Players(value.into())
+    }
+}
+
+impl From<PlayersDisplayScoreboardCommand> for Command {
+    fn from(value: PlayersDisplayScoreboardCommand) -> Self {
+        Self::Scoreboard(value.into())
     }
 }
 
@@ -148,9 +169,7 @@ impl Display for PlayersScoreboardCommand {
             Self::List(selector) => {
                 f.write_str("list")?;
 
-                if let Some(selector) = selector {
-                    write!(f, " {}", selector)?;
-                }
+                option_write_chain!(f, selector);
 
                 Ok(())
             }
@@ -177,9 +196,7 @@ impl Display for PlayersScoreboardCommand {
             Self::Reset(selector, objective) => {
                 write!(f, "reset {}", selector)?;
 
-                if let Some(objective) = objective {
-                    write!(f, " {}", objective)?;
-                }
+                option_write_chain!(f, objective);
 
                 Ok(())
             }
@@ -199,6 +216,12 @@ impl Display for PlayersScoreboardCommand {
 impl From<PlayersScoreboardCommand> for ScoreboardCommand {
     fn from(value: PlayersScoreboardCommand) -> Self {
         Self::Players(value)
+    }
+}
+
+impl From<PlayersScoreboardCommand> for Command {
+    fn from(value: PlayersScoreboardCommand) -> Self {
+        Self::Scoreboard(value.into())
     }
 }
 

@@ -1,4 +1,4 @@
-use crate::command::enums::team_color_with_reset::TeamColorWithReset;
+use crate::command::{Command, enums::team_color_with_reset::TeamColorWithReset};
 use crate::entity_selector::EntitySelector;
 use crate::resource_location::ResourceLocation;
 use minecraft_command_types_procedural_macros::HasMacro;
@@ -65,5 +65,11 @@ impl Display for WaypointCommand {
                 write!(f, "modify {} {}", selector, modification)
             }
         }
+    }
+}
+
+impl From<WaypointCommand> for Command {
+    fn from(value: WaypointCommand) -> Self {
+        Self::Waypoint(value)
     }
 }

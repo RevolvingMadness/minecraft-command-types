@@ -1,6 +1,6 @@
-use crate::command::item_source::ItemSource;
 use crate::item::ItemStack;
 use crate::snbt::SNBT;
+use crate::{command::item_source::ItemSource, option_write_chain};
 use minecraft_command_types_procedural_macros::HasMacro;
 use std::fmt::{Display, Formatter};
 
@@ -18,18 +18,14 @@ impl Display for ItemCommand {
             Self::With(item, count) => {
                 write!(f, "with {}", item)?;
 
-                if let Some(count) = count {
-                    write!(f, " {}", count)?;
-                }
+                option_write_chain!(f, count);
 
                 Ok(())
             }
             Self::From(source, slot, modifier) => {
                 write!(f, "from {} {}", source, slot)?;
 
-                if let Some(modifier) = modifier {
-                    write!(f, " {}", modifier)?;
-                }
+                option_write_chain!(f, modifier);
 
                 Ok(())
             }

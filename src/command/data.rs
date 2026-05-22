@@ -1,6 +1,7 @@
 use crate::command::Command;
 use crate::entity_selector::EntitySelector;
 use crate::nbt_path::NbtPath;
+use crate::option_write_chain;
 use crate::resource_location::ResourceLocation;
 use crate::snbt::SNBT;
 use crate::{coordinate::Coordinates, macroable::Macroable};
@@ -44,26 +45,14 @@ impl Display for DataCommandModification {
             Self::From(source, path) => {
                 write!(f, "from {}", source)?;
 
-                if let Some(path) = path {
-                    write!(f, " {}", path)?;
-                }
+                option_write_chain!(f, path);
 
                 Ok(())
             }
             Self::String(source, path, start, end) => {
                 write!(f, "string {}", source)?;
 
-                if let Some(path) = path {
-                    write!(f, " {}", path)?;
-
-                    if let Some(start) = start {
-                        write!(f, " {}", start)?;
-
-                        if let Some(end) = end {
-                            write!(f, " {}", end)?;
-                        }
-                    }
-                }
+                option_write_chain!(f, path, start, end);
 
                 Ok(())
             }
@@ -114,13 +103,7 @@ impl Display for DataCommand {
             Self::Get(target, path, scale) => {
                 write!(f, "get {}", target)?;
 
-                if let Some(path) = path {
-                    write!(f, " {}", path)?;
-
-                    if let Some(scale) = scale {
-                        write!(f, " {}", scale)?;
-                    }
-                }
+                option_write_chain!(f, path, scale);
 
                 Ok(())
             }

@@ -1,4 +1,4 @@
-use crate::time::Time;
+use crate::{command::Command, option_write_chain, time::Time};
 use minecraft_command_types_procedural_macros::HasMacro;
 use ordered_float::NotNan;
 use std::fmt::{Display, Formatter};
@@ -13,9 +13,7 @@ impl Display for AdvanceTimeTickCommand {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
             Self::Time(time) => {
-                if let Some(time) = time {
-                    write!(f, " {}", time)?;
-                }
+                option_write_chain!(f, time);
 
                 Ok(())
             }
@@ -44,5 +42,11 @@ impl Display for TickCommand {
             Self::Step(command) => write!(f, "step{}", command),
             Self::Sprint(command) => write!(f, "sprint{}", command),
         }
+    }
+}
+
+impl From<TickCommand> for Command {
+    fn from(value: TickCommand) -> Self {
+        Self::Tick(value)
     }
 }

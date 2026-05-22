@@ -1,6 +1,7 @@
-use crate::command::enums::entity_anchor::EntityAnchor;
+use crate::command::{Command, enums::entity_anchor::EntityAnchor};
 use crate::coordinate::Coordinates;
 use crate::entity_selector::EntitySelector;
+use crate::option_write_chain;
 use crate::rotation::Rotation;
 use minecraft_command_types_procedural_macros::HasMacro;
 use std::fmt::{Display, Formatter};
@@ -18,9 +19,7 @@ impl Display for TeleportFacing {
             Self::Entity(selector, anchor) => {
                 write!(f, "entity {}", selector)?;
 
-                if let Some(anchor) = anchor {
-                    write!(f, " {}", anchor)?;
-                }
+                option_write_chain!(f, anchor);
 
                 Ok(())
             }
@@ -57,9 +56,7 @@ impl Display for TargetTeleportCommand {
             Self::Coordinates(coordinates, additional) => {
                 coordinates.fmt(f)?;
 
-                if let Some(additional) = additional {
-                    write!(f, " {}", additional)?;
-                }
+                option_write_chain!(f, additional);
 
                 Ok(())
             }
@@ -81,12 +78,16 @@ impl Display for TeleportCommand {
             Self::Entity(selector, additional) => {
                 selector.fmt(f)?;
 
-                if let Some(additional) = additional {
-                    write!(f, " {}", additional)?;
-                }
+                option_write_chain!(f, additional);
 
                 Ok(())
             }
         }
+    }
+}
+
+impl From<TeleportCommand> for Command {
+    fn from(value: TeleportCommand) -> Self {
+        Self::Teleport(value)
     }
 }

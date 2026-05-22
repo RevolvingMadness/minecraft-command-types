@@ -1,7 +1,8 @@
-use crate::command::enums::team_collision_rule::TeamCollisionRule;
 use crate::command::enums::team_color::TeamColor;
 use crate::command::enums::team_visibility::TeamVisibility;
+use crate::command::{Command, enums::team_collision_rule::TeamCollisionRule};
 use crate::entity_selector::EntitySelector;
+use crate::option_write_chain;
 use crate::snbt::SNBT;
 use minecraft_command_types_procedural_macros::HasMacro;
 use std::fmt::{Display, Formatter};
@@ -70,18 +71,14 @@ impl Display for TeamCommand {
             Self::List(name) => {
                 f.write_str("list")?;
 
-                if let Some(name) = name {
-                    write!(f, " {}", name)?;
-                }
+                option_write_chain!(f, name);
 
                 Ok(())
             }
             Self::Add(name, display_name) => {
                 write!(f, "add {}", name)?;
 
-                if let Some(display_name) = display_name {
-                    write!(f, " {}", display_name)?;
-                }
+                option_write_chain!(f, display_name);
 
                 Ok(())
             }
@@ -94,9 +91,7 @@ impl Display for TeamCommand {
             Self::Join(name, selector) => {
                 write!(f, "join {}", name)?;
 
-                if let Some(selector) = selector {
-                    write!(f, " {}", selector)?;
-                }
+                option_write_chain!(f, selector);
 
                 Ok(())
             }
@@ -107,5 +102,11 @@ impl Display for TeamCommand {
                 write!(f, "modify {} {}", name, option)
             }
         }
+    }
+}
+
+impl From<TeamCommand> for Command {
+    fn from(value: TeamCommand) -> Self {
+        Self::Team(value)
     }
 }

@@ -1,4 +1,4 @@
-use crate::entity_selector::EntitySelector;
+use crate::{command::Command, entity_selector::EntitySelector};
 use minecraft_command_types_procedural_macros::HasMacro;
 use std::fmt::{Display, Formatter};
 
@@ -22,5 +22,11 @@ impl Display for WhitelistCommand {
             Self::Reload => f.write_str("reload"),
             Self::Remove(selector) => write!(f, "remove {}", selector),
         }
+    }
+}
+
+impl From<WhitelistCommand> for Command {
+    fn from(value: WhitelistCommand) -> Self {
+        Self::Whitelist(value)
     }
 }

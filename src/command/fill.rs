@@ -1,6 +1,6 @@
-use crate::block::BlockState;
 use crate::command::enums::fill_mode::FillMode;
 use crate::command::enums::fill_replace_mode::FillReplaceMode;
+use crate::{block::BlockState, option_write_chain};
 use minecraft_command_types_procedural_macros::HasMacro;
 use std::fmt::{Display, Formatter};
 
@@ -17,9 +17,7 @@ impl Display for FillCommand {
             Self::Replace(predicate, replace_mode) => {
                 predicate.fmt(f)?;
 
-                if let Some(replace_mode) = replace_mode {
-                    write!(f, " {}", replace_mode)?;
-                }
+                option_write_chain!(f, replace_mode);
 
                 Ok(())
             }

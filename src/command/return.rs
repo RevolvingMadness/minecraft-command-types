@@ -19,6 +19,12 @@ impl Display for ReturnCommand {
     }
 }
 
+impl From<ReturnCommand> for Command {
+    fn from(value: ReturnCommand) -> Self {
+        Self::Return(value)
+    }
+}
+
 impl ReturnCommand {
     pub const VALUE_0: Self = Self::Value(0);
     pub const VALUE_1: Self = Self::Value(1);

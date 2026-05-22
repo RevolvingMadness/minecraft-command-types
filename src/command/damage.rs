@@ -1,5 +1,5 @@
-use crate::coordinate::Coordinates;
 use crate::entity_selector::EntitySelector;
+use crate::{coordinate::Coordinates, option_write_chain};
 use minecraft_command_types_procedural_macros::HasMacro;
 use std::fmt::{Display, Formatter};
 
@@ -16,9 +16,7 @@ impl Display for DamageType {
             Self::By(by, from) => {
                 write!(f, "by {}", by)?;
 
-                if let Some(from) = from {
-                    write!(f, " from {}", from)?;
-                }
+                option_write_chain!(f, from);
 
                 Ok(())
             }

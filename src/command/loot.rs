@@ -1,8 +1,8 @@
-use crate::command::item_source::ItemSource;
 use crate::coordinate::Coordinates;
 use crate::entity_selector::EntitySelector;
 use crate::item::ItemStack;
 use crate::resource_location::ResourceLocation;
+use crate::{command::item_source::ItemSource, option_write_chain};
 use minecraft_command_types_procedural_macros::HasMacro;
 use std::fmt::{Display, Formatter};
 
@@ -23,9 +23,7 @@ impl Display for LootTarget {
             Self::Replace(item_source, slot, count) => {
                 write!(f, "replace {} {}", item_source, slot)?;
 
-                if let Some(count) = count {
-                    write!(f, " {}", count)?;
-                }
+                option_write_chain!(f, count);
 
                 Ok(())
             }
@@ -64,9 +62,7 @@ impl Display for LootSource {
             Self::Fish(loot_table, pos, item_source) => {
                 write!(f, "fish {} {}", loot_table, pos)?;
 
-                if let Some(item_source) = item_source {
-                    write!(f, " {}", item_source)?;
-                }
+                option_write_chain!(f, item_source);
 
                 Ok(())
             }
@@ -79,9 +75,7 @@ impl Display for LootSource {
             Self::Mine(coordinates, item_source) => {
                 write!(f, "mine {}", coordinates)?;
 
-                if let Some(item_source) = item_source {
-                    write!(f, " {}", item_source)?;
-                }
+                option_write_chain!(f, item_source);
 
                 Ok(())
             }

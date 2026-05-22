@@ -1,5 +1,6 @@
 use crate::command::data::DataTarget;
 use crate::nbt_path::{NbtPath, SNBTCompound};
+use crate::option_write_chain;
 use crate::snbt::fmt_snbt_compound;
 use minecraft_command_types_procedural_macros::HasMacro;
 use std::fmt::{Display, Formatter};
@@ -17,9 +18,7 @@ impl Display for FunctionCommandArguments {
             Self::DataTarget(target, path) => {
                 write!(f, "with {}", target)?;
 
-                if let Some(path) = path {
-                    write!(f, " {}", path)?;
-                }
+                option_write_chain!(f, path);
 
                 Ok(())
             }

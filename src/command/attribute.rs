@@ -1,5 +1,5 @@
-use crate::command::enums::attribute::AttributeAddModifier;
 use crate::resource_location::ResourceLocation;
+use crate::{command::enums::attribute::AttributeAddModifier, option_write_chain};
 use minecraft_command_types_procedural_macros::HasMacro;
 use ordered_float::NotNan;
 use std::fmt::{Display, Formatter};
@@ -19,9 +19,7 @@ impl Display for BaseAttributeCommand {
             Self::Get(scale) => {
                 f.write_str("get")?;
 
-                if let Some(scale) = scale {
-                    write!(f, " {}", scale)?;
-                }
+                option_write_chain!(f, scale);
 
                 Ok(())
             }
@@ -50,9 +48,7 @@ impl Display for ModifierAttributeCommand {
             Self::Get(id, scale) => {
                 write!(f, "value get {}", id)?;
 
-                if let Some(scale) = scale {
-                    write!(f, " {}", scale)?;
-                }
+                option_write_chain!(f, scale);
 
                 Ok(())
             }
@@ -73,9 +69,7 @@ impl Display for AttributeCommand {
             Self::Get(scale) => {
                 f.write_str("get")?;
 
-                if let Some(scale) = scale {
-                    write!(f, " {}", scale)?;
-                }
+                option_write_chain!(f, scale);
 
                 Ok(())
             }

@@ -1,5 +1,5 @@
-use crate::command::enums::time_of_day::TimeOfDay;
 use crate::command::enums::time_query_type::TimeQueryType;
+use crate::command::{Command, enums::time_of_day::TimeOfDay};
 use crate::time::Time;
 use minecraft_command_types_procedural_macros::HasMacro;
 use std::fmt::{Display, Formatter};
@@ -33,5 +33,11 @@ impl Display for TimeCommand {
             Self::Query(query_type) => write!(f, "query {}", query_type),
             Self::Set(set_type) => write!(f, "set {}", set_type),
         }
+    }
+}
+
+impl From<TimeCommand> for Command {
+    fn from(value: TimeCommand) -> Self {
+        Self::Time(value)
     }
 }

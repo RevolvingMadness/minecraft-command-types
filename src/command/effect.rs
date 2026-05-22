@@ -1,5 +1,6 @@
-use crate::entity_selector::EntitySelector;
+use crate::option_write_chain;
 use crate::resource_location::ResourceLocation;
+use crate::{command::Command, entity_selector::EntitySelector};
 use minecraft_command_types_procedural_macros::HasMacro;
 use std::fmt::{Display, Formatter};
 
@@ -36,33 +37,23 @@ impl Display for EffectCommand {
             Self::Clear(selector, effect) => {
                 f.write_str("clear")?;
 
-                if let Some(selector) = selector {
-                    write!(f, " {}", selector)?;
-
-                    if let Some(effect) = effect {
-                        write!(f, " {}", effect)?;
-                    }
-                }
+                option_write_chain!(f, selector, effect);
 
                 Ok(())
             }
             Self::Give(selector, effect, duration, amplifier, hide_particles) => {
                 write!(f, "give {} {}", selector, effect)?;
 
-                if let Some(duration) = duration {
-                    write!(f, " {}", duration)?;
-
-                    if let Some(amplifier) = amplifier {
-                        write!(f, " {}", amplifier)?;
-
-                        if let Some(hide_particles) = hide_particles {
-                            write!(f, " {}", hide_particles)?;
-                        }
-                    }
-                }
+                option_write_chain!(f, duration, amplifier, hide_particles);
 
                 Ok(())
             }
         }
+    }
+}
+
+impl From<EffectCommand> for Command {
+    fn from(value: EffectCommand) -> Self {
+        Self::Effect(value)
     }
 }

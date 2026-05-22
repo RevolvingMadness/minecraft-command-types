@@ -2,6 +2,21 @@ use crate::resource_location::ResourceLocation;
 use minecraft_command_types_procedural_macros::HasMacro;
 use std::fmt::{Display, Formatter};
 
+#[derive(Debug, Clone, Copy, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
+pub enum RecipeMode {
+    Give,
+    Take,
+}
+
+impl Display for RecipeMode {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::Give => f.write_str("give"),
+            Self::Take => f.write_str("take"),
+        }
+    }
+}
+
 #[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
 pub enum RecipeType {
     All,

@@ -1,7 +1,8 @@
-use crate::command::enums::bossbar_color::BossbarColor;
 use crate::command::enums::bossbar_get_type::BossbarGetType;
 use crate::command::enums::bossbar_style::BossbarStyle;
+use crate::command::{Command, enums::bossbar_color::BossbarColor};
 use crate::entity_selector::EntitySelector;
+use crate::option_write_chain;
 use crate::resource_location::ResourceLocation;
 use crate::snbt::SNBT;
 use minecraft_command_types_procedural_macros::HasMacro;
@@ -27,9 +28,7 @@ impl Display for BossbarSetType {
             Self::Players(players) => {
                 f.write_str("players")?;
 
-                if let Some(players) = players {
-                    write!(f, " {}", players)?;
-                }
+                option_write_chain!(f, players);
 
                 Ok(())
             }
@@ -58,5 +57,11 @@ impl Display for BossbarCommand {
             Self::Remove(id) => write!(f, "remove {}", id),
             Self::Set(id, set_type) => write!(f, "set {} {}", id, set_type),
         }
+    }
+}
+
+impl From<BossbarCommand> for Command {
+    fn from(value: BossbarCommand) -> Self {
+        Self::Bossbar(value)
     }
 }

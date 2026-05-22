@@ -1,7 +1,7 @@
-use crate::command::enums::entity_anchor::EntityAnchor;
 use crate::coordinate::Coordinates;
 use crate::entity_selector::EntitySelector;
 use crate::rotation::Rotation;
+use crate::{command::enums::entity_anchor::EntityAnchor, option_write_chain};
 use minecraft_command_types_procedural_macros::HasMacro;
 use std::fmt::{Display, Formatter};
 
@@ -18,9 +18,7 @@ impl Display for FacingRotateCommand {
             Self::Entity(selector, anchor) => {
                 write!(f, "entity {}", selector)?;
 
-                if let Some(anchor) = anchor {
-                    write!(f, " {}", anchor)?;
-                }
+                option_write_chain!(f, anchor);
 
                 Ok(())
             }

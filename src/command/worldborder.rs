@@ -1,5 +1,6 @@
-use crate::column_position::ColumnPosition;
+use crate::option_write_chain;
 use crate::time::Time;
+use crate::{column_position::ColumnPosition, command::Command};
 use minecraft_command_types_procedural_macros::HasMacro;
 use ordered_float::NotNan;
 use std::fmt::{Display, Formatter};
@@ -50,9 +51,7 @@ impl Display for WorldborderCommand {
             Self::Add(distance, time) => {
                 write!(f, "add {}", distance)?;
 
-                if let Some(time) = time {
-                    write!(f, " {}", time)?;
-                }
+                option_write_chain!(f, time);
 
                 Ok(())
             }
@@ -62,9 +61,7 @@ impl Display for WorldborderCommand {
             Self::Set(distance, time) => {
                 write!(f, "set {}", distance)?;
 
-                if let Some(time) = time {
-                    write!(f, " {}", time)?;
-                }
+                option_write_chain!(f, time);
 
                 Ok(())
             }
@@ -72,5 +69,11 @@ impl Display for WorldborderCommand {
                 write!(f, "warning {}", warning_command)
             }
         }
+    }
+}
+
+impl From<WorldborderCommand> for Command {
+    fn from(value: WorldborderCommand) -> Self {
+        Self::Worldborder(value)
     }
 }
