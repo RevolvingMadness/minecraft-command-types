@@ -55,6 +55,7 @@ use crate::command::datapack::DatapackCommand;
 use crate::command::debug::DebugCommandType;
 use crate::command::dialog::DialogCommand;
 use crate::command::effect::EffectCommand;
+use crate::command::enums::score_operation_operator::ScoreOperationOperator;
 use crate::command::enums::setblock_mode::SetblockMode;
 use crate::command::enums::sound_source::{SoundSource, StopSoundSource};
 use crate::command::enums::weather_type::WeatherType;
@@ -78,7 +79,7 @@ use crate::command::r#return::ReturnCommand;
 use crate::command::ride::RideCommand;
 use crate::command::rotate::RotateCommand;
 use crate::command::schedule::ScheduleCommand;
-use crate::command::scoreboard::ScoreboardCommand;
+use crate::command::scoreboard::{PlayersScoreboardCommand, ScoreboardCommand};
 use crate::command::stopwatch::StopwatchCommand;
 use crate::command::tag::TagCommand;
 use crate::command::team::TeamCommand;
@@ -107,6 +108,8 @@ use minecraft_command_types_procedural_macros::HasMacro;
 use ordered_float::NotNan;
 use std::fmt::{Display, Formatter};
 
+pub type ScoreValue = i32;
+
 #[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
 pub struct PlayerScore {
     pub selector: EntitySelector,
@@ -126,6 +129,68 @@ impl PlayerScore {
             selector,
             objective,
         }
+    }
+
+    #[inline]
+    #[must_use]
+    pub const fn set_value(self, value: ScoreValue) -> Command {
+        Command::Scoreboard(ScoreboardCommand::Players(PlayersScoreboardCommand::Set(
+            self, value,
+        )))
+    }
+
+    #[inline]
+    #[must_use]
+    pub const fn add_value(self, amount: ScoreValue) -> Command {
+        Command::Scoreboard(ScoreboardCommand::Players(PlayersScoreboardCommand::Add(
+            self, amount,
+        )))
+    }
+
+    #[inline]
+    #[must_use]
+    pub const fn remove(self, amount: ScoreValue) -> Command {
+        Command::Scoreboard(ScoreboardCommand::Players(
+            PlayersScoreboardCommand::Remove(self, amount),
+        ))
+    }
+
+    #[inline]
+    #[must_use]
+    pub const fn operation(self, operator: ScoreOperationOperator, other: Self) -> Command {
+        Command::Scoreboard(ScoreboardCommand::Players(
+            PlayersScoreboardCommand::Operation(self, operator, other),
+        ))
+    }
+
+    #[inline]
+    #[must_use]
+    pub const fn add(self, other: Self) -> Command {
+        self.operation(ScoreOperationOperator::Add, other)
+    }
+
+    #[inline]
+    #[must_use]
+    pub const fn subtract(self, other: Self) -> Command {
+        self.operation(ScoreOperationOperator::Subtract, other)
+    }
+
+    #[inline]
+    #[must_use]
+    pub const fn multiply(self, other: Self) -> Command {
+        self.operation(ScoreOperationOperator::Multiply, other)
+    }
+
+    #[inline]
+    #[must_use]
+    pub const fn divide(self, other: Self) -> Command {
+        self.operation(ScoreOperationOperator::Divide, other)
+    }
+
+    #[inline]
+    #[must_use]
+    pub const fn modulo(self, other: Self) -> Command {
+        self.operation(ScoreOperationOperator::Modulo, other)
     }
 }
 
@@ -264,10 +329,22 @@ pub enum Command {
     Worldborder(WorldborderCommand),
 }
 
+impl From<Command> for ExecuteSubcommand {
+    fn from(value: Command) -> Self {
+        Self::Run(Box::new(value))
+    }
+}
+
 impl Command {
     pub const RETURN_VALUE_0: Self = Self::Return(ReturnCommand::VALUE_0);
     pub const RETURN_VALUE_1: Self = Self::Return(ReturnCommand::VALUE_1);
     pub const RETURN_FAIL: Self = Self::Return(ReturnCommand::FAIL);
+
+    #[inline]
+    #[must_use]
+    pub fn run(self) -> ExecuteSubcommand {
+        self.into()
+    }
 
     #[must_use]
     pub fn get_permission_level(&self, is_multiplayer: bool) -> PermissionLevel {

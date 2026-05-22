@@ -1,3 +1,4 @@
+use crate::command::Command;
 use crate::entity_selector::EntitySelector;
 use crate::nbt_path::NbtPath;
 use crate::resource_location::ResourceLocation;
@@ -137,5 +138,11 @@ impl Display for DataCommand {
                 write!(f, "remove {} {}", target, path)
             }
         }
+    }
+}
+
+impl From<DataCommand> for Command {
+    fn from(value: DataCommand) -> Self {
+        Self::Data(value)
     }
 }

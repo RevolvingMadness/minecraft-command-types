@@ -1,5 +1,6 @@
 use crate::command::enums::score_operation_operator::ScoreOperationOperator;
 use crate::command::enums::scoreboard_render_type::ScoreboardRenderType;
+use crate::command::{Command, ScoreValue};
 use crate::entity_selector::EntitySelector;
 use crate::snbt::SNBT;
 use crate::{command::PlayerScore, macroable::Macroable};
@@ -132,9 +133,9 @@ impl Display for PlayersDisplayScoreboardCommand {
 pub enum PlayersScoreboardCommand {
     List(Option<EntitySelector>),
     Get(PlayerScore),
-    Set(PlayerScore, i32),
-    Add(PlayerScore, i32),
-    Remove(PlayerScore, i32),
+    Set(PlayerScore, ScoreValue),
+    Add(PlayerScore, ScoreValue),
+    Remove(PlayerScore, ScoreValue),
     Reset(EntitySelector, Option<String>),
     Enable(PlayerScore),
     Operation(PlayerScore, ScoreOperationOperator, PlayerScore),
@@ -195,6 +196,12 @@ impl Display for PlayersScoreboardCommand {
     }
 }
 
+impl From<PlayersScoreboardCommand> for ScoreboardCommand {
+    fn from(value: PlayersScoreboardCommand) -> Self {
+        Self::Players(value)
+    }
+}
+
 #[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
 pub enum ScoreboardCommand {
     Objectives(ObjectivesScoreboardCommand),
@@ -207,5 +214,11 @@ impl Display for ScoreboardCommand {
             Self::Objectives(command) => write!(f, "objectives {}", command),
             Self::Players(command) => write!(f, "players {}", command),
         }
+    }
+}
+
+impl From<ScoreboardCommand> for Command {
+    fn from(value: ScoreboardCommand) -> Self {
+        Self::Scoreboard(value)
     }
 }

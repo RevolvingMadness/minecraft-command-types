@@ -71,7 +71,7 @@ impl Display for Rotated {
     }
 }
 
-#[derive(Display, Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
+#[derive(Display, Debug, Clone, Copy, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
 pub enum ScoreComparisonOperator {
     #[strum(serialize = "<")]
     LessThan,
@@ -238,7 +238,37 @@ impl Display for ExecuteIfSubcommand {
     }
 }
 
+impl From<ExecuteIfSubcommand> for ExecuteSubcommand {
+    fn from(value: ExecuteIfSubcommand) -> Self {
+        Self::If(false, value)
+    }
+}
+
+impl From<ExecuteIfSubcommand> for Command {
+    fn from(value: ExecuteIfSubcommand) -> Self {
+        Self::Execute(value.into())
+    }
+}
+
 impl ExecuteIfSubcommand {
+    #[inline]
+    #[must_use]
+    pub const fn into_subcommand(self, inverted: bool) -> ExecuteSubcommand {
+        ExecuteSubcommand::If(inverted, self)
+    }
+
+    #[inline]
+    #[must_use]
+    pub const fn if_(self) -> ExecuteSubcommand {
+        self.into_subcommand(false)
+    }
+
+    #[inline]
+    #[must_use]
+    pub const fn unless(self) -> ExecuteSubcommand {
+        self.into_subcommand(true)
+    }
+
     #[must_use]
     pub fn then(self, next: ExecuteSubcommand) -> Self {
         match self {
@@ -478,6 +508,12 @@ impl Display for ExecuteSubcommand {
     }
 }
 
+impl From<ExecuteSubcommand> for Command {
+    fn from(value: ExecuteSubcommand) -> Self {
+        Self::Execute(value)
+    }
+}
+
 impl ExecuteSubcommand {
     #[inline]
     #[must_use]
@@ -498,7 +534,9 @@ impl ExecuteSubcommand {
     }
 
     #[must_use]
-    pub fn then(self, next: Self) -> Self {
+    pub fn then<N: Into<Self>>(self, next: N) -> Self {
+        let next = next.into();
+
         match self {
             Self::Align(axes, inner_next) => Self::Align(axes, Box::new(inner_next.then(next))),
             Self::Anchored(anchor, inner_next) => {
@@ -526,5 +564,143 @@ impl ExecuteSubcommand {
             Self::Store(store_type, subcommand) => Self::Store(store_type, subcommand.then(next)),
             Self::Run(..) => next.then(self),
         }
+    }
+}
+
+impl ExecuteSubcommand {
+    #[inline]
+    #[must_use]
+    pub fn store_score(self, store_type: StoreType, score: PlayerScore) -> Self {
+        Self::Store(
+            store_type,
+            ExecuteStoreSubcommand::Score(score, Box::new(self)),
+        )
+    }
+
+    #[inline]
+    #[must_use]
+    pub fn store_result_score(self, score: PlayerScore) -> Self {
+        self.store_score(StoreType::Result, score)
+    }
+
+    #[inline]
+    #[must_use]
+    pub fn store_success_score(self, score: PlayerScore) -> Self {
+        self.store_score(StoreType::Success, score)
+    }
+
+    #[inline]
+    #[must_use]
+    pub fn store_data(
+        self,
+        store_type: StoreType,
+        target: DataTarget,
+        path: NbtPath,
+        nbt_type: NumericSNBTType,
+        scale: NotNan<f32>,
+    ) -> Self {
+        Self::Store(
+            store_type,
+            ExecuteStoreSubcommand::Data(target, path, nbt_type, scale, Box::new(self)),
+        )
+    }
+
+    #[inline]
+    #[must_use]
+    pub fn store_result_data(
+        self,
+        target: DataTarget,
+        path: NbtPath,
+        nbt_type: NumericSNBTType,
+        scale: NotNan<f32>,
+    ) -> Self {
+        self.store_data(StoreType::Result, target, path, nbt_type, scale)
+    }
+
+    #[inline]
+    #[must_use]
+    pub fn store_success_data(
+        self,
+        target: DataTarget,
+        path: NbtPath,
+        nbt_type: NumericSNBTType,
+        scale: NotNan<f32>,
+    ) -> Self {
+        self.store_data(StoreType::Success, target, path, nbt_type, scale)
+    }
+
+    #[inline]
+    #[must_use]
+    pub fn condition_score_range(
+        self,
+        inverted: bool,
+        score: PlayerScore,
+        min: Option<i32>,
+        max: Option<i32>,
+    ) -> Self {
+        Self::If(
+            inverted,
+            ExecuteIfSubcommand::Score(
+                score,
+                ScoreComparison::Range(IntegerRange { min, max }),
+                Some(Box::new(self)),
+            ),
+        )
+    }
+
+    #[inline]
+    #[must_use]
+    pub fn if_score_range(self, score: PlayerScore, min: Option<i32>, max: Option<i32>) -> Self {
+        self.condition_score_range(false, score, min, max)
+    }
+
+    #[inline]
+    #[must_use]
+    pub fn unless_score_range(
+        self,
+        score: PlayerScore,
+        min: Option<i32>,
+        max: Option<i32>,
+    ) -> Self {
+        self.condition_score_range(true, score, min, max)
+    }
+
+    #[inline]
+    #[must_use]
+    pub fn condition_function(self, inverted: bool, resource_location: ResourceLocation) -> Self {
+        Self::If(
+            inverted,
+            ExecuteIfSubcommand::Function(resource_location, Box::new(self)),
+        )
+    }
+
+    #[inline]
+    #[must_use]
+    pub fn if_function(self, resource_location: ResourceLocation) -> Self {
+        self.condition_function(false, resource_location)
+    }
+
+    #[inline]
+    #[must_use]
+    pub fn unless_function(self, resource_location: ResourceLocation) -> Self {
+        self.condition_function(true, resource_location)
+    }
+
+    #[inline]
+    #[must_use]
+    pub fn conditionally(self, inverted: bool, subcommand: ExecuteIfSubcommand) -> Self {
+        Self::If(inverted, subcommand.then(self))
+    }
+
+    #[inline]
+    #[must_use]
+    pub fn if_(self, subcommand: ExecuteIfSubcommand) -> Self {
+        self.conditionally(false, subcommand)
+    }
+
+    #[inline]
+    #[must_use]
+    pub fn unless(self, subcommand: ExecuteIfSubcommand) -> Self {
+        self.conditionally(true, subcommand)
     }
 }

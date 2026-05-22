@@ -128,6 +128,12 @@ impl SNBT {
 
     #[inline]
     #[must_use]
+    pub fn empty_list() -> Self {
+        Self::list(Vec::<Self>::new())
+    }
+
+    #[inline]
+    #[must_use]
     pub fn list<T: Into<Macroable<Self>>>(values: Vec<T>) -> Self {
         Self::List(values.into_iter().map(Into::into).collect())
     }
@@ -136,6 +142,12 @@ impl SNBT {
     #[must_use]
     pub fn macroable_list<T: Into<Macroable<Self>>>(values: Vec<T>) -> Macroable<Self> {
         Macroable::Regular(Self::list(values))
+    }
+
+    #[inline]
+    #[must_use]
+    pub fn empty_compound() -> Self {
+        Self::compound(BTreeMap::<_, Self>::new())
     }
 
     #[inline]
