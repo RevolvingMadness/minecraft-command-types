@@ -105,6 +105,19 @@ impl From<ObjectivesScoreboardCommand> for Command {
     }
 }
 
+impl ObjectivesScoreboardCommand {
+    #[must_use]
+    pub const fn has_side_effects(&self) -> bool {
+        match self {
+            Self::List => false,
+            Self::Add(..) => true,
+            Self::Remove(..) => true,
+            Self::SetDisplay(..) => true,
+            Self::Modify(..) => true,
+        }
+    }
+}
+
 #[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
 pub enum PlayersDisplayScoreboardCommand {
     Name(PlayerScore, Option<Macroable<SNBT>>),
@@ -225,6 +238,23 @@ impl From<PlayersScoreboardCommand> for Command {
     }
 }
 
+impl PlayersScoreboardCommand {
+    #[must_use]
+    pub const fn has_side_effects(&self) -> bool {
+        match self {
+            Self::List(..) => false,
+            Self::Get(..) => false,
+            Self::Set(..) => true,
+            Self::Add(..) => true,
+            Self::Remove(..) => true,
+            Self::Reset(..) => true,
+            Self::Enable(..) => true,
+            Self::Operation(..) => true,
+            Self::Display(..) => true,
+        }
+    }
+}
+
 #[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
 pub enum ScoreboardCommand {
     Objectives(ObjectivesScoreboardCommand),
@@ -243,5 +273,15 @@ impl Display for ScoreboardCommand {
 impl From<ScoreboardCommand> for Command {
     fn from(value: ScoreboardCommand) -> Self {
         Self::Scoreboard(value)
+    }
+}
+
+impl ScoreboardCommand {
+    #[must_use]
+    pub const fn has_side_effects(&self) -> bool {
+        match self {
+            Self::Objectives(command) => command.has_side_effects(),
+            Self::Players(command) => command.has_side_effects(),
+        }
     }
 }

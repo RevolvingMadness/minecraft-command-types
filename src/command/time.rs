@@ -41,3 +41,14 @@ impl From<TimeCommand> for Command {
         Self::Time(value)
     }
 }
+
+impl TimeCommand {
+    #[must_use]
+    pub const fn has_side_effects(&self) -> bool {
+        match self {
+            Self::Add(..) => true,
+            Self::Query(..) => false,
+            Self::Set(..) => true,
+        }
+    }
+}

@@ -9,8 +9,24 @@ use std::str::FromStr;
 #[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
 pub struct ResourceLocation {
     pub is_tag: bool,
-    namespace: Option<String>,
+    pub namespace: Option<String>,
     pub paths: Vec<String>,
+}
+
+impl Display for ResourceLocation {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        if self.is_tag {
+            f.write_str("#")?;
+        }
+
+        if let Some(namespace) = &self.namespace
+            && *namespace != "minecraft"
+        {
+            write!(f, "{}:", namespace)?;
+        }
+
+        self.paths.iter().join("/").fmt(f)
+    }
 }
 
 impl ResourceLocation {
@@ -63,22 +79,6 @@ impl ResourceLocation {
     #[must_use]
     pub fn paths_string(&self) -> String {
         self.paths.iter().join("/")
-    }
-}
-
-impl Display for ResourceLocation {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        if self.is_tag {
-            f.write_str("#")?;
-        }
-
-        if let Some(namespace) = &self.namespace
-            && *namespace != "minecraft"
-        {
-            write!(f, "{}:", namespace)?;
-        }
-
-        self.paths.iter().join("/").fmt(f)
     }
 }
 

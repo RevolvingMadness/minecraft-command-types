@@ -14,7 +14,7 @@ create_enum!(
     #[strum(serialize = "/=")]
     Divide,
     #[strum(serialize = "%=")]
-    Modulo,
+    Remainder,
     #[strum(serialize = "><")]
     Swap,
     #[strum(serialize = "<")]

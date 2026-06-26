@@ -73,3 +73,13 @@ impl From<WaypointCommand> for Command {
         Self::Waypoint(value)
     }
 }
+
+impl WaypointCommand {
+    #[must_use]
+    pub const fn has_side_effects(&self) -> bool {
+        match self {
+            Self::List => false,
+            Self::Modify(..) => true,
+        }
+    }
+}

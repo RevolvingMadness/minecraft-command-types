@@ -10,7 +10,7 @@ keywords = ["minecraft", "ast", "command", "datapack"]
 categories = ["data-structures"]
 
 [dependencies]
-itertools = "0.14.0"
+itertools = "0.15.0"
 ordered-float = "5.3.0"
 strum = { version = "0.28.0", features = ["derive"] }
 serde = { version = "1.0.228", features = ["derive"] }

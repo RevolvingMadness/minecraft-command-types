@@ -30,3 +30,17 @@ impl From<WhitelistCommand> for Command {
         Self::Whitelist(value)
     }
 }
+
+impl WhitelistCommand {
+    #[must_use]
+    pub const fn has_side_effects(&self) -> bool {
+        match self {
+            Self::Add(..) => true,
+            Self::List => false,
+            Self::Off => true,
+            Self::On => true,
+            Self::Reload => true,
+            Self::Remove(..) => true,
+        }
+    }
+}

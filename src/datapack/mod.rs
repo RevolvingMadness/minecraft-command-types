@@ -113,9 +113,6 @@ fn write_file_path_nodes<T>(
         file_path.set_extension(extension.trim_start_matches('.'));
 
         let serialized_content = serializer(content)?;
-        if serialized_content.is_empty() {
-            continue;
-        }
 
         if let Some(parent) = file_path.parent() {
             fs::create_dir_all(parent)?;

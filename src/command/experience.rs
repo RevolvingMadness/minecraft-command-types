@@ -31,3 +31,14 @@ impl From<ExperienceCommand> for Command {
         Self::Experience(value)
     }
 }
+
+impl ExperienceCommand {
+    #[must_use]
+    pub const fn has_side_effects(&self) -> bool {
+        match self {
+            Self::Add(..) => true,
+            Self::Set(..) => true,
+            Self::Query(..) => false,
+        }
+    }
+}

@@ -110,3 +110,18 @@ impl From<TeamCommand> for Command {
         Self::Team(value)
     }
 }
+
+impl TeamCommand {
+    #[must_use]
+    pub const fn has_side_effects(&self) -> bool {
+        match self {
+            Self::List(..) => false,
+            Self::Add(..) => true,
+            Self::Remove(..) => true,
+            Self::Empty(..) => true,
+            Self::Join(..) => true,
+            Self::Leave(..) => true,
+            Self::Modify(..) => true,
+        }
+    }
+}

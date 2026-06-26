@@ -349,6 +349,24 @@ impl ExecuteIfSubcommand {
             ),
         }
     }
+
+    #[must_use]
+    pub fn has_side_effects(&self) -> bool {
+        match self {
+            Self::Biome(.., next) => next.as_ref().is_some_and(|next| next.has_side_effects()),
+            Self::Block(.., next) => next.as_ref().is_some_and(|next| next.has_side_effects()),
+            Self::Blocks(.., next) => next.as_ref().is_some_and(|next| next.has_side_effects()),
+            Self::Data(.., next) => next.as_ref().is_some_and(|next| next.has_side_effects()),
+            Self::Dimension(.., next) => next.as_ref().is_some_and(|next| next.has_side_effects()),
+            Self::Entity(.., next) => next.as_ref().is_some_and(|next| next.has_side_effects()),
+            Self::Function(..) => true,
+            Self::Items(.., next) => next.as_ref().is_some_and(|next| next.has_side_effects()),
+            Self::Loaded(.., next) => next.as_ref().is_some_and(|next| next.has_side_effects()),
+            Self::Predicate(.., next) => next.as_ref().is_some_and(|next| next.has_side_effects()),
+            Self::Score(.., next) => next.as_ref().is_some_and(|next| next.has_side_effects()),
+            Self::Stopwatch(.., next) => next.as_ref().is_some_and(|next| next.has_side_effects()),
+        }
+    }
 }
 
 #[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
@@ -548,9 +566,7 @@ impl ExecuteSubcommand {
             Self::Run(..) => next.then(self),
         }
     }
-}
 
-impl ExecuteSubcommand {
     #[inline]
     #[must_use]
     pub fn store_score(self, store_type: StoreType, score: PlayerScore) -> Self {
@@ -671,9 +687,7 @@ impl ExecuteSubcommand {
     pub fn unless(self, subcommand: ExecuteIfSubcommand) -> Self {
         self.conditionally(true, subcommand)
     }
-}
 
-impl ExecuteSubcommand {
     #[inline]
     #[must_use]
     pub fn condition_score_range(
@@ -709,9 +723,7 @@ impl ExecuteSubcommand {
     ) -> Self {
         self.condition_score_range(true, score, min, max)
     }
-}
 
-impl ExecuteSubcommand {
     #[inline]
     #[must_use]
     pub fn condition_operator(
@@ -815,5 +827,24 @@ impl ExecuteSubcommand {
         right: PlayerScore,
     ) -> Self {
         self.unless_score_operator(left, ScoreComparisonOperator::GreaterThanOrEqualTo, right)
+    }
+
+    #[must_use]
+    pub fn has_side_effects(&self) -> bool {
+        match self {
+            Self::Align(.., next) => next.has_side_effects(),
+            Self::Anchored(.., next) => next.has_side_effects(),
+            Self::As(.., next) => next.has_side_effects(),
+            Self::At(.., next) => next.has_side_effects(),
+            Self::Facing(.., next) => next.has_side_effects(),
+            Self::In(.., next) => next.has_side_effects(),
+            Self::On(.., next) => next.has_side_effects(),
+            Self::Positioned(.., next) => next.has_side_effects(),
+            Self::Rotated(.., next) => next.has_side_effects(),
+            Self::Summon(..) => true,
+            Self::If(.., subcommand) => subcommand.has_side_effects(),
+            Self::Store(..) => true,
+            Self::Run(command) => command.has_side_effects(),
+        }
     }
 }

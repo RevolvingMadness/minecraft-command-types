@@ -50,3 +50,17 @@ impl From<TickCommand> for Command {
         Self::Tick(value)
     }
 }
+
+impl TickCommand {
+    #[must_use]
+    pub const fn has_side_effects(&self) -> bool {
+        match self {
+            Self::Query => false,
+            Self::Rate(..) => true,
+            Self::Freeze => true,
+            Self::Unfreeze => true,
+            Self::Step(..) => true,
+            Self::Sprint(..) => true,
+        }
+    }
+}

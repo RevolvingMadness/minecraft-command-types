@@ -205,7 +205,7 @@ impl PlayerScore {
     #[inline]
     #[must_use]
     pub const fn modulo(self, other: Self) -> Command {
-        self.operation(ScoreOperationOperator::Modulo, other)
+        self.operation(ScoreOperationOperator::Remainder, other)
     }
 }
 
@@ -260,7 +260,7 @@ pub enum Command {
     Give(EntitySelector, ItemStack, Option<i32>),
     Help(Option<String>),
     Item(ItemSource, String, ItemCommand),
-    JFR(bool),
+    Jfr(bool),
     Kick(EntitySelector, Option<String>),
     Kill(Option<EntitySelector>),
     List(bool),
@@ -441,7 +441,7 @@ impl Command {
             | Self::Tick(..)
             | Self::Transfer(..)
             | Self::Whitelist(..) => PermissionLevel::try_from(3).unwrap(),
-            Self::JFR(..)
+            Self::Jfr(..)
             | Self::Perf(..)
             | Self::Publish(..)
             | Self::SaveAll(..)
@@ -479,8 +479,7 @@ impl Command {
     }
 
     #[must_use]
-    #[allow(unused)]
-    fn has_side_effects(&self) -> bool {
+    pub fn has_side_effects(&self) -> bool {
         match self {
             Self::Advancement(..) => true,
             Self::Attribute(_, _, command) => command.has_side_effects(),
@@ -492,93 +491,81 @@ impl Command {
             Self::Clone { .. } => true,
             Self::Damage(_, amount, _, _) => *amount != 0.0,
             Self::Data(command) => command.has_side_effects(),
-            Self::Datapack(datapack_command) => todo!(),
-            Self::Debug(debug_command) => todo!(),
-            Self::DefaultGamemode(gamemode) => todo!(),
-            Self::Deop(entity_selector) => todo!(),
-            Self::Dialog(dialog_command) => todo!(),
-            Self::Difficulty(difficulty) => todo!(),
-            Self::Effect(effect_command) => todo!(),
-            Self::Enchant(entity_selector, resource_location, _) => todo!(),
-            Self::Execute(execute_subcommand) => todo!(),
-            Self::Experience(experience_command) => todo!(),
-            Self::FetchProfile(fetch_profile_command) => todo!(),
-            Self::Fill(coordinates, coordinates1, block_state, fill_command) => todo!(),
-            Self::FillBiome(coordinates, coordinates1, resource_location, resource_location1) => {
-                todo!()
-            }
-            Self::Forceload(forceload_command) => todo!(),
-            Self::Function(resource_location, function_command_arguments) => todo!(),
-            Self::Gamemode(gamemode, entity_selector) => todo!(),
-            Self::Gamerule(_, gamerule_value) => todo!(),
-            Self::Give(entity_selector, item_stack, _) => todo!(),
+            Self::Datapack(command) => command.has_side_effects(),
+            Self::Debug(..) => true,
+            Self::DefaultGamemode(..) => true,
+            Self::Deop(..) => true,
+            Self::Dialog(..) => true,
+            Self::Difficulty(difficulty) => difficulty.is_some(),
+            Self::Effect(..) => true,
+            Self::Enchant(..) => true,
+            Self::Execute(subcommand) => subcommand.has_side_effects(),
+            Self::Experience(command) => command.has_side_effects(),
+            Self::FetchProfile(..) => false,
+            Self::Fill(..) => true,
+            Self::FillBiome(..) => true,
+            Self::Forceload(command) => command.has_side_effects(),
+            Self::Function(..) => true,
+            Self::Gamemode(..) => true,
+            Self::Gamerule(..) => true,
+            Self::Give(..) => true,
             Self::Help(..) => false,
-            Self::Item(item_source, _, item_command) => todo!(),
-            Self::JFR(_) => todo!(),
-            Self::Kick(entity_selector, _) => todo!(),
-            Self::Kill(entity_selector) => todo!(),
-            Self::List(_) => todo!(),
-            Self::Locate(locate_type, resource_location) => todo!(),
-            Self::Loot(loot_target, loot_source) => todo!(),
-            Self::Me(_) => todo!(),
-            Self::Message(entity_selector, _) => todo!(),
-            Self::Op(entity_selector) => todo!(),
-            Self::Pardon(entity_selector) => todo!(),
-            Self::PardonIp(_) => todo!(),
-            Self::Particle(particle_command) => todo!(),
-            Self::Perf(_) => todo!(),
-            Self::Place(place_command) => todo!(),
-            Self::Playsound(
-                resource_location,
-                sound_source,
-                entity_selector,
-                world_coordinate,
-                not_nan,
-                not_nan1,
-                not_nan2,
-            ) => todo!(),
-            Self::Publish(_, gamemode, _) => todo!(),
-            Self::Random(random_command) => todo!(),
-            Self::Recipe(recipe_mode, entity_selector, recipe_type) => todo!(),
-            Self::Reload => todo!(),
-            Self::Return(return_command) => todo!(),
-            Self::Ride(entity_selector, ride_command) => todo!(),
-            Self::Rotate(entity_selector, rotate_command) => todo!(),
-            Self::SaveAll(_) => todo!(),
-            Self::SaveOff => todo!(),
-            Self::SaveOn => todo!(),
-            Self::Say(_) => todo!(),
-            Self::Schedule(schedule_command) => todo!(),
-            Self::Scoreboard(scoreboard_command) => todo!(),
-            Self::Seed => todo!(),
-            Self::Setblock(coordinates, block_state, setblock_mode) => todo!(),
-            Self::SetIdleTimeout(_) => todo!(),
-            Self::SetWorldSpawn(coordinates, not_nan) => todo!(),
-            Self::Spawnpoint(entity_selector, coordinates, not_nan) => todo!(),
-            Self::Spectate(entity_selector, entity_selector1) => todo!(),
-            Self::SpreadPlayers(column_position, not_nan, not_nan1, _, _, entity_selector) => {
-                todo!()
-            }
-            Self::Stop => todo!(),
-            Self::StopSound(entity_selector, stop_sound_source, resource_location) => todo!(),
-            Self::Stopwatch(stopwatch_command) => todo!(),
-            Self::Summon(resource_location, coordinates, macroable) => todo!(),
-            Self::Tag(entity_selector, tag_command) => todo!(),
-            Self::Team(team_command) => todo!(),
-            Self::TeamMessage(_) => todo!(),
-            Self::Teleport(teleport_command) => todo!(),
-            Self::Tellraw(entity_selector, snbt) => todo!(),
-            Self::Test(test_command) => todo!(),
-            Self::Tick(tick_command) => todo!(),
-            Self::Time(time_command) => todo!(),
-            Self::Title(entity_selector, title_command) => todo!(),
-            Self::Transfer(_, _, entity_selector) => todo!(),
-            Self::Trigger(_, trigger_action) => todo!(),
-            Self::Version => todo!(),
-            Self::Waypoint(waypoint_command) => todo!(),
-            Self::Weather(weather_type, time) => todo!(),
-            Self::Whitelist(whitelist_command) => todo!(),
-            Self::Worldborder(worldborder_command) => todo!(),
+            Self::Item(..) => true,
+            Self::Jfr(..) => true,
+            Self::Kick(..) => true,
+            Self::Kill(..) => true,
+            Self::List(..) => false,
+            Self::Locate(..) => false,
+            Self::Loot(..) => true,
+            Self::Me(..) => true,
+            Self::Message(..) => true,
+            Self::Op(..) => true,
+            Self::Pardon(..) => true,
+            Self::PardonIp(..) => true,
+            Self::Particle(..) => true,
+            Self::Perf(..) => true,
+            Self::Place(..) => true,
+            Self::Playsound(..) => true,
+            Self::Publish(..) => true,
+            Self::Random(..) => true,
+            Self::Recipe(..) => true,
+            Self::Reload => true,
+            Self::Return(..) => true,
+            Self::Ride(..) => true,
+            Self::Rotate(..) => true,
+            Self::SaveAll(..) => true,
+            Self::SaveOff => true,
+            Self::SaveOn => true,
+            Self::Say(..) => true,
+            Self::Schedule(..) => true,
+            Self::Scoreboard(command) => command.has_side_effects(),
+            Self::Seed => false,
+            Self::Setblock(..) => true,
+            Self::SetIdleTimeout(..) => true,
+            Self::SetWorldSpawn(..) => true,
+            Self::Spawnpoint(..) => true,
+            Self::Spectate(..) => true,
+            Self::SpreadPlayers(..) => true,
+            Self::Stop => true,
+            Self::StopSound(..) => true,
+            Self::Stopwatch(command) => command.has_side_effects(),
+            Self::Summon(..) => true,
+            Self::Tag(_, command) => command.has_side_effects(),
+            Self::Team(command) => command.has_side_effects(),
+            Self::TeamMessage(..) => true,
+            Self::Teleport(..) => true,
+            Self::Tellraw(..) => true,
+            Self::Test(..) => true,
+            Self::Tick(command) => command.has_side_effects(),
+            Self::Time(command) => command.has_side_effects(),
+            Self::Title(..) => true,
+            Self::Transfer(..) => true,
+            Self::Trigger(..) => true,
+            Self::Version => false,
+            Self::Waypoint(command) => command.has_side_effects(),
+            Self::Weather(..) => true,
+            Self::Whitelist(command) => command.has_side_effects(),
+            Self::Worldborder(command) => command.has_side_effects(),
         }
     }
 }
@@ -735,7 +722,7 @@ impl Display for Command {
             Self::Item(source, slot, command) => {
                 write!(f, "item {} {} {}", source, slot, command)
             }
-            Self::JFR(start) => {
+            Self::Jfr(start) => {
                 f.write_str("jfr ")?;
 
                 if *start {

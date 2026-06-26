@@ -4,12 +4,10 @@ use minecraft_command_types_procedural_macros::HasMacro;
 use ordered_float::NotNan;
 use std::fmt::{Display, Formatter};
 
-type F32 = NotNan<f32>;
-
 #[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
 pub enum BaseAttributeCommand {
-    Get(Option<F32>),
-    Set(F32),
+    Get(Option<NotNan<f32>>),
+    Set(NotNan<f32>),
     Reset,
 }
 
@@ -42,9 +40,9 @@ impl BaseAttributeCommand {
 
 #[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
 pub enum ModifierAttributeCommand {
-    Add(ResourceLocation, F32, AttributeAddModifier),
+    Add(ResourceLocation, NotNan<f32>, AttributeAddModifier),
     Remove(ResourceLocation),
-    Get(ResourceLocation, Option<F32>),
+    Get(ResourceLocation, Option<NotNan<f32>>),
 }
 
 impl Display for ModifierAttributeCommand {
@@ -80,7 +78,7 @@ impl ModifierAttributeCommand {
 
 #[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
 pub enum AttributeCommand {
-    Get(Option<F32>),
+    Get(Option<NotNan<f32>>),
     Base(BaseAttributeCommand),
     Modifier(ModifierAttributeCommand),
 }

@@ -59,3 +59,14 @@ impl From<ForceloadCommand> for Command {
         Self::Forceload(value)
     }
 }
+
+impl ForceloadCommand {
+    #[must_use]
+    pub const fn has_side_effects(&self) -> bool {
+        match self {
+            Self::Add(..) => true,
+            Self::Remove(..) => true,
+            Self::Query(..) => false,
+        }
+    }
+}

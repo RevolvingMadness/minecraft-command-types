@@ -63,3 +63,15 @@ impl From<DatapackCommand> for Command {
         Self::Datapack(value)
     }
 }
+
+impl DatapackCommand {
+    #[must_use]
+    pub const fn has_side_effects(&self) -> bool {
+        match self {
+            Self::Disable(..) => true,
+            Self::Enable(..) => true,
+            Self::List(..) => false,
+            Self::Create(..) => true,
+        }
+    }
+}

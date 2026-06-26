@@ -8,6 +8,7 @@ use minecraft_command_types_procedural_macros::HasMacro;
 use ordered_float::NotNan;
 use std::collections::BTreeMap;
 use std::fmt::{Display, Formatter};
+use std::str::FromStr;
 
 #[derive(Debug, Clone, Copy, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
 pub enum EntitySelectorVariable {
@@ -17,6 +18,23 @@ pub enum EntitySelectorVariable {
     E,
     S,
     N,
+}
+
+impl FromStr for EntitySelectorVariable {
+    type Err = ();
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        Ok(match s {
+            "A" | "a" => Self::A,
+            "E" | "e" => Self::E,
+            "N" | "n" => Self::N,
+            "P" | "p" => Self::P,
+            "R" | "r" => Self::R,
+            "S" | "s" => Self::S,
+
+            _ => return Err(()),
+        })
+    }
 }
 
 impl Display for EntitySelectorVariable {

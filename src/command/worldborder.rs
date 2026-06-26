@@ -77,3 +77,17 @@ impl From<WorldborderCommand> for Command {
         Self::Worldborder(value)
     }
 }
+
+impl WorldborderCommand {
+    #[must_use]
+    pub const fn has_side_effects(&self) -> bool {
+        match self {
+            Self::Add(..) => true,
+            Self::Center(..) => true,
+            Self::Damage(..) => true,
+            Self::Get => false,
+            Self::Set(..) => true,
+            Self::Warning(..) => true,
+        }
+    }
+}

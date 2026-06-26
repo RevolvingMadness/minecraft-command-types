@@ -39,3 +39,15 @@ impl From<StopwatchCommand> for Command {
         Self::Stopwatch(value)
     }
 }
+
+impl StopwatchCommand {
+    #[must_use]
+    pub const fn has_side_effects(&self) -> bool {
+        match self {
+            Self::Create(..) => true,
+            Self::Query(..) => false,
+            Self::Restart(..) => true,
+            Self::Remove(..) => true,
+        }
+    }
+}
