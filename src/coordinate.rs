@@ -2,12 +2,12 @@ use minecraft_command_types_procedural_macros::HasMacro;
 use ordered_float::NotNan;
 use std::fmt::{Display, Formatter, Write};
 
-use crate::macroable::Macroable;
+use crate::{macroable::Macroable, types::Double};
 
 #[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
 pub enum WorldCoordinate {
-    Relative(Option<Macroable<NotNan<f64>>>),
-    Absolute(Macroable<NotNan<f64>>),
+    Relative(Option<Macroable<Double>>),
+    Absolute(Macroable<Double>),
 }
 
 impl Default for WorldCoordinate {
@@ -50,9 +50,9 @@ impl Display for WorldCoordinate {
 pub enum Coordinates {
     World(WorldCoordinate, WorldCoordinate, WorldCoordinate),
     Local(
-        Option<Macroable<NotNan<f64>>>,
-        Option<Macroable<NotNan<f64>>>,
-        Option<Macroable<NotNan<f64>>>,
+        Option<Macroable<Double>>,
+        Option<Macroable<Double>>,
+        Option<Macroable<Double>>,
     ),
 }
 

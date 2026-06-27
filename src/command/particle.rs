@@ -2,8 +2,8 @@ use crate::command::{Command, enums::particle_display_type::ParticleDisplayType}
 use crate::coordinate::Coordinates;
 use crate::entity_selector::EntitySelector;
 use crate::option_write_chain;
+use crate::types::Float;
 use minecraft_command_types_procedural_macros::HasMacro;
-use ordered_float::NotNan;
 use std::fmt::{Display, Formatter};
 
 #[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
@@ -13,7 +13,7 @@ pub enum ParticleCommand {
         String,
         Coordinates,
         Coordinates,
-        NotNan<f32>,
+        Float,
         i32,
         Option<ParticleDisplayType>,
         Option<EntitySelector>,

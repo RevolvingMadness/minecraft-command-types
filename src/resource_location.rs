@@ -1,9 +1,7 @@
-use itertools::Itertools;
 use minecraft_command_types_procedural_macros::HasMacro;
 use serde::de::Visitor;
 use serde::{Deserialize, Deserializer, Serialize, Serializer, de};
-use std::fmt::{Display, Formatter};
-use std::iter::once;
+use std::fmt::{Display, Formatter, Write};
 use std::str::FromStr;
 
 #[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
@@ -25,7 +23,15 @@ impl Display for ResourceLocation {
             write!(f, "{}:", namespace)?;
         }
 
-        self.paths.iter().join("/").fmt(f)
+        for (i, path) in self.paths.iter().enumerate() {
+            if i != 0 {
+                f.write_char('/')?;
+            }
+
+            path.fmt(f)?;
+        }
+
+        Ok(())
     }
 }
 
@@ -33,52 +39,6 @@ impl ResourceLocation {
     #[must_use]
     pub fn namespace(&self) -> &str {
         self.namespace.as_deref().unwrap_or("minecraft")
-    }
-
-    #[inline]
-    #[must_use]
-    pub fn new<N: ToString, P: ToString>(
-        is_tag: bool,
-        namespace: Option<N>,
-        paths: impl IntoIterator<Item = P>,
-    ) -> Self {
-        Self {
-            is_tag,
-            namespace: namespace.map(|namespace| namespace.to_string()),
-            paths: paths.into_iter().map(|path| path.to_string()).collect(),
-        }
-    }
-
-    #[inline]
-    #[must_use]
-    pub fn new_namespace_paths<P: ToString>(
-        namespace: &str,
-        paths: impl IntoIterator<Item = P>,
-    ) -> Self {
-        Self::new(false, Some(namespace), paths)
-    }
-
-    #[inline]
-    #[must_use]
-    pub fn new_namespace_path<P: ToString>(namespace: &str, path: P) -> Self {
-        Self::new_namespace_paths(namespace, once(path))
-    }
-
-    #[inline]
-    #[must_use]
-    pub fn new_paths<N: ToString, P: ToString>(paths: impl IntoIterator<Item = P>) -> Self {
-        Self::new::<N, _>(false, None, paths)
-    }
-
-    #[inline]
-    #[must_use]
-    pub fn new_path<N: ToString, P: ToString>(path: P) -> Self {
-        Self::new_paths::<N, _>(once(path))
-    }
-
-    #[must_use]
-    pub fn paths_string(&self) -> String {
-        self.paths.iter().join("/")
     }
 }
 

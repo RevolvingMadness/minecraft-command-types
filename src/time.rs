@@ -1,6 +1,7 @@
 use minecraft_command_types_procedural_macros::HasMacro;
-use ordered_float::NotNan;
 use std::fmt::{Display, Formatter};
+
+use crate::types::Float;
 
 #[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
 pub enum TimeSuffix {
@@ -20,7 +21,7 @@ impl Display for TimeSuffix {
 }
 
 #[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
-pub struct Time(NotNan<f32>, Option<TimeSuffix>);
+pub struct Time(Float, Option<TimeSuffix>);
 
 impl Display for Time {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {

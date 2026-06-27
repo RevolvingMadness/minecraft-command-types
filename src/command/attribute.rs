@@ -1,13 +1,13 @@
 use crate::resource_location::ResourceLocation;
+use crate::types::Float;
 use crate::{command::enums::attribute::AttributeAddModifier, option_write_chain};
 use minecraft_command_types_procedural_macros::HasMacro;
-use ordered_float::NotNan;
 use std::fmt::{Display, Formatter};
 
 #[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
 pub enum BaseAttributeCommand {
-    Get(Option<NotNan<f32>>),
-    Set(NotNan<f32>),
+    Get(Option<Float>),
+    Set(Float),
     Reset,
 }
 
@@ -40,9 +40,9 @@ impl BaseAttributeCommand {
 
 #[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
 pub enum ModifierAttributeCommand {
-    Add(ResourceLocation, NotNan<f32>, AttributeAddModifier),
+    Add(ResourceLocation, Float, AttributeAddModifier),
     Remove(ResourceLocation),
-    Get(ResourceLocation, Option<NotNan<f32>>),
+    Get(ResourceLocation, Option<Float>),
 }
 
 impl Display for ModifierAttributeCommand {
@@ -78,7 +78,7 @@ impl ModifierAttributeCommand {
 
 #[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
 pub enum AttributeCommand {
-    Get(Option<NotNan<f32>>),
+    Get(Option<Float>),
     Base(BaseAttributeCommand),
     Modifier(ModifierAttributeCommand),
 }

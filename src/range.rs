@@ -1,7 +1,8 @@
 use minecraft_command_types_procedural_macros::HasMacro;
-use ordered_float::NotNan;
 use std::fmt::{Display, Formatter};
 use std::ops::Range;
+
+use crate::types::Float;
 
 #[derive(Debug, Clone, Copy, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
 pub struct IntegerRange {
@@ -112,13 +113,13 @@ impl From<Range<Option<i32>>> for IntegerRange {
 
 #[derive(Debug, Clone, Copy, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
 pub struct FloatRange {
-    pub min: Option<NotNan<f32>>,
-    pub max: Option<NotNan<f32>>,
+    pub min: Option<Float>,
+    pub max: Option<Float>,
 }
 
 impl FloatRange {
     #[must_use]
-    pub fn new(min: Option<NotNan<f32>>, max: Option<NotNan<f32>>) -> Self {
+    pub fn new(min: Option<Float>, max: Option<Float>) -> Self {
         assert!(
             min.is_some() || max.is_some(),
             "min and/or max must be Some"
@@ -135,25 +136,25 @@ impl FloatRange {
 
     #[inline]
     #[must_use]
-    pub fn new_min(min: NotNan<f32>) -> Self {
+    pub fn new_min(min: Float) -> Self {
         Self::new(Some(min), None)
     }
 
     #[inline]
     #[must_use]
-    pub fn new_max(max: NotNan<f32>) -> Self {
+    pub fn new_max(max: Float) -> Self {
         Self::new(None, Some(max))
     }
 
     #[inline]
     #[must_use]
-    pub fn new_min_max(min: NotNan<f32>, max: NotNan<f32>) -> Self {
+    pub fn new_min_max(min: Float, max: Float) -> Self {
         Self::new(Some(min), Some(max))
     }
 
     #[inline]
     #[must_use]
-    pub fn new_single(value: NotNan<f32>) -> Self {
+    pub fn new_single(value: Float) -> Self {
         Self::new(Some(value), Some(value))
     }
 }
@@ -181,38 +182,38 @@ impl Display for FloatRange {
     }
 }
 
-impl From<(NotNan<f32>, NotNan<f32>)> for FloatRange {
-    fn from(value: (NotNan<f32>, NotNan<f32>)) -> Self {
+impl From<(Float, Float)> for FloatRange {
+    fn from(value: (Float, Float)) -> Self {
         Self::new_min_max(value.0, value.1)
     }
 }
 
-impl From<(Option<NotNan<f32>>, NotNan<f32>)> for FloatRange {
-    fn from(value: (Option<NotNan<f32>>, NotNan<f32>)) -> Self {
+impl From<(Option<Float>, Float)> for FloatRange {
+    fn from(value: (Option<Float>, Float)) -> Self {
         Self::new(value.0, Some(value.1))
     }
 }
 
-impl From<(NotNan<f32>, Option<NotNan<f32>>)> for FloatRange {
-    fn from(value: (NotNan<f32>, Option<NotNan<f32>>)) -> Self {
+impl From<(Float, Option<Float>)> for FloatRange {
+    fn from(value: (Float, Option<Float>)) -> Self {
         Self::new(Some(value.0), value.1)
     }
 }
 
-impl From<(Option<NotNan<f32>>, Option<NotNan<f32>>)> for FloatRange {
-    fn from(value: (Option<NotNan<f32>>, Option<NotNan<f32>>)) -> Self {
+impl From<(Option<Float>, Option<Float>)> for FloatRange {
+    fn from(value: (Option<Float>, Option<Float>)) -> Self {
         Self::new(value.0, value.1)
     }
 }
 
-impl From<Range<NotNan<f32>>> for FloatRange {
-    fn from(value: Range<NotNan<f32>>) -> Self {
+impl From<Range<Float>> for FloatRange {
+    fn from(value: Range<Float>) -> Self {
         Self::new_min_max(value.start, value.end)
     }
 }
 
-impl From<Range<Option<NotNan<f32>>>> for FloatRange {
-    fn from(value: Range<Option<NotNan<f32>>>) -> Self {
+impl From<Range<Option<Float>>> for FloatRange {
+    fn from(value: Range<Option<Float>>) -> Self {
         Self::new(value.start, value.end)
     }
 }

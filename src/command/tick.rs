@@ -1,6 +1,5 @@
-use crate::{command::Command, option_write_chain, time::Time};
+use crate::{command::Command, option_write_chain, time::Time, types::Float};
 use minecraft_command_types_procedural_macros::HasMacro;
-use ordered_float::NotNan;
 use std::fmt::{Display, Formatter};
 
 #[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
@@ -25,7 +24,7 @@ impl Display for AdvanceTimeTickCommand {
 #[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
 pub enum TickCommand {
     Query,
-    Rate(NotNan<f32>),
+    Rate(Float),
     Freeze,
     Unfreeze,
     Step(AdvanceTimeTickCommand),

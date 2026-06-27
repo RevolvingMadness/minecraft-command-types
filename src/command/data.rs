@@ -4,9 +4,9 @@ use crate::nbt_path::NbtPath;
 use crate::option_write_chain;
 use crate::resource_location::ResourceLocation;
 use crate::snbt::SNBT;
+use crate::types::Float;
 use crate::{coordinate::Coordinates, macroable::Macroable};
 use minecraft_command_types_procedural_macros::HasMacro;
-use ordered_float::NotNan;
 use std::fmt::{Display, Formatter};
 
 #[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
@@ -86,7 +86,7 @@ impl Display for DataCommandModificationMode {
 
 #[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
 pub enum DataCommand {
-    Get(DataTarget, Option<NbtPath>, Option<NotNan<f32>>),
+    Get(DataTarget, Option<NbtPath>, Option<Float>),
     Merge(DataTarget, Macroable<SNBT>),
     Modify(
         DataTarget,

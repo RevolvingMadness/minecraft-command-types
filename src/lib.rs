@@ -15,4 +15,5 @@ pub mod resource_location;
 pub mod rotation;
 pub mod snbt;
 pub mod time;
+pub mod types;
 mod utils;

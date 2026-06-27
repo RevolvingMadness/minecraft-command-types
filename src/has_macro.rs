@@ -3,6 +3,8 @@ use std::{
     hash::BuildHasher,
 };
 
+use crate::types::{Double, Float};
+
 pub trait HasMacro {
     fn has_macro(&self) -> bool;
     fn has_macro_conflict(&self) -> bool;
@@ -23,16 +25,7 @@ macro_rules! impl_has_macro_false {
     };
 }
 
-impl_has_macro_false!(
-    bool,
-    i8,
-    i16,
-    i32,
-    i64,
-    String,
-    ordered_float::NotNan<f32>,
-    ordered_float::NotNan<f64>
-);
+impl_has_macro_false!(bool, i8, i16, i32, i64, String, Float, Double);
 
 impl<A: HasMacro, B: HasMacro> HasMacro for (A, B) {
     fn has_macro(&self) -> bool {

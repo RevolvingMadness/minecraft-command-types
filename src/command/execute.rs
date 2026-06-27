@@ -19,8 +19,8 @@ use crate::option_write_chain;
 use crate::range::{FloatRange, IntegerRange};
 use crate::resource_location::ResourceLocation;
 use crate::rotation::Rotation;
+use crate::types::Float;
 use minecraft_command_types_procedural_macros::HasMacro;
-use ordered_float::NotNan;
 use std::collections::BTreeSet;
 use std::fmt::{Display, Formatter};
 use strum::Display;
@@ -375,7 +375,7 @@ pub enum ExecuteStoreSubcommand {
         DataTarget,
         NbtPath,
         NumericSNBTType,
-        NotNan<f32>,
+        Float,
         Box<ExecuteSubcommand>,
     ),
     Bossbar(ResourceLocation, BossbarStoreType, Box<ExecuteSubcommand>),
@@ -596,7 +596,7 @@ impl ExecuteSubcommand {
         target: DataTarget,
         path: NbtPath,
         nbt_type: NumericSNBTType,
-        scale: NotNan<f32>,
+        scale: Float,
     ) -> Self {
         Self::Store(
             store_type,
@@ -611,7 +611,7 @@ impl ExecuteSubcommand {
         target: DataTarget,
         path: NbtPath,
         nbt_type: NumericSNBTType,
-        scale: NotNan<f32>,
+        scale: Float,
     ) -> Self {
         self.store_data(StoreType::Result, target, path, nbt_type, scale)
     }
@@ -623,7 +623,7 @@ impl ExecuteSubcommand {
         target: DataTarget,
         path: NbtPath,
         nbt_type: NumericSNBTType,
-        scale: NotNan<f32>,
+        scale: Float,
     ) -> Self {
         self.store_data(StoreType::Success, target, path, nbt_type, scale)
     }

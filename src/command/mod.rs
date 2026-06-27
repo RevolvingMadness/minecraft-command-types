@@ -100,13 +100,13 @@ use crate::option_write_chain;
 use crate::resource_location::ResourceLocation;
 use crate::snbt::SNBT;
 use crate::time::Time;
+use crate::types::Float;
 use enums::advancement_type::AdvancementType;
 use enums::banlist_type::BanlistType;
 use enums::clone_mode::CloneMode;
 use enums::difficulty::Difficulty;
 use enums::gamemode::Gamemode;
 use minecraft_command_types_procedural_macros::HasMacro;
-use ordered_float::NotNan;
 use std::fmt::{Display, Formatter};
 
 pub type ScoreValue = i32;
@@ -230,7 +230,7 @@ pub enum Command {
     },
     Damage(
         EntitySelector,
-        NotNan<f32>,
+        Float,
         Option<ResourceLocation>,
         Option<DamageType>,
     ),
@@ -279,9 +279,9 @@ pub enum Command {
         Option<SoundSource>,
         Option<EntitySelector>,
         Option<WorldCoordinate>,
-        Option<NotNan<f32>>,
-        Option<NotNan<f32>>,
-        Option<NotNan<f32>>,
+        Option<Float>,
+        Option<Float>,
+        Option<Float>,
     ),
     Publish(Option<bool>, Option<Gamemode>, Option<i32>),
     Random(RandomCommand),
@@ -299,17 +299,13 @@ pub enum Command {
     Seed,
     Setblock(Coordinates, BlockState, Option<SetblockMode>),
     SetIdleTimeout(i32),
-    SetWorldSpawn(Option<Coordinates>, Option<NotNan<f32>>),
-    Spawnpoint(
-        Option<EntitySelector>,
-        Option<Coordinates>,
-        Option<NotNan<f32>>,
-    ),
+    SetWorldSpawn(Option<Coordinates>, Option<Float>),
+    Spawnpoint(Option<EntitySelector>, Option<Coordinates>, Option<Float>),
     Spectate(Option<EntitySelector>, Option<EntitySelector>),
     SpreadPlayers(
         ColumnPosition,
-        NotNan<f32>,
-        NotNan<f32>,
+        Float,
+        Float,
         Option<i32>,
         bool,
         EntitySelector,

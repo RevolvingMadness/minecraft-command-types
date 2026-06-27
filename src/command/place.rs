@@ -3,8 +3,8 @@ use crate::command::{Command, enums::template_mirror::TemplateMirror};
 use crate::coordinate::Coordinates;
 use crate::option_write_chain;
 use crate::resource_location::ResourceLocation;
+use crate::types::Float;
 use minecraft_command_types_procedural_macros::HasMacro;
-use ordered_float::NotNan;
 use std::fmt::{Display, Formatter};
 
 #[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
@@ -17,7 +17,7 @@ pub enum PlaceCommand {
         Option<Coordinates>,
         Option<TemplateRotation>,
         Option<TemplateMirror>,
-        Option<NotNan<f32>>,
+        Option<Float>,
         Option<i32>,
         Option<bool>,
     ),

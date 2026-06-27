@@ -1,12 +1,13 @@
-use crate::{command::Command, option_write_chain, resource_location::ResourceLocation};
+use crate::{
+    command::Command, option_write_chain, resource_location::ResourceLocation, types::Float,
+};
 use minecraft_command_types_procedural_macros::HasMacro;
-use ordered_float::NotNan;
 use std::fmt::{Display, Formatter};
 
 #[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
 pub enum StopwatchCommand {
     Create(ResourceLocation),
-    Query(ResourceLocation, Option<NotNan<f32>>),
+    Query(ResourceLocation, Option<Float>),
     Restart(ResourceLocation),
     Remove(ResourceLocation),
 }

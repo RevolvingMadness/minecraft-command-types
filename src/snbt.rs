@@ -1,6 +1,7 @@
 use crate::has_macro::HasMacro;
 use crate::macroable::Macroable;
 use crate::nbt_path::SNBTCompound;
+use crate::types::{Double, Float};
 use minecraft_command_types_procedural_macros::HasMacro;
 use ordered_float::NotNan;
 use serde::de::{Deserialize, Deserializer, MapAccess, SeqAccess, Visitor};
@@ -49,8 +50,8 @@ pub enum SNBT {
     Short(i16),
     Integer(i32),
     Long(i64),
-    Float(NotNan<f32>),
-    Double(NotNan<f64>),
+    Float(Float),
+    Double(Double),
     String(SNBTString),
     List(Vec<Macroable<Self>>),
     Compound(SNBTCompound),
@@ -86,25 +87,25 @@ impl SNBT {
 
     #[inline]
     #[must_use]
-    pub fn float<T: Into<NotNan<f32>>>(value: T) -> Self {
+    pub fn float<T: Into<Float>>(value: T) -> Self {
         Self::Float(value.into())
     }
 
     #[inline]
     #[must_use]
-    pub fn macroable_float<T: Into<NotNan<f32>>>(value: T) -> Macroable<Self> {
+    pub fn macroable_float<T: Into<Float>>(value: T) -> Macroable<Self> {
         Macroable::Regular(Self::float(value))
     }
 
     #[inline]
     #[must_use]
-    pub fn double<T: Into<NotNan<f64>>>(value: T) -> Self {
+    pub fn double<T: Into<Double>>(value: T) -> Self {
         Self::Double(value.into())
     }
 
     #[inline]
     #[must_use]
-    pub fn macroable_double<T: Into<NotNan<f64>>>(value: T) -> Macroable<Self> {
+    pub fn macroable_double<T: Into<Double>>(value: T) -> Macroable<Self> {
         Macroable::Regular(Self::double(value))
     }
 
@@ -431,14 +432,14 @@ impl From<i64> for SNBT {
     }
 }
 
-impl From<NotNan<f32>> for SNBT {
-    fn from(f: NotNan<f32>) -> Self {
+impl From<Float> for SNBT {
+    fn from(f: Float) -> Self {
         Self::Float(f)
     }
 }
 
-impl From<NotNan<f64>> for SNBT {
-    fn from(f: NotNan<f64>) -> Self {
+impl From<Double> for SNBT {
+    fn from(f: Double) -> Self {
         Self::Double(f)
     }
 }
