@@ -2,9 +2,9 @@ use crate::command::{Command, enums::team_color_with_reset::TeamColorWithReset};
 use crate::entity_selector::EntitySelector;
 use crate::resource_location::ResourceLocation;
 use minecraft_command_types_procedural_macros::HasMacro;
-use std::fmt::{Display, Formatter};
+use std::fmt::{self, Display, Formatter};
 
-#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, HasMacro)]
 pub enum WaypointColor {
     Color(TeamColorWithReset),
     Hex(String),
@@ -12,7 +12,7 @@ pub enum WaypointColor {
 }
 
 impl Display for WaypointColor {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
             Self::Color(color) => color.fmt(f),
             Self::Hex(hex) => write!(f, "hex {}", hex),
@@ -21,14 +21,14 @@ impl Display for WaypointColor {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, HasMacro)]
 pub enum WaypointStyleModification {
     Set(ResourceLocation),
     Reset,
 }
 
 impl Display for WaypointStyleModification {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
             Self::Set(style) => write!(f, "set {}", style),
             Self::Reset => f.write_str("reset"),
@@ -36,14 +36,14 @@ impl Display for WaypointStyleModification {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, HasMacro)]
 pub enum WaypointModification {
     Color(WaypointColor),
     Style(WaypointStyleModification),
 }
 
 impl Display for WaypointModification {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
             Self::Color(color) => write!(f, "color {}", color),
             Self::Style(style) => write!(f, "style {}", style),
@@ -51,14 +51,14 @@ impl Display for WaypointModification {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
 pub enum WaypointCommand {
     List,
     Modify(EntitySelector, WaypointModification),
 }
 
 impl Display for WaypointCommand {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
             Self::List => f.write_str("list"),
             Self::Modify(selector, modification) => {

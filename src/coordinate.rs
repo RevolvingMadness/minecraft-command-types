@@ -1,10 +1,10 @@
 use minecraft_command_types_procedural_macros::HasMacro;
 use ordered_float::NotNan;
-use std::fmt::{Display, Formatter, Write};
+use std::fmt::{self, Display, Formatter, Write};
 
 use crate::{macroable::Macroable, types::Double};
 
-#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
 pub enum WorldCoordinate {
     Relative(Option<Macroable<Double>>),
     Absolute(Macroable<Double>),
@@ -30,7 +30,7 @@ impl WorldCoordinate {
 }
 
 impl Display for WorldCoordinate {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
             Self::Relative(offset) => {
                 f.write_char('~')?;
@@ -46,7 +46,7 @@ impl Display for WorldCoordinate {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
 pub enum Coordinates {
     World(WorldCoordinate, WorldCoordinate, WorldCoordinate),
     Local(
@@ -77,7 +77,7 @@ impl Coordinates {
 }
 
 impl Display for Coordinates {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
             Self::World(x, y, z) => {
                 write!(f, "{} {} {}", x, y, z)

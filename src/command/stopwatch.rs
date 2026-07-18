@@ -2,9 +2,9 @@ use crate::{
     command::Command, option_write_chain, resource_location::ResourceLocation, types::Float,
 };
 use minecraft_command_types_procedural_macros::HasMacro;
-use std::fmt::{Display, Formatter};
+use std::fmt::{self, Display, Formatter};
 
-#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
 pub enum StopwatchCommand {
     Create(ResourceLocation),
     Query(ResourceLocation, Option<Float>),
@@ -13,7 +13,7 @@ pub enum StopwatchCommand {
 }
 
 impl Display for StopwatchCommand {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
             Self::Create(location) => {
                 write!(f, "create {}", location)

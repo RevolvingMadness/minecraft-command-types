@@ -3,9 +3,9 @@ use crate::resource_location::ResourceLocation;
 use crate::snbt::fmt_snbt_compound;
 use minecraft_command_types_procedural_macros::HasMacro;
 use std::collections::BTreeMap;
-use std::fmt::{Display, Formatter};
+use std::fmt::{self, Display, Formatter};
 
-#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, HasMacro)]
 pub struct BlockState {
     pub id: ResourceLocation,
     pub block_states: BTreeMap<String, String>,
@@ -13,7 +13,7 @@ pub struct BlockState {
 }
 
 impl Display for BlockState {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         self.id.fmt(f)?;
 
         if !self.block_states.is_empty() {

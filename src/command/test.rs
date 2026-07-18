@@ -1,15 +1,15 @@
 use crate::{command::Command, option_write_chain, resource_location::ResourceLocation};
 use minecraft_command_types_procedural_macros::HasMacro;
-use std::fmt::{Display, Formatter};
+use std::fmt::{self, Display, Formatter};
 
-#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
 pub enum RunfailedTestCommand {
     NumberOfTimes(Option<i32>, Option<bool>, Option<i32>, Option<i32>),
     OnlyRequiredTest(Option<bool>, Option<i32>),
 }
 
 impl Display for RunfailedTestCommand {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
             Self::NumberOfTimes(number_of_times, until_failed, rotation_steps, tests_per_row) => {
                 option_write_chain!(
@@ -31,7 +31,7 @@ impl Display for RunfailedTestCommand {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
 pub enum TestCommand {
     ClearAll(Option<i32>),
     ClearThat,
@@ -63,7 +63,7 @@ pub enum TestCommand {
 }
 
 impl Display for TestCommand {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
             Self::ClearAll(radius) => {
                 f.write_str("clearall")?;

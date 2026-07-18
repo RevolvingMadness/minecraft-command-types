@@ -1,6 +1,6 @@
 use proc_macro::TokenStream;
 use quote::quote;
-use syn::{Attribute, Data, DeriveInput, Fields, parse_macro_input};
+use syn::{Attribute, Data, DeriveInput, Fields, GenericParam, parse_macro_input};
 
 #[proc_macro_derive(HasMacro, attributes(has_macro))]
 pub fn has_macro_derive(input: TokenStream) -> TokenStream {
@@ -9,17 +9,26 @@ pub fn has_macro_derive(input: TokenStream) -> TokenStream {
 
     let crate_name = std::env::var("CARGO_PKG_NAME").unwrap_or_default();
     let is_internal = crate_name == "minecraft-command-types";
-    let crate_path = if is_internal {
-        quote! { crate }
+    let trait_path = if is_internal {
+        quote! { crate::has_macro::HasMacro }
     } else {
-        quote! { ::minecraft_command_types }
+        quote! { ::minecraft_command_types::has_macro::HasMacro }
     };
+
+    let mut generics = input.generics.clone();
+    for param in &mut generics.params {
+        if let GenericParam::Type(ref mut type_param) = *param {
+            type_param.bounds.push(syn::parse_quote!(#trait_path));
+        }
+    }
+
+    let (impl_generics, ty_generics, where_clause) = generics.split_for_impl();
 
     let has_macro_body = generate_body(&input.data, "has_macro");
     let has_macro_conflict_body = generate_body(&input.data, "has_macro_conflict");
 
     let expanded = quote! {
-        impl #crate_path::has_macro::HasMacro for #name {
+        impl #impl_generics #trait_path for #name #ty_generics #where_clause {
             fn has_macro(&self) -> bool {
                 #has_macro_body
             }

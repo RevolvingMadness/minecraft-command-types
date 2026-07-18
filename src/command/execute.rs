@@ -1,5 +1,6 @@
 use crate::block::BlockState;
 use crate::column_position::ColumnPosition;
+use crate::command::Command;
 use crate::command::data::DataTarget;
 use crate::command::enums::axis::Axis;
 use crate::command::enums::bossbar_store_type::BossbarStoreType;
@@ -10,29 +11,29 @@ use crate::command::enums::numeric_snbt_type::NumericSNBTType;
 use crate::command::enums::relation::Relation;
 use crate::command::enums::store_type::StoreType;
 use crate::command::item_source::ItemSource;
-use crate::command::{Command, PlayerScore};
 use crate::coordinate::Coordinates;
 use crate::entity_selector::EntitySelector;
 use crate::item::ItemPredicate;
 use crate::nbt_path::NbtPath;
 use crate::option_write_chain;
+use crate::player_score::PlayerScore;
 use crate::range::{FloatRange, IntegerRange};
 use crate::resource_location::ResourceLocation;
 use crate::rotation::Rotation;
 use crate::types::Float;
 use minecraft_command_types_procedural_macros::HasMacro;
 use std::collections::BTreeSet;
-use std::fmt::{Display, Formatter};
+use std::fmt::{self, Display, Formatter};
 use strum::Display;
 
-#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
 pub enum Facing {
     Position(Coordinates),
     Entity(EntitySelector, EntityAnchor),
 }
 
 impl Display for Facing {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
             Self::Position(coords) => coords.fmt(f),
             Self::Entity(selector, anchor) => write!(f, "entity {} {}", selector, anchor),
@@ -40,7 +41,7 @@ impl Display for Facing {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
 pub enum Positioned {
     Position(Coordinates),
     As(EntitySelector),
@@ -48,7 +49,7 @@ pub enum Positioned {
 }
 
 impl Display for Positioned {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
             Self::Position(coords) => coords.fmt(f),
             Self::As(selector) => write!(f, "as {}", selector),
@@ -57,14 +58,14 @@ impl Display for Positioned {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
 pub enum Rotated {
     Rotation(Rotation),
     As(EntitySelector),
 }
 
 impl Display for Rotated {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
             Self::Rotation(rotation) => rotation.fmt(f),
             Self::As(selector) => write!(f, "as {}", selector),
@@ -72,7 +73,7 @@ impl Display for Rotated {
     }
 }
 
-#[derive(Display, Debug, Clone, Copy, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
+#[derive(Display, Debug, Clone, Copy, PartialEq, Eq, Hash, HasMacro)]
 pub enum ScoreComparisonOperator {
     #[strum(serialize = "<")]
     LessThan,
@@ -86,14 +87,27 @@ pub enum ScoreComparisonOperator {
     GreaterThanOrEqualTo,
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
+impl ScoreComparisonOperator {
+    #[must_use]
+    pub const fn into_range(self, value: i32) -> IntegerRange {
+        match self {
+            Self::LessThan => IntegerRange::new_upper(value - 1),
+            Self::LessThanOrEqualTo => IntegerRange::new_upper(value),
+            Self::EqualTo => IntegerRange::new_single(value),
+            Self::GreaterThan => IntegerRange::new_lower(value + 1),
+            Self::GreaterThanOrEqualTo => IntegerRange::new_lower(value),
+        }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
 pub enum ScoreComparison {
     Range(IntegerRange),
     Score(ScoreComparisonOperator, PlayerScore),
 }
 
 impl Display for ScoreComparison {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
             Self::Range(range) => write!(f, "matches {}", range),
             Self::Score(operator, right) => {
@@ -103,7 +117,7 @@ impl Display for ScoreComparison {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
 pub enum ExecuteIfSubcommand {
     Biome(
         Coordinates,
@@ -135,7 +149,7 @@ pub enum ExecuteIfSubcommand {
 }
 
 impl Display for ExecuteIfSubcommand {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
             Self::Biome(coords, id, next) => {
                 write!(f, "biome {} {}", coords, id)?;
@@ -253,7 +267,9 @@ impl ExecuteIfSubcommand {
     }
 
     #[must_use]
-    pub fn then(self, next: ExecuteSubcommand) -> Self {
+    pub fn then<S: Into<ExecuteSubcommand>>(self, next: S) -> Self {
+        let next = next.into();
+
         match self {
             Self::Biome(coordinates, resource_location, inner_next) => Self::Biome(
                 coordinates,
@@ -369,7 +385,7 @@ impl ExecuteIfSubcommand {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
 pub enum ExecuteStoreSubcommand {
     Data(
         DataTarget,
@@ -383,7 +399,7 @@ pub enum ExecuteStoreSubcommand {
 }
 
 impl Display for ExecuteStoreSubcommand {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
             Self::Data(target, path, num_type, scale, next) => {
                 write!(f, "{} {} {} {} {}", target, path, num_type, scale, next)?;
@@ -423,7 +439,7 @@ impl ExecuteStoreSubcommand {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
 pub enum ExecuteSubcommand {
     Align(BTreeSet<Axis>, Box<Self>),
     Anchored(EntityAnchor, Box<Self>),
@@ -441,7 +457,7 @@ pub enum ExecuteSubcommand {
 }
 
 impl Display for ExecuteSubcommand {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
             Self::Align(axes, next) => {
                 let axes_str: String = axes.iter().map(ToString::to_string).collect();
@@ -495,7 +511,11 @@ impl Display for ExecuteSubcommand {
                 Ok(())
             }
             Self::If(is_inverted, subcommand) => {
-                let keyword = if *is_inverted { "unless" } else { "if" };
+                let keyword = if *is_inverted {
+                    "unless"
+                } else {
+                    "if"
+                };
 
                 write!(f, "{} {}", keyword, subcommand)
             }
@@ -535,7 +555,7 @@ impl ExecuteSubcommand {
     }
 
     #[must_use]
-    pub fn then<N: Into<Self>>(self, next: N) -> Self {
+    pub fn then<S: Into<Self>>(self, next: S) -> Self {
         let next = next.into();
 
         match self {
@@ -694,34 +714,24 @@ impl ExecuteSubcommand {
         self,
         inverted: bool,
         score: PlayerScore,
-        min: Option<i32>,
-        max: Option<i32>,
+        range: IntegerRange,
     ) -> Self {
         Self::If(
             inverted,
-            ExecuteIfSubcommand::Score(
-                score,
-                ScoreComparison::Range(IntegerRange { min, max }),
-                Some(Box::new(self)),
-            ),
+            ExecuteIfSubcommand::Score(score, ScoreComparison::Range(range), Some(Box::new(self))),
         )
     }
 
     #[inline]
     #[must_use]
-    pub fn if_score_range(self, score: PlayerScore, min: Option<i32>, max: Option<i32>) -> Self {
-        self.condition_score_range(false, score, min, max)
+    pub fn if_score_range(self, score: PlayerScore, range: IntegerRange) -> Self {
+        self.condition_score_range(false, score, range)
     }
 
     #[inline]
     #[must_use]
-    pub fn unless_score_range(
-        self,
-        score: PlayerScore,
-        min: Option<i32>,
-        max: Option<i32>,
-    ) -> Self {
-        self.condition_score_range(true, score, min, max)
+    pub fn unless_score_range(self, score: PlayerScore, range: IntegerRange) -> Self {
+        self.condition_score_range(true, score, range)
     }
 
     #[inline]

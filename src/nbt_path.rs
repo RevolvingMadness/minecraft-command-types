@@ -3,7 +3,7 @@ use crate::macroable::Macroable;
 use crate::snbt::{SNBT, SNBTString, fmt_snbt_compound};
 use minecraft_command_types_procedural_macros::HasMacro;
 use std::collections::BTreeMap;
-use std::fmt::{Display, Formatter};
+use std::fmt::{self, Display, Formatter};
 
 pub type SNBTCompound = BTreeMap<SNBTString, Macroable<SNBT>>;
 
@@ -20,7 +20,7 @@ fn escape_nbt_path_key(name: &str) -> String {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, HasMacro)]
 pub enum NbtPathNode {
     RootCompound(SNBTCompound),
     Named(SNBTString, Option<SNBTCompound>),
@@ -39,7 +39,7 @@ impl NbtPathNode {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, HasMacro)]
 pub struct NbtPath(pub Vec<NbtPathNode>);
 
 impl NbtPath {
@@ -67,7 +67,7 @@ impl NbtPath {
 }
 
 impl Display for NbtPathNode {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
             Self::RootCompound(compound) => fmt_snbt_compound(f, compound),
             Self::Named(SNBTString(_, name), filter) => {
@@ -87,7 +87,7 @@ impl Display for NbtPathNode {
 }
 
 impl Display for NbtPath {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         let mut first = true;
         for node in &self.0 {
             if !first && !matches!(node, NbtPathNode::Index(..)) {

@@ -7,10 +7,10 @@ use crate::snbt::SNBT;
 use crate::types::Float;
 use minecraft_command_types_procedural_macros::HasMacro;
 use std::collections::BTreeMap;
-use std::fmt::{Display, Formatter};
+use std::fmt::{self, Display, Formatter};
 use std::str::FromStr;
 
-#[derive(Debug, Clone, Copy, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, HasMacro)]
 pub enum EntitySelectorVariable {
     P,
     R,
@@ -38,7 +38,7 @@ impl FromStr for EntitySelectorVariable {
 }
 
 impl Display for EntitySelectorVariable {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
             Self::P => "p",
             Self::R => "r",
@@ -71,7 +71,7 @@ fn fmt_hash_map<K: Display, V: Display>(
     f.write_str("}")
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, HasMacro)]
 pub enum AdvancementChoiceType {
     Boolean(bool),
     Criterion(BTreeMap<String, bool>),
@@ -90,7 +90,7 @@ impl From<BTreeMap<String, bool>> for AdvancementChoiceType {
 }
 
 impl Display for AdvancementChoiceType {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
             Self::Boolean(bool) => bool.fmt(f),
             Self::Criterion(map) => fmt_hash_map(f, map),
@@ -98,7 +98,7 @@ impl Display for AdvancementChoiceType {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
 pub enum EntitySelectorOption {
     X(Float),
     Y(Float),
@@ -155,7 +155,7 @@ macro_rules! write_entity_selector_option {
 }
 
 impl Display for EntitySelectorOption {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
             Self::X(x) => write_entity_selector_option!(f, "x", x),
             Self::Y(y) => write_entity_selector_option!(f, "y", y),
@@ -210,7 +210,7 @@ impl Display for EntitySelectorOption {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
 pub enum EntitySelector {
     Variable(EntitySelectorVariable, Vec<EntitySelectorOption>),
     Name(String),
@@ -274,7 +274,7 @@ impl Default for EntitySelector {
 }
 
 impl Display for EntitySelector {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
             Self::Variable(variable, options) => {
                 write!(f, "@{}", variable)?;

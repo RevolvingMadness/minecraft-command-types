@@ -1,8 +1,8 @@
 use crate::{option_write_chain, resource_location::ResourceLocation};
 use minecraft_command_types_procedural_macros::HasMacro;
-use std::fmt::{Display, Formatter};
+use std::fmt::{self, Display, Formatter};
 
-#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
 pub enum AdvancementCommand {
     Everything,
     Only(ResourceLocation, Option<String>),
@@ -12,7 +12,7 @@ pub enum AdvancementCommand {
 }
 
 impl Display for AdvancementCommand {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
             Self::Everything => f.write_str("everything"),
             Self::Only(advancement, criterion) => {

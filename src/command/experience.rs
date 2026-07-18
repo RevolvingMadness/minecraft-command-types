@@ -1,9 +1,9 @@
 use crate::command::{Command, enums::experience_type::ExperienceType};
 use crate::entity_selector::EntitySelector;
 use minecraft_command_types_procedural_macros::HasMacro;
-use std::fmt::{Display, Formatter};
+use std::fmt::{self, Display, Formatter};
 
-#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
 pub enum ExperienceCommand {
     Add(EntitySelector, i32, ExperienceType),
     Set(EntitySelector, i32, ExperienceType),
@@ -11,7 +11,7 @@ pub enum ExperienceCommand {
 }
 
 impl Display for ExperienceCommand {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
             Self::Add(selector, amount, experience_type) => {
                 write!(f, "add {} {} {}", selector, amount, experience_type)

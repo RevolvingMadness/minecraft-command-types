@@ -7,10 +7,10 @@ use ordered_float::NotNan;
 use serde::de::{Deserialize, Deserializer, MapAccess, SeqAccess, Visitor};
 use serde::{Serialize, Serializer, de};
 use std::collections::BTreeMap;
-use std::fmt::Formatter;
+use std::fmt::{self, Formatter};
 use std::fmt::{Display, Write};
 
-#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct SNBTString(pub bool, pub String);
 
 impl HasMacro for SNBTString {
@@ -19,7 +19,11 @@ impl HasMacro for SNBTString {
     }
 
     fn has_macro_conflict(&self) -> bool {
-        if self.0 { false } else { self.1.contains("$(") }
+        if self.0 {
+            false
+        } else {
+            self.1.contains("$(")
+        }
     }
 }
 
@@ -39,12 +43,12 @@ impl Serialize for SNBTString {
 }
 
 impl Display for SNBTString {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         self.1.fmt(f)
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, HasMacro)]
 pub enum SNBT {
     Byte(i8),
     Short(i16),
@@ -234,7 +238,7 @@ pub(crate) fn fmt_snbt_compound(
 }
 
 impl Display for SNBT {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
             Self::Byte(byte) => write!(f, "{}b", byte),
             Self::Short(short) => write!(f, "{}s", short),

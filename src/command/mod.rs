@@ -55,7 +55,6 @@ use crate::command::datapack::DatapackCommand;
 use crate::command::debug::DebugCommand;
 use crate::command::dialog::DialogCommand;
 use crate::command::effect::EffectCommand;
-use crate::command::enums::score_operation_operator::ScoreOperationOperator;
 use crate::command::enums::setblock_mode::SetblockMode;
 use crate::command::enums::sound_source::{SoundSource, StopSoundSource};
 use crate::command::enums::weather_type::WeatherType;
@@ -79,7 +78,7 @@ use crate::command::r#return::ReturnCommand;
 use crate::command::ride::RideCommand;
 use crate::command::rotate::RotateCommand;
 use crate::command::schedule::ScheduleCommand;
-use crate::command::scoreboard::{PlayersScoreboardCommand, ScoreboardCommand};
+use crate::command::scoreboard::ScoreboardCommand;
 use crate::command::stopwatch::StopwatchCommand;
 use crate::command::tag::TagCommand;
 use crate::command::team::TeamCommand;
@@ -107,109 +106,9 @@ use enums::clone_mode::CloneMode;
 use enums::difficulty::Difficulty;
 use enums::gamemode::Gamemode;
 use minecraft_command_types_procedural_macros::HasMacro;
-use std::fmt::{Display, Formatter};
+use std::fmt::{self, Display, Formatter};
 
-pub type ScoreValue = i32;
-
-#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
-pub struct PlayerScore {
-    pub selector: EntitySelector,
-    pub objective: String,
-}
-
-impl Display for PlayerScore {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{} {}", self.selector, self.objective)
-    }
-}
-
-impl PlayerScore {
-    #[must_use]
-    pub const fn new(selector: EntitySelector, objective: String) -> Self {
-        Self {
-            selector,
-            objective,
-        }
-    }
-
-    #[inline]
-    #[must_use]
-    pub const fn get(self) -> Command {
-        Command::Scoreboard(ScoreboardCommand::Players(PlayersScoreboardCommand::Get(
-            self,
-        )))
-    }
-
-    #[inline]
-    #[must_use]
-    pub const fn set_value(self, value: ScoreValue) -> Command {
-        Command::Scoreboard(ScoreboardCommand::Players(PlayersScoreboardCommand::Set(
-            self, value,
-        )))
-    }
-
-    #[inline]
-    #[must_use]
-    pub const fn add_value(self, amount: ScoreValue) -> Command {
-        Command::Scoreboard(ScoreboardCommand::Players(PlayersScoreboardCommand::Add(
-            self, amount,
-        )))
-    }
-
-    #[inline]
-    #[must_use]
-    pub const fn remove(self, amount: ScoreValue) -> Command {
-        Command::Scoreboard(ScoreboardCommand::Players(
-            PlayersScoreboardCommand::Remove(self, amount),
-        ))
-    }
-
-    #[inline]
-    #[must_use]
-    pub const fn operation(self, operator: ScoreOperationOperator, other: Self) -> Command {
-        Command::Scoreboard(ScoreboardCommand::Players(
-            PlayersScoreboardCommand::Operation(self, operator, other),
-        ))
-    }
-
-    #[inline]
-    #[must_use]
-    pub const fn set(self, other: Self) -> Command {
-        self.operation(ScoreOperationOperator::Set, other)
-    }
-
-    #[inline]
-    #[must_use]
-    pub const fn add(self, other: Self) -> Command {
-        self.operation(ScoreOperationOperator::Add, other)
-    }
-
-    #[inline]
-    #[must_use]
-    pub const fn subtract(self, other: Self) -> Command {
-        self.operation(ScoreOperationOperator::Subtract, other)
-    }
-
-    #[inline]
-    #[must_use]
-    pub const fn multiply(self, other: Self) -> Command {
-        self.operation(ScoreOperationOperator::Multiply, other)
-    }
-
-    #[inline]
-    #[must_use]
-    pub const fn divide(self, other: Self) -> Command {
-        self.operation(ScoreOperationOperator::Divide, other)
-    }
-
-    #[inline]
-    #[must_use]
-    pub const fn modulo(self, other: Self) -> Command {
-        self.operation(ScoreOperationOperator::Remainder, other)
-    }
-}
-
-#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
 pub enum Command {
     Advancement(AdvancementType, EntitySelector, AdvancementCommand),
     Attribute(EntitySelector, ResourceLocation, AttributeCommand),
@@ -371,7 +270,9 @@ impl Command {
             | Self::Attribute(..)
             | Self::Bossbar(..)
             | Self::Clear(..)
-            | Self::Clone { .. }
+            | Self::Clone {
+                ..
+            }
             | Self::Damage(..)
             | Self::Data(..)
             | Self::Datapack(..)
@@ -446,7 +347,11 @@ impl Command {
             | Self::Stop
             | Self::Stopwatch(..) => PermissionLevel::try_from(4).unwrap(),
             Self::Seed => {
-                let level = if is_multiplayer { 2 } else { 0 };
+                let level = if is_multiplayer {
+                    2
+                } else {
+                    0
+                };
                 PermissionLevel::try_from(level).unwrap()
             }
         }
@@ -484,7 +389,9 @@ impl Command {
             Self::Banlist(..) => false,
             Self::Bossbar(command) => command.has_side_effects(),
             Self::Clear(_, _, max_count) => max_count.is_none_or(|max_count| max_count != 0),
-            Self::Clone { .. } => true,
+            Self::Clone {
+                ..
+            } => true,
             Self::Damage(_, amount, _, _) => *amount != 0.0,
             Self::Data(command) => command.has_side_effects(),
             Self::Datapack(command) => command.has_side_effects(),
@@ -567,7 +474,7 @@ impl Command {
 }
 
 impl Display for Command {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
             Self::Advancement(type_, selector, command) => {
                 write!(f, "advancement {} {} {}", type_, selector, command)

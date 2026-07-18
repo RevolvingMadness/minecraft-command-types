@@ -2,9 +2,9 @@ use crate::command::{Command, enums::datapack_list_type::DatapackListType};
 use crate::option_write_chain;
 use crate::snbt::SNBT;
 use minecraft_command_types_procedural_macros::HasMacro;
-use std::fmt::{Display, Formatter};
+use std::fmt::{self, Display, Formatter};
 
-#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, HasMacro)]
 pub enum DatapackLoadPriority {
     First,
     Last,
@@ -13,7 +13,7 @@ pub enum DatapackLoadPriority {
 }
 
 impl Display for DatapackLoadPriority {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
             Self::First => f.write_str("first"),
             Self::Last => f.write_str("last"),
@@ -23,7 +23,7 @@ impl Display for DatapackLoadPriority {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
 pub enum DatapackCommand {
     Disable(String),
     Enable(String, Option<DatapackLoadPriority>),
@@ -32,7 +32,7 @@ pub enum DatapackCommand {
 }
 
 impl Display for DatapackCommand {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
             Self::Disable(name) => {
                 write!(f, "disable {}", name)

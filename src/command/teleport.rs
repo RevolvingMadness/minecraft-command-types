@@ -4,16 +4,16 @@ use crate::entity_selector::EntitySelector;
 use crate::option_write_chain;
 use crate::rotation::Rotation;
 use minecraft_command_types_procedural_macros::HasMacro;
-use std::fmt::{Display, Formatter};
+use std::fmt::{self, Display, Formatter};
 
-#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
 pub enum TeleportFacing {
     Position(Coordinates),
     Entity(EntitySelector, Option<EntityAnchor>),
 }
 
 impl Display for TeleportFacing {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
             Self::Position(coords) => coords.fmt(f),
             Self::Entity(selector, anchor) => {
@@ -27,14 +27,14 @@ impl Display for TeleportFacing {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
 pub enum TeleportCoordinatesType {
     Rotation(Rotation),
     Facing(TeleportFacing),
 }
 
 impl Display for TeleportCoordinatesType {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
             Self::Rotation(rotation) => rotation.fmt(f),
             Self::Facing(facing) => {
@@ -44,14 +44,14 @@ impl Display for TeleportCoordinatesType {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
 pub enum TargetTeleportCommand {
     Coordinates(Coordinates, Option<TeleportCoordinatesType>),
     Entity(EntitySelector),
 }
 
 impl Display for TargetTeleportCommand {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
             Self::Coordinates(coordinates, additional) => {
                 coordinates.fmt(f)?;
@@ -65,14 +65,14 @@ impl Display for TargetTeleportCommand {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
 pub enum TeleportCommand {
     Coordinates(Coordinates),
     Entity(EntitySelector, Option<TargetTeleportCommand>),
 }
 
 impl Display for TeleportCommand {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
             Self::Coordinates(coordinates) => coordinates.fmt(f),
             Self::Entity(selector, additional) => {

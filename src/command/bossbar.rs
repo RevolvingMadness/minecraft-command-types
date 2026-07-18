@@ -6,9 +6,9 @@ use crate::option_write_chain;
 use crate::resource_location::ResourceLocation;
 use crate::snbt::SNBT;
 use minecraft_command_types_procedural_macros::HasMacro;
-use std::fmt::{Display, Formatter};
+use std::fmt::{self, Display, Formatter};
 
-#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
 pub enum BossbarSetType {
     Color(BossbarColor),
     Max(i32),
@@ -20,7 +20,7 @@ pub enum BossbarSetType {
 }
 
 impl Display for BossbarSetType {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
             Self::Color(color) => write!(f, "color {}", color),
             Self::Max(max) => write!(f, "max {}", max),
@@ -39,7 +39,7 @@ impl Display for BossbarSetType {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
 pub enum BossbarCommand {
     Add(ResourceLocation, SNBT),
     Get(ResourceLocation, BossbarGetType),
@@ -49,7 +49,7 @@ pub enum BossbarCommand {
 }
 
 impl Display for BossbarCommand {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
             Self::Add(id, name) => write!(f, "add {} {}", id, name),
             Self::Get(id, type_) => write!(f, "get {} {}", id, type_),

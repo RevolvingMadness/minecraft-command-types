@@ -3,16 +3,16 @@ use crate::option_write_chain;
 use crate::resource_location::ResourceLocation;
 use crate::time::Time;
 use minecraft_command_types_procedural_macros::HasMacro;
-use std::fmt::{Display, Formatter};
+use std::fmt::{self, Display, Formatter};
 
-#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
 pub enum ScheduleCommand {
     Function(ResourceLocation, Time, Option<ScheduleMode>),
     Clear(ResourceLocation),
 }
 
 impl Display for ScheduleCommand {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
             Self::Function(location, time, mode) => {
                 write!(f, "function {} {}", location, time)?;

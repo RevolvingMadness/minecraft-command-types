@@ -1,15 +1,16 @@
 use crate::command::Command;
 use crate::entity_selector::EntitySelector;
-use crate::nbt_path::NbtPath;
+use crate::macroable::RegularMacroableExt;
+use crate::nbt_path::{NbtPath, SNBTCompound};
 use crate::option_write_chain;
 use crate::resource_location::ResourceLocation;
-use crate::snbt::SNBT;
+use crate::snbt::{SNBT, SNBTString};
 use crate::types::Float;
 use crate::{coordinate::Coordinates, macroable::Macroable};
 use minecraft_command_types_procedural_macros::HasMacro;
-use std::fmt::{Display, Formatter};
+use std::fmt::{self, Display, Formatter};
 
-#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
 pub enum DataTarget {
     Block(Coordinates),
     Entity(EntitySelector),
@@ -17,7 +18,7 @@ pub enum DataTarget {
 }
 
 impl Display for DataTarget {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
             Self::Block(coordinates) => {
                 write!(f, "block {}", coordinates)
@@ -32,7 +33,48 @@ impl Display for DataTarget {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
+impl DataTarget {
+    #[must_use]
+    pub fn to_snbt(&self) -> SNBTCompound {
+        let mut compound = SNBTCompound::new();
+
+        let source = match self {
+            Self::Block(..) => "block",
+            Self::Entity(..) => "entity",
+            Self::Storage(..) => "storage",
+        };
+
+        compound.insert(
+            SNBTString(false, "source".to_owned()),
+            SNBT::String(SNBTString(false, source.to_owned())).regular_macroable(),
+        );
+
+        match self {
+            Self::Block(coordinates) => {
+                compound.insert(
+                    SNBTString(false, "block".to_owned()),
+                    SNBT::String(SNBTString(false, format!("{}", coordinates))).regular_macroable(),
+                );
+            }
+            Self::Entity(selector) => {
+                compound.insert(
+                    SNBTString(false, "entity".to_owned()),
+                    SNBT::String(SNBTString(false, format!("{}", selector))).regular_macroable(),
+                );
+            }
+            Self::Storage(storage) => {
+                compound.insert(
+                    SNBTString(false, "storage".to_owned()),
+                    SNBT::String(SNBTString(false, format!("{}", storage))).regular_macroable(),
+                );
+            }
+        }
+
+        compound
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
 pub enum DataCommandModification {
     From(DataTarget, Option<NbtPath>),
     String(DataTarget, Option<NbtPath>, Option<i32>, Option<i32>),
@@ -40,7 +82,7 @@ pub enum DataCommandModification {
 }
 
 impl Display for DataCommandModification {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
             Self::From(source, path) => {
                 write!(f, "from {}", source)?;
@@ -63,7 +105,7 @@ impl Display for DataCommandModification {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, HasMacro)]
 pub enum DataCommandModificationMode {
     Append,
     Prepend,
@@ -73,7 +115,7 @@ pub enum DataCommandModificationMode {
 }
 
 impl Display for DataCommandModificationMode {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
             Self::Append => f.write_str("append"),
             Self::Prepend => f.write_str("prepend"),
@@ -84,7 +126,7 @@ impl Display for DataCommandModificationMode {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
 pub enum DataCommand {
     Get(DataTarget, Option<NbtPath>, Option<Float>),
     Merge(DataTarget, Macroable<SNBT>),
@@ -98,7 +140,7 @@ pub enum DataCommand {
 }
 
 impl Display for DataCommand {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
             Self::Get(target, path, scale) => {
                 write!(f, "get {}", target)?;

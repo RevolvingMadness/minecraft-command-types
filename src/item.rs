@@ -1,9 +1,9 @@
 use crate::snbt::SNBT;
 use crate::{macroable::Macroable, resource_location::ResourceLocation};
 use minecraft_command_types_procedural_macros::HasMacro;
-use std::fmt::{Display, Formatter};
+use std::fmt::{self, Display, Formatter};
 
-#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, HasMacro)]
 pub enum ItemTest {
     Component(ResourceLocation),
     ComponentMatches(ResourceLocation, Macroable<SNBT>),
@@ -11,7 +11,7 @@ pub enum ItemTest {
 }
 
 impl Display for ItemTest {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
             Self::Component(id) => id.fmt(f),
             Self::ComponentMatches(id, value) => write!(f, "{}={}", id, value),
@@ -20,14 +20,14 @@ impl Display for ItemTest {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, HasMacro)]
 pub enum ItemType {
     ResourceLocation(ResourceLocation),
     Wildcard,
 }
 
 impl Display for ItemType {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
             Self::ResourceLocation(resource_location) => resource_location.fmt(f),
             Self::Wildcard => f.write_str("*"),
@@ -35,11 +35,11 @@ impl Display for ItemType {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, HasMacro)]
 pub struct OrGroup(pub Vec<(bool, ItemTest)>);
 
 impl Display for OrGroup {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         let parts: Vec<String> = self
             .0
             .iter()
@@ -55,14 +55,14 @@ impl Display for OrGroup {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, HasMacro)]
 pub struct ItemPredicate {
     pub id: ItemType,
     pub or_groups: Vec<OrGroup>,
 }
 
 impl Display for ItemPredicate {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         self.id.fmt(f)?;
 
         if self.or_groups.is_empty() {
@@ -100,14 +100,14 @@ impl ItemPredicate {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, HasMacro)]
 pub enum ItemComponent {
     KeyValue(ResourceLocation, SNBT),
     Remove(ResourceLocation),
 }
 
 impl Display for ItemComponent {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
             Self::KeyValue(component, value) => {
                 write!(f, "{}={}", component, value)
@@ -117,14 +117,14 @@ impl Display for ItemComponent {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, HasMacro)]
 pub struct ItemStack {
     pub id: ItemType,
     pub components: Vec<ItemComponent>,
 }
 
 impl Display for ItemStack {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         self.id.fmt(f)?;
 
         if !self.components.is_empty() {

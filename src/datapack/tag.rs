@@ -2,33 +2,6 @@ use crate::datapack::FilePathNode;
 use crate::resource_location::ResourceLocation;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
-use strum::{Display, EnumString};
-
-#[derive(
-    Debug, Clone, Eq, PartialEq, Hash, Display, EnumString, Serialize, Deserialize, Ord, PartialOrd,
-)]
-#[serde(rename_all = "snake_case")]
-#[strum(serialize_all = "snake_case")]
-pub enum TagType {
-    BannerPattern,
-    Block,
-    DamageType,
-    Dialog,
-    Enchantment,
-    EntityType,
-    Fluid,
-    Function,
-    GameEvent,
-    Instrument,
-    Item,
-    PaintingVariant,
-    PointOfInterestType,
-    Timeline,
-    Biome,
-    FlatLevelGeneratorPreset,
-    Structure,
-    WorldPreset,
-}
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
@@ -51,19 +24,11 @@ pub struct Tag {
 
 impl Tag {
     pub fn extend(&mut self, other: Self) {
-        self.replace = other.replace;
+        if self.replace.is_none_or(|replace| !replace) {
+            self.replace = other.replace;
+        }
 
         self.values.extend(other.values);
-    }
-}
-
-impl TagType {
-    #[must_use]
-    pub const fn is_worldgen(&self) -> bool {
-        matches!(
-            self,
-            Self::Biome | Self::FlatLevelGeneratorPreset | Self::Structure | Self::WorldPreset
-        )
     }
 }
 

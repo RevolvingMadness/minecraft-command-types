@@ -2,16 +2,16 @@ use crate::command::enums::time_query_type::TimeQueryType;
 use crate::command::{Command, enums::time_of_day::TimeOfDay};
 use crate::time::Time;
 use minecraft_command_types_procedural_macros::HasMacro;
-use std::fmt::{Display, Formatter};
+use std::fmt::{self, Display, Formatter};
 
-#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, HasMacro)]
 pub enum TimeSetType {
     Time(Time),
     TimeOfDay(TimeOfDay),
 }
 
 impl Display for TimeSetType {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
             Self::Time(time) => time.fmt(f),
             Self::TimeOfDay(time_of_day) => time_of_day.fmt(f),
@@ -19,7 +19,7 @@ impl Display for TimeSetType {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
 pub enum TimeCommand {
     Add(Time),
     Query(TimeQueryType),
@@ -27,7 +27,7 @@ pub enum TimeCommand {
 }
 
 impl Display for TimeCommand {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
             Self::Add(time) => write!(f, "add {}", time),
             Self::Query(query_type) => write!(f, "query {}", query_type),

@@ -3,16 +3,16 @@ use crate::time::Time;
 use crate::types::{Double, Float};
 use crate::{column_position::ColumnPosition, command::Command};
 use minecraft_command_types_procedural_macros::HasMacro;
-use std::fmt::{Display, Formatter};
+use std::fmt::{self, Display, Formatter};
 
-#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
 pub enum DamageWorldborderCommand {
     Amount(Float),
     Buffer(Float),
 }
 
 impl Display for DamageWorldborderCommand {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
             Self::Amount(amount) => write!(f, "amount {}", amount),
             Self::Buffer(buffer) => write!(f, "buffer {}", buffer),
@@ -20,14 +20,14 @@ impl Display for DamageWorldborderCommand {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
 pub enum WarningWorldborderCommand {
     Distance(i32),
     Time(Time),
 }
 
 impl Display for WarningWorldborderCommand {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
             Self::Distance(distance) => write!(f, "distance {}", distance),
             Self::Time(time) => write!(f, "time {}", time),
@@ -35,7 +35,7 @@ impl Display for WarningWorldborderCommand {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
 pub enum WorldborderCommand {
     Add(Double, Option<Time>),
     Center(ColumnPosition),
@@ -46,7 +46,7 @@ pub enum WorldborderCommand {
 }
 
 impl Display for WorldborderCommand {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
             Self::Add(distance, time) => {
                 write!(f, "add {}", distance)?;

@@ -1,8 +1,8 @@
 use crate::command::Command;
 use minecraft_command_types_procedural_macros::HasMacro;
-use std::fmt::{Display, Formatter};
+use std::fmt::{self, Display, Formatter};
 
-#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
 pub enum ReturnCommand {
     Value(i32),
     Fail,
@@ -10,7 +10,7 @@ pub enum ReturnCommand {
 }
 
 impl Display for ReturnCommand {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
             Self::Value(v) => write!(f, "{}", v),
             Self::Fail => f.write_str("fail"),

@@ -1,14 +1,15 @@
 use crate::command::enums::score_operation_operator::ScoreOperationOperator;
 use crate::command::enums::scoreboard_render_type::ScoreboardRenderType;
-use crate::command::{Command, ScoreValue};
 use crate::entity_selector::EntitySelector;
+use crate::macroable::Macroable;
 use crate::option_write_chain;
+use crate::player_score::ScoreValue;
 use crate::snbt::SNBT;
-use crate::{command::PlayerScore, macroable::Macroable};
+use crate::{command::Command, player_score::PlayerScore};
 use minecraft_command_types_procedural_macros::HasMacro;
-use std::fmt::{Display, Formatter};
+use std::fmt::{self, Display, Formatter};
 
-#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
 pub enum ScoreboardNumberFormat {
     Blank,
     Fixed(Macroable<SNBT>),
@@ -16,7 +17,7 @@ pub enum ScoreboardNumberFormat {
 }
 
 impl Display for ScoreboardNumberFormat {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
             Self::Blank => f.write_str("blank"),
             Self::Fixed(snbt) => write!(f, "fixed {}", snbt),
@@ -25,7 +26,7 @@ impl Display for ScoreboardNumberFormat {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
 pub enum ScoreboardModification {
     DisplayAutoUpdate(bool),
     DisplayName(Macroable<SNBT>),
@@ -34,7 +35,7 @@ pub enum ScoreboardModification {
 }
 
 impl Display for ScoreboardModification {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
             Self::DisplayAutoUpdate(value) => {
                 write!(f, "displayautoupdate {}", value)
@@ -56,7 +57,7 @@ impl Display for ScoreboardModification {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
 pub enum ObjectivesScoreboardCommand {
     List,
     Add(String, String, Option<Macroable<SNBT>>),
@@ -66,7 +67,7 @@ pub enum ObjectivesScoreboardCommand {
 }
 
 impl Display for ObjectivesScoreboardCommand {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
             Self::List => f.write_str("list"),
             Self::Add(name, criterion, display_name) => {
@@ -118,14 +119,14 @@ impl ObjectivesScoreboardCommand {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
 pub enum PlayersDisplayScoreboardCommand {
     Name(PlayerScore, Option<Macroable<SNBT>>),
     NumberFormat(PlayerScore, Option<ScoreboardNumberFormat>),
 }
 
 impl Display for PlayersDisplayScoreboardCommand {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
             Self::Name(score, text) => {
                 write!(f, "name {}", score)?;
@@ -163,7 +164,7 @@ impl From<PlayersDisplayScoreboardCommand> for Command {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
 pub enum PlayersScoreboardCommand {
     List(Option<EntitySelector>),
     Get(PlayerScore),
@@ -177,7 +178,7 @@ pub enum PlayersScoreboardCommand {
 }
 
 impl Display for PlayersScoreboardCommand {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
             Self::List(selector) => {
                 f.write_str("list")?;
@@ -255,14 +256,14 @@ impl PlayersScoreboardCommand {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
 pub enum ScoreboardCommand {
     Objectives(ObjectivesScoreboardCommand),
     Players(PlayersScoreboardCommand),
 }
 
 impl Display for ScoreboardCommand {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
             Self::Objectives(command) => write!(f, "objectives {}", command),
             Self::Players(command) => write!(f, "players {}", command),

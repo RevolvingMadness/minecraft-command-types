@@ -1,15 +1,15 @@
 use crate::{column_position::ColumnPosition, command::Command, option_write_chain};
 use minecraft_command_types_procedural_macros::HasMacro;
-use std::fmt::{Display, Formatter};
+use std::fmt::{self, Display, Formatter};
 
-#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
 pub enum ForceloadRemoveType {
     ColumnPosition(ColumnPosition, Option<ColumnPosition>),
     All,
 }
 
 impl Display for ForceloadRemoveType {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
             Self::ColumnPosition(from, to) => {
                 from.fmt(f)?;
@@ -23,7 +23,7 @@ impl Display for ForceloadRemoveType {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
 pub enum ForceloadCommand {
     Add(ColumnPosition, Option<ColumnPosition>),
     Remove(ForceloadRemoveType),
@@ -31,7 +31,7 @@ pub enum ForceloadCommand {
 }
 
 impl Display for ForceloadCommand {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
             Self::Add(from, to) => {
                 write!(f, "add {}", from)?;

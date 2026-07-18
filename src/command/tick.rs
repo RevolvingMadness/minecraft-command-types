@@ -1,15 +1,15 @@
 use crate::{command::Command, option_write_chain, time::Time, types::Float};
 use minecraft_command_types_procedural_macros::HasMacro;
-use std::fmt::{Display, Formatter};
+use std::fmt::{self, Display, Formatter};
 
-#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
 pub enum AdvanceTimeTickCommand {
     Time(Option<Time>),
     Stop,
 }
 
 impl Display for AdvanceTimeTickCommand {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
             Self::Time(time) => {
                 option_write_chain!(f, time);
@@ -21,7 +21,7 @@ impl Display for AdvanceTimeTickCommand {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
 pub enum TickCommand {
     Query,
     Rate(Float),
@@ -32,7 +32,7 @@ pub enum TickCommand {
 }
 
 impl Display for TickCommand {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
             Self::Query => f.write_str("query"),
             Self::Rate(rate) => write!(f, "rate {}", rate),

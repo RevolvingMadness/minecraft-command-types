@@ -6,11 +6,14 @@ use crate::datapack::pack::feature::Features;
 use crate::datapack::pack::filter::Filter;
 use crate::datapack::pack::language::Language;
 use crate::datapack::pack::overlay::Overlays;
-use crate::datapack::tag::{Tag, TagType, Worldgen};
+use crate::datapack::tag::{Tag, Worldgen};
+use crate::function::Function;
+use crate::resource_location::{ResourceLocationPaths, ResourceLocationPathsRef};
+use hashbrown::HashMap;
+use hashbrown::hash_map::EntryRef;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use std::collections::BTreeMap;
-use std::collections::btree_map::Entry;
 use std::path::{Path, PathBuf};
 use std::{fs, io};
 
@@ -61,45 +64,48 @@ impl<T> FilePathNode<T> {
     }
 }
 
+pub type TagRegistry = String;
+
 #[derive(Debug, Clone, Default)]
 pub struct Namespace {
-    pub functions: BTreeMap<Vec<String>, String>,
-    pub tags: BTreeMap<TagType, BTreeMap<Vec<String>, Tag>>,
+    pub functions: HashMap<ResourceLocationPaths, Function>,
+    pub tags: HashMap<TagRegistry, HashMap<ResourceLocationPaths, Tag>>,
 
-    pub advancements: BTreeMap<Vec<String>, Value>,
-    pub banner_patterns: BTreeMap<Vec<String>, Value>,
-    pub cat_variants: BTreeMap<Vec<String>, Value>,
-    pub chat_types: BTreeMap<Vec<String>, Value>,
-    pub chicken_variants: BTreeMap<Vec<String>, Value>,
-    pub cow_variants: BTreeMap<Vec<String>, Value>,
-    pub damage_types: BTreeMap<Vec<String>, Value>,
-    pub dialogs: BTreeMap<Vec<String>, Value>,
-    pub dimensions: BTreeMap<Vec<String>, Value>,
-    pub dimension_types: BTreeMap<Vec<String>, Value>,
-    pub enchantments: BTreeMap<Vec<String>, Value>,
-    pub enchantment_providers: BTreeMap<Vec<String>, Value>,
-    pub frog_variants: BTreeMap<Vec<String>, Value>,
-    pub instruments: BTreeMap<Vec<String>, Value>,
-    pub item_modifiers: BTreeMap<Vec<String>, Value>,
-    pub jukebox_songs: BTreeMap<Vec<String>, Value>,
-    pub loot_tables: BTreeMap<Vec<String>, Value>,
-    pub painting_variants: BTreeMap<Vec<String>, Value>,
-    pub pig_variants: BTreeMap<Vec<String>, Value>,
-    pub predicates: BTreeMap<Vec<String>, Value>,
-    pub recipes: BTreeMap<Vec<String>, Value>,
-    pub test_environments: BTreeMap<Vec<String>, Value>,
-    pub test_instances: BTreeMap<Vec<String>, Value>,
-    pub timelines: BTreeMap<Vec<String>, Value>,
-    pub trial_spawners: BTreeMap<Vec<String>, Value>,
-    pub trim_materials: BTreeMap<Vec<String>, Value>,
-    pub trim_patterns: BTreeMap<Vec<String>, Value>,
-    pub wolf_sound_variants: BTreeMap<Vec<String>, Value>,
-    pub wolf_variants: BTreeMap<Vec<String>, Value>,
+    pub advancements: HashMap<ResourceLocationPaths, Value>,
+    pub banner_patterns: HashMap<ResourceLocationPaths, Value>,
+    pub cat_variants: HashMap<ResourceLocationPaths, Value>,
+    pub chat_types: HashMap<ResourceLocationPaths, Value>,
+    pub chicken_variants: HashMap<ResourceLocationPaths, Value>,
+    pub cow_variants: HashMap<ResourceLocationPaths, Value>,
+    pub damage_types: HashMap<ResourceLocationPaths, Value>,
+    pub dialogs: HashMap<ResourceLocationPaths, Value>,
+    pub dimensions: HashMap<ResourceLocationPaths, Value>,
+    pub dimension_types: HashMap<ResourceLocationPaths, Value>,
+    pub enchantments: HashMap<ResourceLocationPaths, Value>,
+    pub enchantment_providers: HashMap<ResourceLocationPaths, Value>,
+    pub frog_variants: HashMap<ResourceLocationPaths, Value>,
+    pub instruments: HashMap<ResourceLocationPaths, Value>,
+    pub item_modifiers: HashMap<ResourceLocationPaths, Value>,
+    pub jukebox_songs: HashMap<ResourceLocationPaths, Value>,
+    pub loot_tables: HashMap<ResourceLocationPaths, Value>,
+    pub painting_variants: HashMap<ResourceLocationPaths, Value>,
+    pub pig_variants: HashMap<ResourceLocationPaths, Value>,
+    pub predicates: HashMap<ResourceLocationPaths, Value>,
+    pub recipes: HashMap<ResourceLocationPaths, Value>,
+    pub test_environments: HashMap<ResourceLocationPaths, Value>,
+    pub test_instances: HashMap<ResourceLocationPaths, Value>,
+    pub timelines: HashMap<ResourceLocationPaths, Value>,
+    pub trial_spawners: HashMap<ResourceLocationPaths, Value>,
+    pub trim_materials: HashMap<ResourceLocationPaths, Value>,
+    pub trim_patterns: HashMap<ResourceLocationPaths, Value>,
+    pub wolf_sound_variants: HashMap<ResourceLocationPaths, Value>,
+    pub wolf_variants: HashMap<ResourceLocationPaths, Value>,
     pub worldgen: Worldgen,
 }
+
 fn write_file_path_nodes<T>(
     base_path: &Path,
-    nodes: &BTreeMap<Vec<String>, T>,
+    nodes: &HashMap<ResourceLocationPaths, T>,
     extension: &str,
     serializer: &impl Fn(&T) -> io::Result<String>,
 ) -> io::Result<()> {
@@ -125,44 +131,43 @@ fn write_file_path_nodes<T>(
 }
 
 impl Namespace {
-    pub fn merge(&mut self, mut other: Self) {
-        self.functions.append(&mut other.functions);
+    pub fn merge(&mut self, other: Self) {
+        self.functions.extend(other.functions);
 
         for (tag_type, tags) in other.tags {
             self.tags.entry(tag_type).or_default().extend(tags);
         }
 
-        self.advancements.append(&mut other.advancements);
-        self.banner_patterns.append(&mut other.banner_patterns);
-        self.cat_variants.append(&mut other.cat_variants);
-        self.chat_types.append(&mut other.chat_types);
-        self.chicken_variants.append(&mut other.chicken_variants);
-        self.cow_variants.append(&mut other.cow_variants);
-        self.damage_types.append(&mut other.damage_types);
-        self.dialogs.append(&mut other.dialogs);
-        self.dimensions.append(&mut other.dimensions);
-        self.dimension_types.append(&mut other.dimension_types);
-        self.enchantments.append(&mut other.enchantments);
+        self.advancements.extend(other.advancements);
+        self.banner_patterns.extend(other.banner_patterns);
+        self.cat_variants.extend(other.cat_variants);
+        self.chat_types.extend(other.chat_types);
+        self.chicken_variants.extend(other.chicken_variants);
+        self.cow_variants.extend(other.cow_variants);
+        self.damage_types.extend(other.damage_types);
+        self.dialogs.extend(other.dialogs);
+        self.dimensions.extend(other.dimensions);
+        self.dimension_types.extend(other.dimension_types);
+        self.enchantments.extend(other.enchantments);
         self.enchantment_providers
-            .append(&mut other.enchantment_providers);
-        self.frog_variants.append(&mut other.frog_variants);
-        self.instruments.append(&mut other.instruments);
-        self.item_modifiers.append(&mut other.item_modifiers);
-        self.jukebox_songs.append(&mut other.jukebox_songs);
-        self.loot_tables.append(&mut other.loot_tables);
-        self.painting_variants.append(&mut other.painting_variants);
-        self.pig_variants.append(&mut other.pig_variants);
-        self.predicates.append(&mut other.predicates);
-        self.recipes.append(&mut other.recipes);
-        self.test_environments.append(&mut other.test_environments);
-        self.test_instances.append(&mut other.test_instances);
-        self.timelines.append(&mut other.timelines);
-        self.trial_spawners.append(&mut other.trial_spawners);
-        self.trim_materials.append(&mut other.trim_materials);
-        self.trim_patterns.append(&mut other.trim_patterns);
-        self.wolf_sound_variants
-            .append(&mut other.wolf_sound_variants);
-        self.wolf_variants.append(&mut other.wolf_variants);
+            .extend(other.enchantment_providers);
+        self.frog_variants.extend(other.frog_variants);
+        self.instruments.extend(other.instruments);
+        self.item_modifiers.extend(other.item_modifiers);
+        self.jukebox_songs.extend(other.jukebox_songs);
+        self.loot_tables.extend(other.loot_tables);
+        self.painting_variants.extend(other.painting_variants);
+        self.pig_variants.extend(other.pig_variants);
+        self.predicates.extend(other.predicates);
+        self.recipes.extend(other.recipes);
+        self.test_environments.extend(other.test_environments);
+        self.test_instances.extend(other.test_instances);
+        self.timelines.extend(other.timelines);
+        self.trial_spawners.extend(other.trial_spawners);
+        self.trim_materials.extend(other.trim_materials);
+        self.trim_patterns.extend(other.trim_patterns);
+        self.wolf_sound_variants.extend(other.wolf_sound_variants);
+        self.wolf_variants.extend(other.wolf_variants);
 
         self.worldgen.merge(other.worldgen);
     }
@@ -174,16 +179,13 @@ impl Namespace {
             &namespace_path.join("function"),
             &self.functions,
             ".mcfunction",
-            &|content_str| Ok(content_str.clone()),
+            &|function| Ok(function.to_string()),
         )?;
 
         let tags_root_path = namespace_path.join("tags");
-        for (tag_type, nodes) in &self.tags {
-            let type_path = if tag_type.is_worldgen() {
-                tags_root_path.join("worldgen").join(tag_type.to_string())
-            } else {
-                tags_root_path.join(tag_type.to_string())
-            };
+
+        for (registry, nodes) in &self.tags {
+            let type_path = tags_root_path.join(registry);
 
             write_file_path_nodes(&type_path, nodes, ".json", &|tag| {
                 serde_json::to_string_pretty(tag).map_err(io::Error::other)
@@ -234,38 +236,39 @@ impl Namespace {
         Ok(())
     }
 
-    pub fn add_tag(&mut self, tag_type: TagType, path: &Vec<String>, new_tag: Tag) {
-        if let Some(tags) = self.tags.get_mut(&tag_type) {
-            if let Some(tag) = tags.get_mut(path) {
-                tag.extend(new_tag);
+    pub fn add_tag(&mut self, registry: TagRegistry, path: &ResourceLocationPaths, tag: Tag) {
+        if let Some(original_tags) = self.tags.get_mut(&registry) {
+            if let Some(original_tag) = original_tags.get_mut(path) {
+                original_tag.extend(tag);
             } else {
-                tags.insert(path.clone(), new_tag);
+                original_tags.insert(path.clone(), tag);
             }
         } else {
             self.tags
-                .insert(tag_type, BTreeMap::from([(path.clone(), new_tag)]));
+                .insert(registry, HashMap::from([(path.clone(), tag)]));
         }
     }
 
-    pub fn add_function(&mut self, path: &Vec<String>, new_function: &str) {
-        if let Some(functions) = self.functions.get_mut(path) {
-            functions.push('\n');
-            functions.push_str(new_function);
-        } else {
-            self.functions
-                .insert(path.clone(), new_function.to_string());
-        }
+    #[must_use]
+    pub fn get_function(&mut self, paths: ResourceLocationPathsRef) -> &Function {
+        self.functions.entry_ref(paths).or_default()
+    }
+
+    #[must_use]
+    pub fn get_function_mut(&mut self, paths: ResourceLocationPathsRef) -> &mut Function {
+        self.functions.entry_ref(paths).or_default()
     }
 }
 
+#[derive(Debug, Clone)]
 pub struct Datapack {
     pub pack: PackMCMeta,
-    pub namespaces: BTreeMap<String, Namespace>,
+    pub namespaces: HashMap<String, Namespace>,
 }
 
 impl Datapack {
     #[must_use]
-    pub const fn new(pack_format: i32, description: Value) -> Self {
+    pub fn new(pack_format: i32, description: Value) -> Self {
         Self {
             pack: PackMCMeta {
                 pack: Pack {
@@ -280,29 +283,32 @@ impl Datapack {
                 overlays: None,
                 language: None,
             },
-            namespaces: BTreeMap::new(),
+            namespaces: HashMap::new(),
         }
     }
 
     #[must_use]
-    pub const fn new_pack(pack: PackMCMeta) -> Self {
+    pub fn new_pack(pack: PackMCMeta) -> Self {
         Self {
             pack,
-            namespaces: BTreeMap::new(),
+            namespaces: HashMap::new(),
         }
     }
 
-    pub fn write(&self, datapack_directory: &Path) -> io::Result<()> {
-        fs::create_dir_all(datapack_directory)?;
+    pub fn write<P: AsRef<Path>>(&self, output: P) -> io::Result<()> {
+        let output = output.as_ref();
 
-        let mcmeta_path = datapack_directory.join("pack.mcmeta");
+        fs::create_dir_all(output)?;
+
+        let mcmeta_path = output.join("pack.mcmeta");
         let mcmeta_content = serde_json::to_string_pretty(&self.pack).map_err(io::Error::other)?;
         fs::write(mcmeta_path, mcmeta_content)?;
 
-        let data_path = datapack_directory.join("data");
+        let data_path = output.join("data");
 
         for (name, namespace) in &self.namespaces {
             let namespace_path = data_path.join(name);
+
             namespace.write(&namespace_path)?;
         }
 
@@ -310,16 +316,16 @@ impl Datapack {
     }
 
     pub fn get_namespace_mut(&mut self, name: &str) -> &mut Namespace {
-        self.namespaces.entry(name.to_string()).or_default()
+        self.namespaces.entry_ref(name).or_default()
     }
 
     pub fn add_namespace(&mut self, name: &str, namespace: Namespace) {
-        match self.namespaces.entry(name.to_string()) {
-            Entry::Vacant(e) => {
-                e.insert(namespace);
+        match self.namespaces.entry_ref(name) {
+            EntryRef::Occupied(mut entry) => {
+                entry.get_mut().merge(namespace);
             }
-            Entry::Occupied(mut e) => {
-                e.get_mut().merge(namespace);
+            EntryRef::Vacant(entry) => {
+                entry.insert(namespace);
             }
         }
     }

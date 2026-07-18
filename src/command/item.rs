@@ -2,9 +2,9 @@ use crate::item::ItemStack;
 use crate::snbt::SNBT;
 use crate::{command::item_source::ItemSource, option_write_chain};
 use minecraft_command_types_procedural_macros::HasMacro;
-use std::fmt::{Display, Formatter};
+use std::fmt::{self, Display, Formatter};
 
-#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
 pub enum ItemCommand {
     Modifier(SNBT),
     With(ItemStack, Option<i32>),
@@ -12,7 +12,7 @@ pub enum ItemCommand {
 }
 
 impl Display for ItemCommand {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
             Self::Modifier(item) => item.fmt(f),
             Self::With(item, count) => {

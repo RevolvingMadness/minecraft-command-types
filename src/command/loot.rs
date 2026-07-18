@@ -4,9 +4,9 @@ use crate::item::ItemStack;
 use crate::resource_location::ResourceLocation;
 use crate::{command::item_source::ItemSource, option_write_chain};
 use minecraft_command_types_procedural_macros::HasMacro;
-use std::fmt::{Display, Formatter};
+use std::fmt::{self, Display, Formatter};
 
-#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
 pub enum LootTarget {
     Give(EntitySelector),
     Insert(Coordinates),
@@ -15,7 +15,7 @@ pub enum LootTarget {
 }
 
 impl Display for LootTarget {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
             Self::Give(selector) => write!(f, "give {}", selector),
             Self::Insert(coords) => write!(f, "insert {}", coords),
@@ -31,7 +31,7 @@ impl Display for LootTarget {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, HasMacro)]
 pub enum LootItemSource {
     Tool(ItemStack),
     Mainhand,
@@ -39,7 +39,7 @@ pub enum LootItemSource {
 }
 
 impl Display for LootItemSource {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
             Self::Tool(tool) => tool.fmt(f),
             Self::Mainhand => f.write_str("mainhand"),
@@ -48,7 +48,7 @@ impl Display for LootItemSource {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
 pub enum LootSource {
     Fish(ResourceLocation, Coordinates, Option<LootItemSource>),
     Loot(ResourceLocation),
@@ -57,7 +57,7 @@ pub enum LootSource {
 }
 
 impl Display for LootSource {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
             Self::Fish(loot_table, pos, item_source) => {
                 write!(f, "fish {} {}", loot_table, pos)?;

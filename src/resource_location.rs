@@ -1,18 +1,22 @@
 use minecraft_command_types_procedural_macros::HasMacro;
 use serde::de::Visitor;
 use serde::{Deserialize, Deserializer, Serialize, Serializer, de};
-use std::fmt::{Display, Formatter, Write};
+use std::fmt::{self, Display, Formatter, Write};
 use std::str::FromStr;
 
-#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
+pub type ResourceLocationPaths = Vec<String>;
+
+pub type ResourceLocationPathsRef<'a> = &'a [String];
+
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, HasMacro)]
 pub struct ResourceLocation {
     pub is_tag: bool,
     pub namespace: Option<String>,
-    pub paths: Vec<String>,
+    pub paths: ResourceLocationPaths,
 }
 
 impl Display for ResourceLocation {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         if self.is_tag {
             f.write_str("#")?;
         }
@@ -49,7 +53,7 @@ pub enum ResourceLocationParseError {
 }
 
 impl Display for ResourceLocationParseError {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
             Self::EmptyString => f.write_str("Resource location string cannot be empty"),
             Self::InvalidFormat(msg) => {

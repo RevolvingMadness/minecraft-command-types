@@ -1,4 +1,7 @@
-use std::{collections::BTreeMap, fmt::Display};
+use std::{
+    collections::BTreeMap,
+    fmt::{self, Display},
+};
 
 use serde::{Deserialize, Serialize};
 
@@ -7,7 +10,7 @@ use crate::{
     snbt::{SNBT, SNBTString},
 };
 
-#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum Macroable<T> {
     Regular(T),
     Macro(String),
@@ -73,7 +76,7 @@ impl FromIterator<(SNBTString, Macroable<SNBT>)>
 }
 
 impl<T: Display> Display for Macroable<T> {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> fmt::Result {
         match self {
             Self::Regular(value) => value.fmt(f),
             Self::Macro(name) => write!(f, "$({})", name),

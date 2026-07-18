@@ -5,9 +5,9 @@ use crate::entity_selector::EntitySelector;
 use crate::option_write_chain;
 use crate::snbt::SNBT;
 use minecraft_command_types_procedural_macros::HasMacro;
-use std::fmt::{Display, Formatter};
+use std::fmt::{self, Display, Formatter};
 
-#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, HasMacro)]
 pub enum TeamOption {
     DisplayName(SNBT),
     Color(TeamColor),
@@ -21,7 +21,7 @@ pub enum TeamOption {
 }
 
 impl Display for TeamOption {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
             Self::DisplayName(display_name) => {
                 write!(f, "displayName {}", display_name)
@@ -54,7 +54,7 @@ impl Display for TeamOption {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
 pub enum TeamCommand {
     List(Option<String>),
     Add(String, Option<SNBT>),
@@ -66,7 +66,7 @@ pub enum TeamCommand {
 }
 
 impl Display for TeamCommand {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
             Self::List(name) => {
                 f.write_str("list")?;

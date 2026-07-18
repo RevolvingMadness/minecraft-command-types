@@ -2,9 +2,9 @@ use crate::resource_location::ResourceLocation;
 use crate::types::Float;
 use crate::{command::enums::attribute::AttributeAddModifier, option_write_chain};
 use minecraft_command_types_procedural_macros::HasMacro;
-use std::fmt::{Display, Formatter};
+use std::fmt::{self, Display, Formatter};
 
-#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
 pub enum BaseAttributeCommand {
     Get(Option<Float>),
     Set(Float),
@@ -12,7 +12,7 @@ pub enum BaseAttributeCommand {
 }
 
 impl Display for BaseAttributeCommand {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
             Self::Get(scale) => {
                 f.write_str("get")?;
@@ -38,7 +38,7 @@ impl BaseAttributeCommand {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
 pub enum ModifierAttributeCommand {
     Add(ResourceLocation, Float, AttributeAddModifier),
     Remove(ResourceLocation),
@@ -46,7 +46,7 @@ pub enum ModifierAttributeCommand {
 }
 
 impl Display for ModifierAttributeCommand {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
             Self::Add(id, value, add_modifier) => {
                 write!(f, "add {} {} {}", id, value, add_modifier)
@@ -76,7 +76,7 @@ impl ModifierAttributeCommand {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
 pub enum AttributeCommand {
     Get(Option<Float>),
     Base(BaseAttributeCommand),
@@ -84,7 +84,7 @@ pub enum AttributeCommand {
 }
 
 impl Display for AttributeCommand {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
             Self::Get(scale) => {
                 f.write_str("get")?;

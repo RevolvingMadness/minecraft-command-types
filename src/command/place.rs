@@ -5,9 +5,9 @@ use crate::option_write_chain;
 use crate::resource_location::ResourceLocation;
 use crate::types::Float;
 use minecraft_command_types_procedural_macros::HasMacro;
-use std::fmt::{Display, Formatter};
+use std::fmt::{self, Display, Formatter};
 
-#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
 pub enum PlaceCommand {
     Feature(ResourceLocation, Option<Coordinates>),
     Jigsaw(ResourceLocation, ResourceLocation, i32, Option<Coordinates>),
@@ -24,7 +24,7 @@ pub enum PlaceCommand {
 }
 
 impl Display for PlaceCommand {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
             Self::Feature(feature, pos) => {
                 write!(f, "feature {}", feature)?;

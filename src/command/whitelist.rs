@@ -1,8 +1,8 @@
 use crate::{command::Command, entity_selector::EntitySelector};
 use minecraft_command_types_procedural_macros::HasMacro;
-use std::fmt::{Display, Formatter};
+use std::fmt::{self, Display, Formatter};
 
-#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
 pub enum WhitelistCommand {
     Add(EntitySelector),
     List,
@@ -13,7 +13,7 @@ pub enum WhitelistCommand {
 }
 
 impl Display for WhitelistCommand {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
             Self::Add(selector) => write!(f, "add {}", selector),
             Self::List => f.write_str("list"),

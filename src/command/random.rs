@@ -3,16 +3,16 @@ use crate::option_write_chain;
 use crate::range::IntegerRange;
 use crate::resource_location::ResourceLocation;
 use minecraft_command_types_procedural_macros::HasMacro;
-use std::fmt::{Display, Formatter};
+use std::fmt::{self, Display, Formatter};
 
-#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, HasMacro)]
 pub enum RandomResetType {
     All,
     Sequence(ResourceLocation),
 }
 
 impl Display for RandomResetType {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
             Self::All => f.write_str("*"),
             Self::Sequence(sequence) => sequence.fmt(f),
@@ -20,14 +20,14 @@ impl Display for RandomResetType {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
 pub enum RandomCommand {
     ValueRoll(RandomType, IntegerRange, Option<ResourceLocation>),
     Reset(RandomResetType, Option<i32>, Option<bool>, Option<bool>),
 }
 
 impl Display for RandomCommand {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
             Self::ValueRoll(random_type, range, sequence) => {
                 write!(f, "{} {}", random_type, range)?;

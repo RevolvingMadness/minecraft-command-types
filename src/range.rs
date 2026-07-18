@@ -1,219 +1,177 @@
 use minecraft_command_types_procedural_macros::HasMacro;
-use std::fmt::{Display, Formatter};
-use std::ops::Range;
+use std::fmt::{self, Display, Formatter};
+use std::ops::Range as OpsRange;
 
 use crate::types::Float;
 
-#[derive(Debug, Clone, Copy, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
-pub struct IntegerRange {
-    pub min: Option<i32>,
-    pub max: Option<i32>,
+pub type IntegerRange = Range<i32>;
+pub type FloatRange = Range<Float>;
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, HasMacro)]
+pub enum Range<T> {
+    LowerBound(T),
+    UpperBound(T),
+    Bounds {
+        lower: T,
+        upper: T,
+    },
+    Single(T),
 }
 
-impl IntegerRange {
+impl<T> Range<T> {
+    #[inline]
     #[must_use]
-    pub fn new(min: Option<i32>, max: Option<i32>) -> Self {
-        assert!(
-            min.is_some() || max.is_some(),
-            "min and/or max must be Some"
-        );
-
-        if let (Some(min), Some(max)) = (min, max)
-            && min > max
-        {
-            panic!("min must be smaller or equal to max");
-        }
-
-        Self { min, max }
+    pub const fn new_lower(lower: T) -> Self {
+        Self::LowerBound(lower)
     }
 
     #[inline]
     #[must_use]
-    pub fn new_min(min: i32) -> Self {
-        Self::new(Some(min), None)
+    pub const fn new_upper(upper: T) -> Self {
+        Self::UpperBound(upper)
     }
 
     #[inline]
     #[must_use]
-    pub fn new_max(max: i32) -> Self {
-        Self::new(None, Some(max))
-    }
-
-    #[inline]
-    #[must_use]
-    pub fn new_min_max(min: i32, max: i32) -> Self {
-        Self::new(Some(min), Some(max))
-    }
-
-    #[inline]
-    #[must_use]
-    pub fn new_single(value: i32) -> Self {
-        Self::new(Some(value), Some(value))
+    pub const fn new_single(value: T) -> Self {
+        Self::Single(value)
     }
 }
 
-impl Display for IntegerRange {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        match (self.min, self.max) {
-            (Some(min), Some(max)) => {
-                if min == max {
-                    Display::fmt(&min, f)
+impl<T: PartialEq + PartialOrd> Range<T> {
+    #[must_use]
+    pub fn new(lower: Option<T>, upper: Option<T>) -> Option<Self> {
+        Some(match (lower, upper) {
+            (None, None) => return None,
+            (None, Some(upper)) => Self::UpperBound(upper),
+            (Some(lower), None) => Self::LowerBound(lower),
+            (Some(lower), Some(upper)) => {
+                if lower == upper {
+                    Self::Single(lower)
                 } else {
-                    write!(f, "{}..{}", min, max)
+                    if lower > upper {
+                        return None;
+                    }
+
+                    Self::Bounds {
+                        lower,
+                        upper,
+                    }
                 }
             }
-            (Some(min), None) => {
-                write!(f, "{}..", min)
-            }
-            (None, Some(max)) => {
-                write!(f, "..{}", max)
-            }
-            (None, None) => {
-                panic!("min and/or max must be Some")
-            }
+        })
+    }
+
+    #[inline]
+    #[must_use]
+    pub fn new_bounds(lower: T, upper: T) -> Option<Self> {
+        Self::new(Some(lower), Some(upper))
+    }
+}
+
+impl<T: Clone> Range<T> {
+    #[must_use]
+    pub fn lower(&self) -> Option<T> {
+        Some(match self {
+            Self::LowerBound(lower) => lower.clone(),
+            Self::UpperBound(..) => return None,
+            Self::Bounds {
+                lower,
+                ..
+            } => lower.clone(),
+            Self::Single(value) => value.clone(),
+        })
+    }
+
+    #[must_use]
+    pub fn upper(&self) -> Option<T> {
+        Some(match self {
+            Self::LowerBound(..) => return None,
+            Self::UpperBound(upper) => upper.clone(),
+            Self::Bounds {
+                upper,
+                ..
+            } => upper.clone(),
+            Self::Single(value) => value.clone(),
+        })
+    }
+}
+
+impl<T: Display> Display for Range<T> {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::LowerBound(lower) => write!(f, "{}..", lower),
+            Self::UpperBound(upper) => write!(f, "..{}", upper),
+            Self::Bounds {
+                lower,
+                upper,
+            } => write!(f, "{}..{}", lower, upper),
+            Self::Single(value) => value.fmt(f),
         }
     }
 }
 
-impl From<(i32, i32)> for IntegerRange {
-    fn from(value: (i32, i32)) -> Self {
-        Self::new_min_max(value.0, value.1)
-    }
-}
-
-impl From<(Option<i32>, i32)> for IntegerRange {
-    fn from(value: (Option<i32>, i32)) -> Self {
-        Self::new(value.0, Some(value.1))
-    }
-}
-
-impl From<(i32, Option<i32>)> for IntegerRange {
-    fn from(value: (i32, Option<i32>)) -> Self {
-        Self::new(Some(value.0), value.1)
-    }
-}
-
-impl From<(Option<i32>, Option<i32>)> for IntegerRange {
-    fn from(value: (Option<i32>, Option<i32>)) -> Self {
-        Self::new(value.0, value.1)
-    }
-}
-
-impl From<Range<i32>> for IntegerRange {
-    fn from(value: Range<i32>) -> Self {
-        Self::new_min_max(value.start, value.end)
-    }
-}
-
-impl From<Range<Option<i32>>> for IntegerRange {
-    fn from(value: Range<Option<i32>>) -> Self {
-        Self::new(value.start, value.end)
-    }
-}
-
-#[derive(Debug, Clone, Copy, Eq, PartialEq, PartialOrd, Ord, Hash, HasMacro)]
-pub struct FloatRange {
-    pub min: Option<Float>,
-    pub max: Option<Float>,
-}
-
-impl FloatRange {
-    #[must_use]
-    pub fn new(min: Option<Float>, max: Option<Float>) -> Self {
-        assert!(
-            min.is_some() || max.is_some(),
-            "min and/or max must be Some"
-        );
-
-        if let (Some(min), Some(max)) = (min, max)
-            && min > max
-        {
-            panic!("min must be smaller or equal to max");
-        }
-
-        Self { min, max }
-    }
-
-    #[inline]
-    #[must_use]
-    pub fn new_min(min: Float) -> Self {
-        Self::new(Some(min), None)
-    }
-
-    #[inline]
-    #[must_use]
-    pub fn new_max(max: Float) -> Self {
-        Self::new(None, Some(max))
-    }
-
-    #[inline]
-    #[must_use]
-    pub fn new_min_max(min: Float, max: Float) -> Self {
-        Self::new(Some(min), Some(max))
-    }
-
-    #[inline]
-    #[must_use]
-    pub fn new_single(value: Float) -> Self {
-        Self::new(Some(value), Some(value))
-    }
-}
-
-impl Display for FloatRange {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        match (self.min, self.max) {
-            (Some(min), Some(max)) => {
-                if min == max {
-                    min.fmt(f)
-                } else {
-                    write!(f, "{}..{}", min, max)
-                }
-            }
-            (Some(min), None) => {
-                write!(f, "{}..", min)
-            }
-            (None, Some(max)) => {
-                write!(f, "..{}", max)
-            }
-            (None, None) => {
-                panic!("min and/or max must be Some")
-            }
+impl<T> From<(T, T)> for Range<T> {
+    fn from((lower, upper): (T, T)) -> Self {
+        Self::Bounds {
+            lower,
+            upper,
         }
     }
 }
 
-impl From<(Float, Float)> for FloatRange {
-    fn from(value: (Float, Float)) -> Self {
-        Self::new_min_max(value.0, value.1)
+impl<T: PartialEq + PartialOrd> TryFrom<(Option<T>, T)> for Range<T> {
+    type Error = ();
+
+    fn try_from((lower, upper): (Option<T>, T)) -> Result<Self, Self::Error> {
+        Self::new(lower, Some(upper)).ok_or(())
     }
 }
 
-impl From<(Option<Float>, Float)> for FloatRange {
-    fn from(value: (Option<Float>, Float)) -> Self {
-        Self::new(value.0, Some(value.1))
+impl<T: PartialEq + PartialOrd> TryFrom<(T, Option<T>)> for Range<T> {
+    type Error = ();
+
+    fn try_from((lower, upper): (T, Option<T>)) -> Result<Self, Self::Error> {
+        Self::new(Some(lower), upper).ok_or(())
     }
 }
 
-impl From<(Float, Option<Float>)> for FloatRange {
-    fn from(value: (Float, Option<Float>)) -> Self {
-        Self::new(Some(value.0), value.1)
+impl<T: PartialEq + PartialOrd> TryFrom<(Option<T>, Option<T>)> for Range<T> {
+    type Error = ();
+
+    fn try_from(value: (Option<T>, Option<T>)) -> Result<Self, Self::Error> {
+        Self::new(value.0, value.1).ok_or(())
     }
 }
 
-impl From<(Option<Float>, Option<Float>)> for FloatRange {
-    fn from(value: (Option<Float>, Option<Float>)) -> Self {
-        Self::new(value.0, value.1)
+impl<T: PartialEq + PartialOrd> TryFrom<OpsRange<T>> for Range<T> {
+    type Error = ();
+
+    fn try_from(
+        OpsRange {
+            start: lower,
+            end: upper,
+        }: OpsRange<T>,
+    ) -> Result<Self, Self::Error> {
+        Self::new_bounds(lower, upper).ok_or(())
     }
 }
 
-impl From<Range<Float>> for FloatRange {
-    fn from(value: Range<Float>) -> Self {
-        Self::new_min_max(value.start, value.end)
+impl<T: PartialEq + PartialOrd> TryFrom<OpsRange<Option<T>>> for Range<T> {
+    type Error = ();
+
+    fn try_from(
+        OpsRange {
+            start: lower,
+            end: upper,
+        }: OpsRange<Option<T>>,
+    ) -> Result<Self, Self::Error> {
+        Self::new(lower, upper).ok_or(())
     }
 }
 
-impl From<Range<Option<Float>>> for FloatRange {
-    fn from(value: Range<Option<Float>>) -> Self {
-        Self::new(value.start, value.end)
+impl<T> From<T> for Range<T> {
+    fn from(value: T) -> Self {
+        Self::Single(value)
     }
 }
