@@ -4,12 +4,13 @@ pub mod format;
 pub mod language;
 pub mod overlay;
 
-use crate::datapack::pack::format::Format;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
+use crate::pack_mc_meta::pack_information::format::Format;
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct Pack {
+pub struct PackInformation {
     pub description: Value,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub pack_format: Option<i32>,

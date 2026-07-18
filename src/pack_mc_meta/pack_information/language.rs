@@ -5,5 +5,6 @@ use serde::{Deserialize, Serialize};
 pub struct Language {
     pub name: String,
     pub region: String,
-    pub bidirectional: bool,
+    #[serde(rename = "bidirectional")]
+    pub reads_left_to_right: bool,
 }

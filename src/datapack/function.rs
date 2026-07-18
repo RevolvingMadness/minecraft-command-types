@@ -9,7 +9,9 @@ pub struct Function {
 
 impl Function {
     #[inline]
-    pub fn add_command(&mut self, command: Command) {
+    pub fn add_command<C: Into<Command>>(&mut self, command: C) {
+        let command = command.into();
+
         self.commands.push(command);
     }
 

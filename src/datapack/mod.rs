@@ -1,35 +1,20 @@
-pub mod pack;
-pub mod tag;
-
 use crate::{
     datapack::{
-        pack::{Pack, feature::Features, filter::Filter, language::Language, overlay::Overlays},
+        function::Function,
         tag::{Tag, Worldgen},
     },
-    function::Function,
+    pack_mc_meta::{PackMcMeta, pack_information::PackInformation},
     resource_location::{ResourceLocationPaths, ResourceLocationPathsRef},
 };
 use hashbrown::{HashMap, hash_map::EntryRef};
-use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use std::{
-    collections::BTreeMap,
     fs, io,
     path::{Path, PathBuf},
 };
 
-#[derive(Debug, Clone, Deserialize, Serialize)]
-pub struct PackMcMeta {
-    pub pack: Pack,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub features: Option<Features>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub filter: Option<Filter>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub overlays: Option<Overlays>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub language: Option<BTreeMap<String, Language>>,
-}
+pub mod function;
+pub mod tag;
 
 #[derive(Debug, Clone)]
 pub enum FilePathNode<T> {
@@ -271,7 +256,7 @@ impl Datapack {
     pub fn new(pack_format: i32, description: Value) -> Self {
         Self {
             pack: PackMcMeta {
-                pack: Pack {
+                information: PackInformation {
                     pack_format: Some(pack_format),
                     description,
                     max_format: None,
