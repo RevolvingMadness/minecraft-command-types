@@ -7,7 +7,7 @@ use crate::{
         scoreboard::{PlayersScoreboardCommand, ScoreboardCommand},
     },
     entity_selector::EntitySelector,
-    snbt::{SNBT, SNBTCompound},
+    snbt::{Snbt, SnbtCompound},
 };
 
 pub type ScoreValue = i32;
@@ -34,23 +34,23 @@ impl PlayerScore {
     }
 
     #[must_use]
-    pub fn to_text_component(self) -> SNBT {
-        let mut score_compound = SNBTCompound::new();
+    pub fn to_text_component(self) -> Snbt {
+        let mut score_compound = SnbtCompound::new();
 
         score_compound.insert(
             "name".to_owned(),
-            SNBT::String(format!("{}", self.selector)),
+            Snbt::String(format!("{}", self.selector)),
         );
 
-        score_compound.insert("objective".to_owned(), SNBT::String(self.objective));
+        score_compound.insert("objective".to_owned(), Snbt::String(self.objective));
 
-        let score_compound = SNBT::Compound(score_compound);
+        let score_compound = Snbt::Compound(score_compound);
 
-        let mut compound = SNBTCompound::new();
+        let mut compound = SnbtCompound::new();
 
         compound.insert("score".to_owned(), score_compound);
 
-        SNBT::Compound(compound)
+        Snbt::Compound(compound)
     }
 
     #[inline]

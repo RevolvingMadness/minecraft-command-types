@@ -4,7 +4,7 @@ use crate::{
         data::{DataCommand, DataCommandModification, DataCommandModificationMode, DataTarget},
     },
     nbt_path::NbtPath,
-    snbt::{SNBT, SNBTCompound},
+    snbt::{Snbt, SnbtCompound},
 };
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
@@ -15,14 +15,14 @@ pub struct Data {
 
 impl Data {
     #[must_use]
-    pub fn to_text_component(self) -> SNBT {
-        let mut compound = SNBTCompound::new();
+    pub fn to_text_component(self) -> Snbt {
+        let mut compound = SnbtCompound::new();
 
         compound.extend(self.target.to_snbt());
 
-        compound.insert("nbt".to_owned(), SNBT::String(format!("{}", self.path)));
+        compound.insert("nbt".to_owned(), Snbt::String(format!("{}", self.path)));
 
-        SNBT::Compound(compound)
+        Snbt::Compound(compound)
     }
 
     #[inline]

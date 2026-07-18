@@ -1,4 +1,4 @@
-use crate::snbt::{SNBT, SNBTCompound, fmt_snbt_compound};
+use crate::snbt::{Snbt, SnbtCompound, fmt_snbt_compound};
 use std::fmt::{self, Display, Formatter};
 
 fn escape_nbt_path_key(name: &str) -> String {
@@ -16,9 +16,9 @@ fn escape_nbt_path_key(name: &str) -> String {
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum NbtPathNode {
-    RootCompound(SNBTCompound),
-    Named(String, Option<SNBTCompound>),
-    Index(Option<SNBT>),
+    RootCompound(SnbtCompound),
+    Named(String, Option<SnbtCompound>),
+    Index(Option<Snbt>),
 }
 
 impl NbtPathNode {
@@ -41,7 +41,7 @@ impl NbtPath {
     }
 
     #[must_use]
-    pub fn with_named_compound(mut self, compound: SNBTCompound) -> Self {
+    pub fn with_named_compound(mut self, compound: SnbtCompound) -> Self {
         if let Some(NbtPathNode::Named(_, inner_compound @ None)) = self.0.last_mut() {
             *inner_compound = Some(compound);
         }
@@ -51,8 +51,8 @@ impl NbtPath {
 
     #[inline]
     #[must_use]
-    pub fn to_snbt_string(&self) -> SNBT {
-        SNBT::String(self.to_string())
+    pub fn to_snbt_string(&self) -> Snbt {
+        Snbt::String(self.to_string())
     }
 }
 

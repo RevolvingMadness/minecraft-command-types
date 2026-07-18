@@ -1,7 +1,7 @@
 use crate::{
     command::{Command, enums::datapack_list_type::DatapackListType},
     option_write_chain,
-    snbt::SNBT,
+    snbt::Snbt,
 };
 use std::fmt::{self, Display, Formatter};
 
@@ -29,7 +29,7 @@ pub enum DatapackCommand {
     Disable(String),
     Enable(String, Option<DatapackLoadPriority>),
     List(Option<DatapackListType>),
-    Create(String, SNBT),
+    Create(String, Snbt),
 }
 
 impl Display for DatapackCommand {

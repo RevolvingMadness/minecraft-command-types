@@ -2,13 +2,13 @@ use crate::{
     command::data::DataTarget,
     nbt_path::NbtPath,
     option_write_chain,
-    snbt::{SNBTCompound, fmt_snbt_compound},
+    snbt::{SnbtCompound, fmt_snbt_compound},
 };
 use std::fmt::{self, Display, Formatter};
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum FunctionCommandArguments {
-    Compound(SNBTCompound),
+    Compound(SnbtCompound),
     DataTarget(DataTarget, Option<NbtPath>),
 }
 

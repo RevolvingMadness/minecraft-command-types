@@ -4,7 +4,7 @@ use std::fmt::{self, Display, Formatter};
 pub enum LocateType {
     Structure,
     Biome,
-    POI,
+    PointOfInterest,
 }
 
 impl Display for LocateType {
@@ -12,7 +12,7 @@ impl Display for LocateType {
         match self {
             Self::Structure => f.write_str("structure"),
             Self::Biome => f.write_str("biome"),
-            Self::POI => f.write_str("poi"),
+            Self::PointOfInterest => f.write_str("poi"),
         }
     }
 }

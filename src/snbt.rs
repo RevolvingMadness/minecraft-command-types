@@ -4,10 +4,10 @@ use std::{
     fmt::{self, Display, Formatter},
 };
 
-pub type SNBTCompound = BTreeMap<String, SNBT>;
+pub type SnbtCompound = BTreeMap<String, Snbt>;
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
-pub enum SNBT {
+pub enum Snbt {
     Byte(i8),
     Short(i16),
     Integer(i32),
@@ -16,13 +16,13 @@ pub enum SNBT {
     Double(Double),
     String(String),
     List(Vec<Self>),
-    Compound(SNBTCompound),
+    Compound(SnbtCompound),
     ByteArray(Vec<i8>),
     IntegerArray(Vec<i32>),
     LongArray(Vec<i64>),
 }
 
-impl SNBT {
+impl Snbt {
     #[must_use]
     pub fn get(&self, key: &str) -> Option<&Self> {
         let Self::Compound(compound) = self else {
@@ -64,7 +64,7 @@ pub fn is_valid_unquoted_snbt_string(string: &str) -> bool {
 
 pub(crate) fn fmt_snbt_compound(
     f: &mut Formatter<'_>,
-    compound: &SNBTCompound,
+    compound: &SnbtCompound,
 ) -> std::fmt::Result {
     f.write_str("{")?;
 
@@ -91,7 +91,7 @@ pub(crate) fn fmt_snbt_compound(
     f.write_str("}")
 }
 
-impl Display for SNBT {
+impl Display for Snbt {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
             Self::Byte(byte) => write!(f, "{}b", byte),
@@ -172,73 +172,73 @@ impl Display for SNBT {
     }
 }
 
-impl From<i8> for SNBT {
+impl From<i8> for Snbt {
     fn from(value: i8) -> Self {
         Self::Byte(value)
     }
 }
 
-impl From<i16> for SNBT {
+impl From<i16> for Snbt {
     fn from(value: i16) -> Self {
         Self::Short(value)
     }
 }
 
-impl From<i32> for SNBT {
+impl From<i32> for Snbt {
     fn from(value: i32) -> Self {
         Self::Integer(value)
     }
 }
 
-impl From<i64> for SNBT {
+impl From<i64> for Snbt {
     fn from(value: i64) -> Self {
         Self::Long(value)
     }
 }
 
-impl From<Float> for SNBT {
+impl From<Float> for Snbt {
     fn from(value: Float) -> Self {
         Self::Float(value)
     }
 }
 
-impl From<Double> for SNBT {
+impl From<Double> for Snbt {
     fn from(value: Double) -> Self {
         Self::Double(value)
     }
 }
 
-impl From<String> for SNBT {
+impl From<String> for Snbt {
     fn from(value: String) -> Self {
         Self::String(value)
     }
 }
 
-impl From<Vec<Self>> for SNBT {
+impl From<Vec<Self>> for Snbt {
     fn from(value: Vec<Self>) -> Self {
         Self::List(value)
     }
 }
 
-impl From<BTreeMap<String, Self>> for SNBT {
+impl From<BTreeMap<String, Self>> for Snbt {
     fn from(m: BTreeMap<String, Self>) -> Self {
         Self::Compound(m)
     }
 }
 
-impl From<Vec<i8>> for SNBT {
+impl From<Vec<i8>> for Snbt {
     fn from(value: Vec<i8>) -> Self {
         Self::ByteArray(value)
     }
 }
 
-impl From<Vec<i32>> for SNBT {
+impl From<Vec<i32>> for Snbt {
     fn from(value: Vec<i32>) -> Self {
         Self::IntegerArray(value)
     }
 }
 
-impl From<Vec<i64>> for SNBT {
+impl From<Vec<i64>> for Snbt {
     fn from(value: Vec<i64>) -> Self {
         Self::LongArray(value)
     }

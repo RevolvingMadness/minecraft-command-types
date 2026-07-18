@@ -9,7 +9,7 @@ use crate::{
     entity_selector::EntitySelector,
     option_write_chain,
     resource_location::ResourceLocation,
-    snbt::SNBT,
+    snbt::Snbt,
 };
 use std::fmt::{self, Display, Formatter};
 
@@ -17,7 +17,7 @@ use std::fmt::{self, Display, Formatter};
 pub enum BossbarSetType {
     Color(BossbarColor),
     Max(i32),
-    Name(SNBT),
+    Name(Snbt),
     Players(Option<EntitySelector>),
     Style(BossbarStyle),
     Value(i32),
@@ -46,7 +46,7 @@ impl Display for BossbarSetType {
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum BossbarCommand {
-    Add(ResourceLocation, SNBT),
+    Add(ResourceLocation, Snbt),
     Get(ResourceLocation, BossbarGetType),
     List,
     Remove(ResourceLocation),

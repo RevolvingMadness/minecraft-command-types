@@ -5,7 +5,7 @@ use crate::{
     nbt_path::NbtPath,
     option_write_chain,
     resource_location::ResourceLocation,
-    snbt::{SNBT, SNBTCompound},
+    snbt::{Snbt, SnbtCompound},
     types::Float,
 };
 use std::fmt::{self, Display, Formatter};
@@ -35,24 +35,24 @@ impl Display for DataTarget {
 
 impl DataTarget {
     #[must_use]
-    pub fn to_snbt(&self) -> SNBTCompound {
-        let mut compound = SNBTCompound::new();
+    pub fn to_snbt(&self) -> SnbtCompound {
+        let mut compound = SnbtCompound::new();
 
         match self {
             Self::Block(coordinates) => {
-                compound.insert("source".to_owned(), SNBT::String("block".to_owned()));
+                compound.insert("source".to_owned(), Snbt::String("block".to_owned()));
 
-                compound.insert("block".to_owned(), SNBT::String(format!("{}", coordinates)));
+                compound.insert("block".to_owned(), Snbt::String(format!("{}", coordinates)));
             }
             Self::Entity(selector) => {
-                compound.insert("source".to_owned(), SNBT::String("entity".to_owned()));
+                compound.insert("source".to_owned(), Snbt::String("entity".to_owned()));
 
-                compound.insert("entity".to_owned(), SNBT::String(format!("{}", selector)));
+                compound.insert("entity".to_owned(), Snbt::String(format!("{}", selector)));
             }
             Self::Storage(storage) => {
-                compound.insert("source".to_owned(), SNBT::String("storage".to_owned()));
+                compound.insert("source".to_owned(), Snbt::String("storage".to_owned()));
 
-                compound.insert("storage".to_owned(), SNBT::String(format!("{}", storage)));
+                compound.insert("storage".to_owned(), Snbt::String(format!("{}", storage)));
             }
         }
 
@@ -64,7 +64,7 @@ impl DataTarget {
 pub enum DataCommandModification {
     From(DataTarget, Option<NbtPath>),
     String(DataTarget, Option<NbtPath>, Option<i32>, Option<i32>),
-    Value(SNBT),
+    Value(Snbt),
 }
 
 impl Display for DataCommandModification {
@@ -115,7 +115,7 @@ impl Display for DataCommandModificationMode {
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum DataCommand {
     Get(DataTarget, Option<NbtPath>, Option<Float>),
-    Merge(DataTarget, SNBT),
+    Merge(DataTarget, Snbt),
     Modify(
         DataTarget,
         NbtPath,
@@ -163,13 +163,13 @@ impl DataCommand {
     pub fn has_side_effects(&self) -> bool {
         match self {
             Self::Get(..) => false,
-            Self::Merge(_, SNBT::Compound(compound)) => !compound.is_empty(),
+            Self::Merge(_, Snbt::Compound(compound)) => !compound.is_empty(),
             Self::Merge(..) => true,
             Self::Modify(
                 _,
                 _,
                 DataCommandModificationMode::Merge,
-                DataCommandModification::Value(SNBT::Compound(compound)),
+                DataCommandModification::Value(Snbt::Compound(compound)),
             ) => !compound.is_empty(),
             Self::Modify(..) => true,
             Self::Remove(..) => true,

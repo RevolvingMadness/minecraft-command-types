@@ -1,11 +1,11 @@
-use crate::{command::enums::title_type::TitleType, snbt::SNBT, time::Time};
+use crate::{command::enums::title_type::TitleType, snbt::Snbt, time::Time};
 use std::fmt::{self, Display, Formatter};
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum TitleCommand {
     Clear,
     Reset,
-    Title(TitleType, SNBT),
+    Title(TitleType, Snbt),
     Times(Time, Time, Time),
 }
 

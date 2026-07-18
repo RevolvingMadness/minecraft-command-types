@@ -8,21 +8,21 @@ use crate::{
     },
     entity_selector::EntitySelector,
     option_write_chain,
-    snbt::SNBT,
+    snbt::Snbt,
 };
 use std::fmt::{self, Display, Formatter};
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum TeamOption {
-    DisplayName(SNBT),
+    DisplayName(Snbt),
     Color(TeamColor),
     FriendlyFire(bool),
     SeeFriendlyInvisibles(bool),
     NametagVisibility(TeamVisibility),
     DeathMessageVisibility(TeamVisibility),
     CollisionRule(TeamCollisionRule),
-    Prefix(SNBT),
-    Suffix(SNBT),
+    Prefix(Snbt),
+    Suffix(Snbt),
 }
 
 impl Display for TeamOption {
@@ -62,7 +62,7 @@ impl Display for TeamOption {
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum TeamCommand {
     List(Option<String>),
-    Add(String, Option<SNBT>),
+    Add(String, Option<Snbt>),
     Remove(String),
     Empty(String),
     Join(String, Option<EntitySelector>),

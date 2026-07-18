@@ -101,7 +101,7 @@ use crate::{
     item::{ItemPredicate, ItemStack},
     option_write_chain,
     resource_location::ResourceLocation,
-    snbt::SNBT,
+    snbt::Snbt,
     time::Time,
     types::Float,
 };
@@ -116,7 +116,7 @@ pub enum Command {
     Advancement(AdvancementType, EntitySelector, AdvancementCommand),
     Attribute(EntitySelector, ResourceLocation, AttributeCommand),
     Ban(EntitySelector, Option<String>),
-    BanIP(String, Option<String>),
+    BanIp(String, Option<String>),
     Banlist(Option<BanlistType>),
     Bossbar(BossbarCommand),
     Clear(Option<EntitySelector>, Option<ItemPredicate>, Option<i32>),
@@ -219,12 +219,12 @@ pub enum Command {
         Option<ResourceLocation>,
     ),
     Stopwatch(StopwatchCommand),
-    Summon(ResourceLocation, Option<Coordinates>, Option<SNBT>),
+    Summon(ResourceLocation, Option<Coordinates>, Option<Snbt>),
     Tag(EntitySelector, TagCommand),
     Team(TeamCommand),
     TeamMessage(String),
     Teleport(TeleportCommand),
-    Tellraw(EntitySelector, SNBT),
+    Tellraw(EntitySelector, Snbt),
     Test(TestCommand),
     Tick(TickCommand),
     Time(TimeCommand),
@@ -245,10 +245,6 @@ impl From<Command> for ExecuteSubcommand {
 }
 
 impl Command {
-    pub const RETURN_VALUE_0: Self = Self::Return(ReturnCommand::VALUE_0);
-    pub const RETURN_VALUE_1: Self = Self::Return(ReturnCommand::VALUE_1);
-    pub const RETURN_FAIL: Self = Self::Return(ReturnCommand::FAIL);
-
     #[inline]
     #[must_use]
     pub fn run(self) -> ExecuteSubcommand {
@@ -323,7 +319,7 @@ impl Command {
             | Self::Weather(..)
             | Self::Worldborder(..) => PermissionLevel::try_from(2).unwrap(),
             Self::Ban(..)
-            | Self::BanIP(..)
+            | Self::BanIp(..)
             | Self::Banlist(..)
             | Self::Debug(..)
             | Self::Deop(..)
@@ -359,7 +355,7 @@ impl Command {
         matches!(
             self,
             Self::Ban(..)
-                | Self::BanIP(..)
+                | Self::BanIp(..)
                 | Self::Banlist(..)
                 | Self::Deop(..)
                 | Self::Op(..)
@@ -382,7 +378,7 @@ impl Command {
             Self::Advancement(..) => true,
             Self::Attribute(_, _, command) => command.has_side_effects(),
             Self::Ban(..) => true,
-            Self::BanIP(..) => true,
+            Self::BanIp(..) => true,
             Self::Banlist(..) => false,
             Self::Bossbar(command) => command.has_side_effects(),
             Self::Clear(_, _, max_count) => max_count.is_none_or(|max_count| max_count != 0),
@@ -484,7 +480,7 @@ impl Display for Command {
 
                 Ok(())
             }
-            Self::BanIP(target, reason) => {
+            Self::BanIp(target, reason) => {
                 write!(f, "ban-ip {}", target)?;
 
                 option_write_chain!(f, reason);

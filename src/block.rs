@@ -1,6 +1,6 @@
 use crate::{
     resource_location::ResourceLocation,
-    snbt::{SNBTCompound, fmt_snbt_compound},
+    snbt::{SnbtCompound, fmt_snbt_compound},
 };
 use std::{
     collections::BTreeMap,
@@ -11,7 +11,7 @@ use std::{
 pub struct BlockState {
     pub id: ResourceLocation,
     pub block_states: BTreeMap<String, String>,
-    pub data_tags: Option<SNBTCompound>,
+    pub data_tags: Option<SnbtCompound>,
 }
 
 impl Display for BlockState {

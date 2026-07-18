@@ -1,11 +1,11 @@
-use crate::{resource_location::ResourceLocation, snbt::SNBT};
+use crate::{resource_location::ResourceLocation, snbt::Snbt};
 use std::fmt::{self, Display, Formatter};
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum ItemTest {
     Component(ResourceLocation),
-    ComponentMatches(ResourceLocation, SNBT),
-    Predicate(ResourceLocation, SNBT),
+    ComponentMatches(ResourceLocation, Snbt),
+    Predicate(ResourceLocation, Snbt),
 }
 
 impl Display for ItemTest {
@@ -100,7 +100,7 @@ impl ItemPredicate {
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum ItemComponent {
-    KeyValue(ResourceLocation, SNBT),
+    KeyValue(ResourceLocation, Snbt),
     Remove(ResourceLocation),
 }
 

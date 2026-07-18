@@ -6,7 +6,7 @@ use crate::{
         data::DataTarget,
         enums::{
             axis::Axis, bossbar_store_type::BossbarStoreType, entity_anchor::EntityAnchor,
-            heightmap::Heightmap, if_blocks_mode::IfBlocksMode, numeric_snbt_type::NumericSNBTType,
+            heightmap::Heightmap, if_blocks_mode::IfBlocksMode, numeric_snbt_type::NumericSnbtType,
             relation::Relation, store_type::StoreType,
         },
         item_source::ItemSource,
@@ -120,7 +120,7 @@ impl Display for ScoreComparison {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub enum ExecuteIfSubcommand {
+pub enum ExecuteConditionSubcommand {
     Biome(
         Coordinates,
         ResourceLocation,
@@ -150,7 +150,7 @@ pub enum ExecuteIfSubcommand {
     Stopwatch(ResourceLocation, FloatRange, Option<Box<ExecuteSubcommand>>),
 }
 
-impl Display for ExecuteIfSubcommand {
+impl Display for ExecuteConditionSubcommand {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
             Self::Biome(coords, id, next) => {
@@ -237,19 +237,19 @@ impl Display for ExecuteIfSubcommand {
     }
 }
 
-impl From<ExecuteIfSubcommand> for ExecuteSubcommand {
-    fn from(value: ExecuteIfSubcommand) -> Self {
+impl From<ExecuteConditionSubcommand> for ExecuteSubcommand {
+    fn from(value: ExecuteConditionSubcommand) -> Self {
         Self::If(false, value)
     }
 }
 
-impl From<ExecuteIfSubcommand> for Command {
-    fn from(value: ExecuteIfSubcommand) -> Self {
+impl From<ExecuteConditionSubcommand> for Command {
+    fn from(value: ExecuteConditionSubcommand) -> Self {
         Self::Execute(value.into())
     }
 }
 
-impl ExecuteIfSubcommand {
+impl ExecuteConditionSubcommand {
     #[inline]
     #[must_use]
     pub const fn into_subcommand(self, inverted: bool) -> ExecuteSubcommand {
@@ -392,7 +392,7 @@ pub enum ExecuteStoreSubcommand {
     Data(
         DataTarget,
         NbtPath,
-        NumericSNBTType,
+        NumericSnbtType,
         Float,
         Box<ExecuteSubcommand>,
     ),
@@ -453,7 +453,7 @@ pub enum ExecuteSubcommand {
     Positioned(Positioned, Box<Self>),
     Rotated(Rotated, Box<Self>),
     Summon(ResourceLocation, Box<Self>),
-    If(bool, ExecuteIfSubcommand),
+    If(bool, ExecuteConditionSubcommand),
     Store(StoreType, ExecuteStoreSubcommand),
     Run(Box<Command>),
 }
@@ -538,24 +538,6 @@ impl From<ExecuteSubcommand> for Command {
 }
 
 impl ExecuteSubcommand {
-    #[inline]
-    #[must_use]
-    pub fn run_return_value_0() -> Self {
-        Self::Run(Box::new(Command::RETURN_VALUE_0))
-    }
-
-    #[inline]
-    #[must_use]
-    pub fn run_return_value_1() -> Self {
-        Self::Run(Box::new(Command::RETURN_VALUE_1))
-    }
-
-    #[inline]
-    #[must_use]
-    pub fn run_return_fail() -> Self {
-        Self::Run(Box::new(Command::RETURN_FAIL))
-    }
-
     #[must_use]
     pub fn then<S: Into<Self>>(self, next: S) -> Self {
         let next = next.into();
@@ -617,7 +599,7 @@ impl ExecuteSubcommand {
         store_type: StoreType,
         target: DataTarget,
         path: NbtPath,
-        nbt_type: NumericSNBTType,
+        nbt_type: NumericSnbtType,
         scale: Float,
     ) -> Self {
         Self::Store(
@@ -632,7 +614,7 @@ impl ExecuteSubcommand {
         self,
         target: DataTarget,
         path: NbtPath,
-        nbt_type: NumericSNBTType,
+        nbt_type: NumericSnbtType,
         scale: Float,
     ) -> Self {
         self.store_data(StoreType::Result, target, path, nbt_type, scale)
@@ -644,7 +626,7 @@ impl ExecuteSubcommand {
         self,
         target: DataTarget,
         path: NbtPath,
-        nbt_type: NumericSNBTType,
+        nbt_type: NumericSnbtType,
         scale: Float,
     ) -> Self {
         self.store_data(StoreType::Success, target, path, nbt_type, scale)
@@ -655,7 +637,7 @@ impl ExecuteSubcommand {
     pub fn condition_data(self, inverted: bool, target: DataTarget, path: NbtPath) -> Self {
         Self::If(
             inverted,
-            ExecuteIfSubcommand::Data(target, path, Some(Box::new(self))),
+            ExecuteConditionSubcommand::Data(target, path, Some(Box::new(self))),
         )
     }
 
@@ -676,7 +658,7 @@ impl ExecuteSubcommand {
     pub fn condition_function(self, inverted: bool, resource_location: ResourceLocation) -> Self {
         Self::If(
             inverted,
-            ExecuteIfSubcommand::Function(resource_location, Box::new(self)),
+            ExecuteConditionSubcommand::Function(resource_location, Box::new(self)),
         )
     }
 
@@ -694,19 +676,19 @@ impl ExecuteSubcommand {
 
     #[inline]
     #[must_use]
-    pub fn conditionally(self, inverted: bool, subcommand: ExecuteIfSubcommand) -> Self {
+    pub fn conditionally(self, inverted: bool, subcommand: ExecuteConditionSubcommand) -> Self {
         Self::If(inverted, subcommand.then(self))
     }
 
     #[inline]
     #[must_use]
-    pub fn if_(self, subcommand: ExecuteIfSubcommand) -> Self {
+    pub fn if_(self, subcommand: ExecuteConditionSubcommand) -> Self {
         self.conditionally(false, subcommand)
     }
 
     #[inline]
     #[must_use]
-    pub fn unless(self, subcommand: ExecuteIfSubcommand) -> Self {
+    pub fn unless(self, subcommand: ExecuteConditionSubcommand) -> Self {
         self.conditionally(true, subcommand)
     }
 
@@ -720,7 +702,11 @@ impl ExecuteSubcommand {
     ) -> Self {
         Self::If(
             inverted,
-            ExecuteIfSubcommand::Score(score, ScoreComparison::Range(range), Some(Box::new(self))),
+            ExecuteConditionSubcommand::Score(
+                score,
+                ScoreComparison::Range(range),
+                Some(Box::new(self)),
+            ),
         )
     }
 
@@ -747,7 +733,7 @@ impl ExecuteSubcommand {
     ) -> Self {
         Self::If(
             inverted,
-            ExecuteIfSubcommand::Score(
+            ExecuteConditionSubcommand::Score(
                 left,
                 ScoreComparison::Score(operator, right),
                 Some(Box::new(self)),

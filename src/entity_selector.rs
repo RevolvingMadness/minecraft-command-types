@@ -2,7 +2,7 @@ use crate::{
     command::enums::{gamemode::Gamemode, sort::Sort},
     range::{FloatRange, IntegerRange},
     resource_location::ResourceLocation,
-    snbt::SNBT,
+    snbt::Snbt,
     types::Float,
 };
 use std::{
@@ -40,15 +40,16 @@ impl FromStr for EntitySelectorVariable {
 
 impl Display for EntitySelectorVariable {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
-        match self {
+        let string = match self {
             Self::P => "p",
             Self::R => "r",
             Self::A => "a",
             Self::E => "e",
             Self::S => "s",
             Self::N => "n",
-        }
-        .fmt(f)
+        };
+
+        f.write_str(string)
     }
 }
 
@@ -116,7 +117,7 @@ pub enum EntitySelectorOption {
     Name(bool, String),
     Type(bool, ResourceLocation),
     Predicate(bool, ResourceLocation),
-    Nbt(bool, SNBT),
+    Nbt(bool, Snbt),
     Gamemode(bool, Gamemode),
     Level(IntegerRange),
     Advancements(BTreeMap<ResourceLocation, AdvancementChoiceType>),
@@ -268,12 +269,6 @@ impl EntitySelector {
     }
 }
 
-impl Default for EntitySelector {
-    fn default() -> Self {
-        Self::S
-    }
-}
-
 impl Display for EntitySelector {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
@@ -282,16 +277,13 @@ impl Display for EntitySelector {
 
                 if !options.is_empty() {
                     f.write_str("[")?;
-                    let mut first = true;
 
-                    for option in options {
-                        if !first {
+                    for (i, option) in options.iter().enumerate() {
+                        if i != 0 {
                             f.write_str(", ")?;
                         }
 
-                        option.fmt(f)?;
-
-                        first = false;
+                        write!(f, "{}", option)?;
                     }
 
                     f.write_str("]")?;
@@ -299,7 +291,9 @@ impl Display for EntitySelector {
 
                 Ok(())
             }
-            Self::Name(name) => name.fmt(f),
+            Self::Name(name) => {
+                write!(f, "{}", name)
+            }
         }
     }
 }

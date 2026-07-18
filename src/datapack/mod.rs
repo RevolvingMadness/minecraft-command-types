@@ -19,7 +19,7 @@ use std::{
 };
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
-pub struct PackMCMeta {
+pub struct PackMcMeta {
     pub pack: Pack,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub features: Option<Features>,
@@ -262,7 +262,7 @@ impl Namespace {
 
 #[derive(Debug, Clone)]
 pub struct Datapack {
-    pub pack: PackMCMeta,
+    pub pack: PackMcMeta,
     pub namespaces: HashMap<String, Namespace>,
 }
 
@@ -270,7 +270,7 @@ impl Datapack {
     #[must_use]
     pub fn new(pack_format: i32, description: Value) -> Self {
         Self {
-            pack: PackMCMeta {
+            pack: PackMcMeta {
                 pack: Pack {
                     pack_format: Some(pack_format),
                     description,
@@ -288,7 +288,7 @@ impl Datapack {
     }
 
     #[must_use]
-    pub fn new_pack(pack: PackMCMeta) -> Self {
+    pub fn new_pack(pack: PackMcMeta) -> Self {
         Self {
             pack,
             namespaces: HashMap::new(),

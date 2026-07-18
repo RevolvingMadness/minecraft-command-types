@@ -9,15 +9,15 @@ use crate::{
     entity_selector::EntitySelector,
     option_write_chain,
     player_score::{PlayerScore, ScoreValue},
-    snbt::SNBT,
+    snbt::Snbt,
 };
 use std::fmt::{self, Display, Formatter};
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum ScoreboardNumberFormat {
     Blank,
-    Fixed(SNBT),
-    Styled(SNBT),
+    Fixed(Snbt),
+    Styled(Snbt),
 }
 
 impl Display for ScoreboardNumberFormat {
@@ -33,7 +33,7 @@ impl Display for ScoreboardNumberFormat {
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum ScoreboardModification {
     DisplayAutoUpdate(bool),
-    DisplayName(SNBT),
+    DisplayName(Snbt),
     NumberFormat(Option<ScoreboardNumberFormat>),
     RenderType(ScoreboardRenderType),
 }
@@ -64,7 +64,7 @@ impl Display for ScoreboardModification {
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum ObjectivesScoreboardCommand {
     List,
-    Add(String, String, Option<SNBT>),
+    Add(String, String, Option<Snbt>),
     Remove(String),
     SetDisplay(String, Option<String>),
     Modify(String, ScoreboardModification),
@@ -125,7 +125,7 @@ impl ObjectivesScoreboardCommand {
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum PlayersDisplayScoreboardCommand {
-    Name(PlayerScore, Option<SNBT>),
+    Name(PlayerScore, Option<Snbt>),
     NumberFormat(PlayerScore, Option<ScoreboardNumberFormat>),
 }
 

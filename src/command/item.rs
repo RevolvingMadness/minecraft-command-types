@@ -1,11 +1,11 @@
-use crate::{command::item_source::ItemSource, item::ItemStack, option_write_chain, snbt::SNBT};
+use crate::{command::item_source::ItemSource, item::ItemStack, option_write_chain, snbt::Snbt};
 use std::fmt::{self, Display, Formatter};
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum ItemCommand {
-    Modifier(SNBT),
+    Modifier(Snbt),
     With(ItemStack, Option<i32>),
-    From(ItemSource, String, Option<SNBT>),
+    From(ItemSource, String, Option<Snbt>),
 }
 
 impl Display for ItemCommand {
