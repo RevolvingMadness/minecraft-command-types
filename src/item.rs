@@ -1,13 +1,11 @@
-use crate::snbt::SNBT;
-use crate::{macroable::Macroable, resource_location::ResourceLocation};
-use minecraft_command_types_procedural_macros::HasMacro;
+use crate::{resource_location::ResourceLocation, snbt::SNBT};
 use std::fmt::{self, Display, Formatter};
 
-#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum ItemTest {
     Component(ResourceLocation),
-    ComponentMatches(ResourceLocation, Macroable<SNBT>),
-    Predicate(ResourceLocation, Macroable<SNBT>),
+    ComponentMatches(ResourceLocation, SNBT),
+    Predicate(ResourceLocation, SNBT),
 }
 
 impl Display for ItemTest {
@@ -20,7 +18,7 @@ impl Display for ItemTest {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum ItemType {
     ResourceLocation(ResourceLocation),
     Wildcard,
@@ -35,7 +33,7 @@ impl Display for ItemType {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct OrGroup(pub Vec<(bool, ItemTest)>);
 
 impl Display for OrGroup {
@@ -55,7 +53,7 @@ impl Display for OrGroup {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct ItemPredicate {
     pub id: ItemType,
     pub or_groups: Vec<OrGroup>,
@@ -100,7 +98,7 @@ impl ItemPredicate {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum ItemComponent {
     KeyValue(ResourceLocation, SNBT),
     Remove(ResourceLocation),
@@ -117,7 +115,7 @@ impl Display for ItemComponent {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct ItemStack {
     pub id: ItemType,
     pub components: Vec<ItemComponent>,

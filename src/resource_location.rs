@@ -1,14 +1,14 @@
-use minecraft_command_types_procedural_macros::HasMacro;
-use serde::de::Visitor;
-use serde::{Deserialize, Deserializer, Serialize, Serializer, de};
-use std::fmt::{self, Display, Formatter, Write};
-use std::str::FromStr;
+use serde::{Deserialize, Deserializer, Serialize, Serializer, de, de::Visitor};
+use std::{
+    fmt::{self, Display, Formatter},
+    str::FromStr,
+};
 
 pub type ResourceLocationPaths = Vec<String>;
 
 pub type ResourceLocationPathsRef<'a> = &'a [String];
 
-#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct ResourceLocation {
     pub is_tag: bool,
     pub namespace: Option<String>,
@@ -29,7 +29,7 @@ impl Display for ResourceLocation {
 
         for (i, path) in self.paths.iter().enumerate() {
             if i != 0 {
-                f.write_char('/')?;
+                f.write_str("/")?;
             }
 
             path.fmt(f)?;

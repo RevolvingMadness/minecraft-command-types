@@ -43,72 +43,75 @@ pub mod waypoint;
 pub mod whitelist;
 pub mod worldborder;
 
-use crate::block::BlockState;
-use crate::column_position::ColumnPosition;
-use crate::command::advancement::AdvancementCommand;
-use crate::command::attribute::AttributeCommand;
-use crate::command::bossbar::BossbarCommand;
-use crate::command::clone::CloneMaskMode;
-use crate::command::damage::DamageType;
-use crate::command::data::DataCommand;
-use crate::command::datapack::DatapackCommand;
-use crate::command::debug::DebugCommand;
-use crate::command::dialog::DialogCommand;
-use crate::command::effect::EffectCommand;
-use crate::command::enums::setblock_mode::SetblockMode;
-use crate::command::enums::sound_source::{SoundSource, StopSoundSource};
-use crate::command::enums::weather_type::WeatherType;
-use crate::command::execute::ExecuteSubcommand;
-use crate::command::experience::ExperienceCommand;
-use crate::command::fetch_profile::FetchProfileCommand;
-use crate::command::fill::FillCommand;
-use crate::command::forceload::ForceloadCommand;
-use crate::command::function::FunctionCommandArguments;
-use crate::command::gamerule::GameruleValue;
-use crate::command::item::ItemCommand;
-use crate::command::item_source::ItemSource;
-use crate::command::locate::LocateType;
-use crate::command::loot::{LootSource, LootTarget};
-use crate::command::particle::ParticleCommand;
-use crate::command::permission_level::PermissionLevel;
-use crate::command::place::PlaceCommand;
-use crate::command::random::RandomCommand;
-use crate::command::recipe::{RecipeMode, RecipeType};
-use crate::command::r#return::ReturnCommand;
-use crate::command::ride::RideCommand;
-use crate::command::rotate::RotateCommand;
-use crate::command::schedule::ScheduleCommand;
-use crate::command::scoreboard::ScoreboardCommand;
-use crate::command::stopwatch::StopwatchCommand;
-use crate::command::tag::TagCommand;
-use crate::command::team::TeamCommand;
-use crate::command::teleport::TeleportCommand;
-use crate::command::test::TestCommand;
-use crate::command::tick::TickCommand;
-use crate::command::time::TimeCommand;
-use crate::command::title::TitleCommand;
-use crate::command::trigger::TriggerAction;
-use crate::command::waypoint::WaypointCommand;
-use crate::command::whitelist::WhitelistCommand;
-use crate::command::worldborder::WorldborderCommand;
-use crate::coordinate::{Coordinates, WorldCoordinate};
-use crate::entity_selector::EntitySelector;
-use crate::item::{ItemPredicate, ItemStack};
-use crate::macroable::Macroable;
-use crate::option_write_chain;
-use crate::resource_location::ResourceLocation;
-use crate::snbt::SNBT;
-use crate::time::Time;
-use crate::types::Float;
-use enums::advancement_type::AdvancementType;
-use enums::banlist_type::BanlistType;
-use enums::clone_mode::CloneMode;
-use enums::difficulty::Difficulty;
-use enums::gamemode::Gamemode;
-use minecraft_command_types_procedural_macros::HasMacro;
+use crate::{
+    block::BlockState,
+    column_position::ColumnPosition,
+    command::{
+        advancement::AdvancementCommand,
+        attribute::AttributeCommand,
+        bossbar::BossbarCommand,
+        clone::CloneMaskMode,
+        damage::DamageType,
+        data::DataCommand,
+        datapack::DatapackCommand,
+        debug::DebugCommand,
+        dialog::DialogCommand,
+        effect::EffectCommand,
+        enums::{
+            setblock_mode::SetblockMode,
+            sound_source::{SoundSource, StopSoundSource},
+            weather_type::WeatherType,
+        },
+        execute::ExecuteSubcommand,
+        experience::ExperienceCommand,
+        fetch_profile::FetchProfileCommand,
+        fill::FillCommand,
+        forceload::ForceloadCommand,
+        function::FunctionCommandArguments,
+        gamerule::GameruleValue,
+        item::ItemCommand,
+        item_source::ItemSource,
+        locate::LocateType,
+        loot::{LootSource, LootTarget},
+        particle::ParticleCommand,
+        permission_level::PermissionLevel,
+        place::PlaceCommand,
+        random::RandomCommand,
+        recipe::{RecipeMode, RecipeType},
+        r#return::ReturnCommand,
+        ride::RideCommand,
+        rotate::RotateCommand,
+        schedule::ScheduleCommand,
+        scoreboard::ScoreboardCommand,
+        stopwatch::StopwatchCommand,
+        tag::TagCommand,
+        team::TeamCommand,
+        teleport::TeleportCommand,
+        test::TestCommand,
+        tick::TickCommand,
+        time::TimeCommand,
+        title::TitleCommand,
+        trigger::TriggerAction,
+        waypoint::WaypointCommand,
+        whitelist::WhitelistCommand,
+        worldborder::WorldborderCommand,
+    },
+    coordinate::{Coordinates, world::WorldCoordinate},
+    entity_selector::EntitySelector,
+    item::{ItemPredicate, ItemStack},
+    option_write_chain,
+    resource_location::ResourceLocation,
+    snbt::SNBT,
+    time::Time,
+    types::Float,
+};
+use enums::{
+    advancement_type::AdvancementType, banlist_type::BanlistType, clone_mode::CloneMode,
+    difficulty::Difficulty, gamemode::Gamemode,
+};
 use std::fmt::{self, Display, Formatter};
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum Command {
     Advancement(AdvancementType, EntitySelector, AdvancementCommand),
     Attribute(EntitySelector, ResourceLocation, AttributeCommand),
@@ -216,11 +219,7 @@ pub enum Command {
         Option<ResourceLocation>,
     ),
     Stopwatch(StopwatchCommand),
-    Summon(
-        ResourceLocation,
-        Option<Coordinates>,
-        Option<Macroable<SNBT>>,
-    ),
+    Summon(ResourceLocation, Option<Coordinates>, Option<SNBT>),
     Tag(EntitySelector, TagCommand),
     Team(TeamCommand),
     TeamMessage(String),
@@ -270,9 +269,7 @@ impl Command {
             | Self::Attribute(..)
             | Self::Bossbar(..)
             | Self::Clear(..)
-            | Self::Clone {
-                ..
-            }
+            | Self::Clone { .. }
             | Self::Damage(..)
             | Self::Data(..)
             | Self::Datapack(..)
@@ -389,9 +386,7 @@ impl Command {
             Self::Banlist(..) => false,
             Self::Bossbar(command) => command.has_side_effects(),
             Self::Clear(_, _, max_count) => max_count.is_none_or(|max_count| max_count != 0),
-            Self::Clone {
-                ..
-            } => true,
+            Self::Clone { .. } => true,
             Self::Damage(_, amount, _, _) => *amount != 0.0,
             Self::Data(command) => command.has_side_effects(),
             Self::Datapack(command) => command.has_side_effects(),

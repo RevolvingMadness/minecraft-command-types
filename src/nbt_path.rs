@@ -1,11 +1,5 @@
-use crate::has_macro::HasMacro;
-use crate::macroable::Macroable;
-use crate::snbt::{SNBT, SNBTString, fmt_snbt_compound};
-use minecraft_command_types_procedural_macros::HasMacro;
-use std::collections::BTreeMap;
+use crate::snbt::{SNBT, SNBTCompound, fmt_snbt_compound};
 use std::fmt::{self, Display, Formatter};
-
-pub type SNBTCompound = BTreeMap<SNBTString, Macroable<SNBT>>;
 
 fn escape_nbt_path_key(name: &str) -> String {
     let needs_quotes = name
@@ -20,26 +14,22 @@ fn escape_nbt_path_key(name: &str) -> String {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum NbtPathNode {
     RootCompound(SNBTCompound),
-    Named(SNBTString, Option<SNBTCompound>),
-    Index(Option<Macroable<SNBT>>),
+    Named(String, Option<SNBTCompound>),
+    Index(Option<SNBT>),
 }
 
 impl NbtPathNode {
+    #[inline]
     #[must_use]
-    pub const fn named(name: SNBTString) -> Self {
+    pub const fn named(name: String) -> Self {
         Self::Named(name, None)
-    }
-
-    #[must_use]
-    pub const fn named_string(name: String) -> Self {
-        Self::named(SNBTString(false, name))
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct NbtPath(pub Vec<NbtPathNode>);
 
 impl NbtPath {
@@ -62,7 +52,7 @@ impl NbtPath {
     #[inline]
     #[must_use]
     pub fn to_snbt_string(&self) -> SNBT {
-        SNBT::String(SNBTString(self.has_macro(), self.to_string()))
+        SNBT::String(self.to_string())
     }
 }
 
@@ -70,7 +60,7 @@ impl Display for NbtPathNode {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
             Self::RootCompound(compound) => fmt_snbt_compound(f, compound),
-            Self::Named(SNBTString(_, name), filter) => {
+            Self::Named(name, filter) => {
                 f.write_str(&escape_nbt_path_key(name))?;
 
                 if let Some(filter) = filter
@@ -78,6 +68,7 @@ impl Display for NbtPathNode {
                 {
                     fmt_snbt_compound(f, filter)?;
                 }
+
                 Ok(())
             }
             Self::Index(Some(snbt)) => write!(f, "[{}]", snbt),
@@ -88,14 +79,14 @@ impl Display for NbtPathNode {
 
 impl Display for NbtPath {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
-        let mut first = true;
-        for node in &self.0 {
-            if !first && !matches!(node, NbtPathNode::Index(..)) {
+        for (i, node) in self.0.iter().enumerate() {
+            if i != 0 && !matches!(node, NbtPathNode::Index(..)) {
                 write!(f, ".")?;
             }
-            first = false;
+
             write!(f, "{}", node)?;
         }
+
         Ok(())
     }
 }

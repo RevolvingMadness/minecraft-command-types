@@ -1,16 +1,13 @@
-use minecraft_command_types_procedural_macros::HasMacro;
-
 use crate::{
     command::{
         Command,
         data::{DataCommand, DataCommandModification, DataCommandModificationMode, DataTarget},
     },
-    macroable::RegularMacroableExt,
-    nbt_path::{NbtPath, SNBTCompound},
-    snbt::{SNBT, SNBTString},
+    nbt_path::NbtPath,
+    snbt::{SNBT, SNBTCompound},
 };
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct Data {
     pub target: DataTarget,
     pub path: NbtPath,
@@ -23,10 +20,7 @@ impl Data {
 
         compound.extend(self.target.to_snbt());
 
-        compound.insert(
-            SNBTString(false, "nbt".to_owned()),
-            SNBT::String(SNBTString(false, format!("{}", self.path))).regular_macroable(),
-        );
+        compound.insert("nbt".to_owned(), SNBT::String(format!("{}", self.path)));
 
         SNBT::Compound(compound)
     }

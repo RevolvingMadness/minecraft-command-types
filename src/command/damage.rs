@@ -1,9 +1,7 @@
-use crate::entity_selector::EntitySelector;
-use crate::{coordinate::Coordinates, option_write_chain};
-use minecraft_command_types_procedural_macros::HasMacro;
+use crate::{coordinate::Coordinates, entity_selector::EntitySelector, option_write_chain};
 use std::fmt::{self, Display, Formatter};
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum DamageType {
     At(Coordinates),
     By(EntitySelector, Option<EntitySelector>),

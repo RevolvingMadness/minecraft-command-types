@@ -1,11 +1,12 @@
-use crate::command::data::DataTarget;
-use crate::nbt_path::{NbtPath, SNBTCompound};
-use crate::option_write_chain;
-use crate::snbt::fmt_snbt_compound;
-use minecraft_command_types_procedural_macros::HasMacro;
+use crate::{
+    command::data::DataTarget,
+    nbt_path::NbtPath,
+    option_write_chain,
+    snbt::{SNBTCompound, fmt_snbt_compound},
+};
 use std::fmt::{self, Display, Formatter};
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum FunctionCommandArguments {
     Compound(SNBTCompound),
     DataTarget(DataTarget, Option<NbtPath>),

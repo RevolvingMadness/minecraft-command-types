@@ -1,19 +1,23 @@
-use crate::command::enums::score_operation_operator::ScoreOperationOperator;
-use crate::command::enums::scoreboard_render_type::ScoreboardRenderType;
-use crate::entity_selector::EntitySelector;
-use crate::macroable::Macroable;
-use crate::option_write_chain;
-use crate::player_score::ScoreValue;
-use crate::snbt::SNBT;
-use crate::{command::Command, player_score::PlayerScore};
-use minecraft_command_types_procedural_macros::HasMacro;
+use crate::{
+    command::{
+        Command,
+        enums::{
+            score_operation_operator::ScoreOperationOperator,
+            scoreboard_render_type::ScoreboardRenderType,
+        },
+    },
+    entity_selector::EntitySelector,
+    option_write_chain,
+    player_score::{PlayerScore, ScoreValue},
+    snbt::SNBT,
+};
 use std::fmt::{self, Display, Formatter};
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum ScoreboardNumberFormat {
     Blank,
-    Fixed(Macroable<SNBT>),
-    Styled(Macroable<SNBT>),
+    Fixed(SNBT),
+    Styled(SNBT),
 }
 
 impl Display for ScoreboardNumberFormat {
@@ -26,10 +30,10 @@ impl Display for ScoreboardNumberFormat {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum ScoreboardModification {
     DisplayAutoUpdate(bool),
-    DisplayName(Macroable<SNBT>),
+    DisplayName(SNBT),
     NumberFormat(Option<ScoreboardNumberFormat>),
     RenderType(ScoreboardRenderType),
 }
@@ -57,10 +61,10 @@ impl Display for ScoreboardModification {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum ObjectivesScoreboardCommand {
     List,
-    Add(String, String, Option<Macroable<SNBT>>),
+    Add(String, String, Option<SNBT>),
     Remove(String),
     SetDisplay(String, Option<String>),
     Modify(String, ScoreboardModification),
@@ -119,9 +123,9 @@ impl ObjectivesScoreboardCommand {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum PlayersDisplayScoreboardCommand {
-    Name(PlayerScore, Option<Macroable<SNBT>>),
+    Name(PlayerScore, Option<SNBT>),
     NumberFormat(PlayerScore, Option<ScoreboardNumberFormat>),
 }
 
@@ -164,7 +168,7 @@ impl From<PlayersDisplayScoreboardCommand> for Command {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum PlayersScoreboardCommand {
     List(Option<EntitySelector>),
     Get(PlayerScore),
@@ -256,7 +260,7 @@ impl PlayersScoreboardCommand {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum ScoreboardCommand {
     Objectives(ObjectivesScoreboardCommand),
     Players(PlayersScoreboardCommand),

@@ -60,20 +60,10 @@ name = "minecraft-command-types"
 version = "0.1.0"
 dependencies = [
  "hashbrown",
- "minecraft-command-types_procedural-macros",
  "ordered-float",
  "serde",
  "serde_json",
  "strum",
-]
-
-[[package]]
-name = "minecraft-command-types_procedural-macros"
-version = "0.1.0"
-dependencies = [
- "proc-macro2",
- "quote",
- "syn",
 ]
 
 [[package]]

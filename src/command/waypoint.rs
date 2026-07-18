@@ -1,10 +1,11 @@
-use crate::command::{Command, enums::team_color_with_reset::TeamColorWithReset};
-use crate::entity_selector::EntitySelector;
-use crate::resource_location::ResourceLocation;
-use minecraft_command_types_procedural_macros::HasMacro;
+use crate::{
+    command::{Command, enums::team_color_with_reset::TeamColorWithReset},
+    entity_selector::EntitySelector,
+    resource_location::ResourceLocation,
+};
 use std::fmt::{self, Display, Formatter};
 
-#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum WaypointColor {
     Color(TeamColorWithReset),
     Hex(String),
@@ -21,7 +22,7 @@ impl Display for WaypointColor {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum WaypointStyleModification {
     Set(ResourceLocation),
     Reset,
@@ -36,7 +37,7 @@ impl Display for WaypointStyleModification {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum WaypointModification {
     Color(WaypointColor),
     Style(WaypointStyleModification),
@@ -51,7 +52,7 @@ impl Display for WaypointModification {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum WaypointCommand {
     List,
     Modify(EntitySelector, WaypointModification),

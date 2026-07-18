@@ -1,5 +1,4 @@
-use crate::datapack::FilePathNode;
-use crate::resource_location::ResourceLocation;
+use crate::{datapack::FilePathNode, resource_location::ResourceLocation};
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 

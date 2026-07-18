@@ -1,14 +1,19 @@
-use crate::command::enums::bossbar_get_type::BossbarGetType;
-use crate::command::enums::bossbar_style::BossbarStyle;
-use crate::command::{Command, enums::bossbar_color::BossbarColor};
-use crate::entity_selector::EntitySelector;
-use crate::option_write_chain;
-use crate::resource_location::ResourceLocation;
-use crate::snbt::SNBT;
-use minecraft_command_types_procedural_macros::HasMacro;
+use crate::{
+    command::{
+        Command,
+        enums::{
+            bossbar_color::BossbarColor, bossbar_get_type::BossbarGetType,
+            bossbar_style::BossbarStyle,
+        },
+    },
+    entity_selector::EntitySelector,
+    option_write_chain,
+    resource_location::ResourceLocation,
+    snbt::SNBT,
+};
 use std::fmt::{self, Display, Formatter};
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum BossbarSetType {
     Color(BossbarColor),
     Max(i32),
@@ -39,7 +44,7 @@ impl Display for BossbarSetType {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum BossbarCommand {
     Add(ResourceLocation, SNBT),
     Get(ResourceLocation, BossbarGetType),

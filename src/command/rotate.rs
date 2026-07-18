@@ -1,11 +1,10 @@
-use crate::coordinate::Coordinates;
-use crate::entity_selector::EntitySelector;
-use crate::rotation::Rotation;
-use crate::{command::enums::entity_anchor::EntityAnchor, option_write_chain};
-use minecraft_command_types_procedural_macros::HasMacro;
+use crate::{
+    command::enums::entity_anchor::EntityAnchor, coordinate::Coordinates,
+    entity_selector::EntitySelector, option_write_chain, rotation::Rotation,
+};
 use std::fmt::{self, Display, Formatter};
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum FacingRotateCommand {
     Coordinates(Coordinates),
     Entity(EntitySelector, Option<EntityAnchor>),
@@ -26,7 +25,7 @@ impl Display for FacingRotateCommand {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum RotateCommand {
     Rotation(Rotation),
     Facing(FacingRotateCommand),

@@ -1,12 +1,13 @@
-use crate::command::{Command, enums::particle_display_type::ParticleDisplayType};
-use crate::coordinate::Coordinates;
-use crate::entity_selector::EntitySelector;
-use crate::option_write_chain;
-use crate::types::Float;
-use minecraft_command_types_procedural_macros::HasMacro;
+use crate::{
+    command::{Command, enums::particle_display_type::ParticleDisplayType},
+    coordinate::Coordinates,
+    entity_selector::EntitySelector,
+    option_write_chain,
+    types::Float,
+};
 use std::fmt::{self, Display, Formatter};
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum ParticleCommand {
     Regular(String, Option<Coordinates>),
     Extra(

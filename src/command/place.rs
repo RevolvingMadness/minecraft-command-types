@@ -1,13 +1,16 @@
-use crate::command::enums::template_rotation::TemplateRotation;
-use crate::command::{Command, enums::template_mirror::TemplateMirror};
-use crate::coordinate::Coordinates;
-use crate::option_write_chain;
-use crate::resource_location::ResourceLocation;
-use crate::types::Float;
-use minecraft_command_types_procedural_macros::HasMacro;
+use crate::{
+    command::{
+        Command,
+        enums::{template_mirror::TemplateMirror, template_rotation::TemplateRotation},
+    },
+    coordinate::Coordinates,
+    option_write_chain,
+    resource_location::ResourceLocation,
+    types::Float,
+};
 use std::fmt::{self, Display, Formatter};
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum PlaceCommand {
     Feature(ResourceLocation, Option<Coordinates>),
     Jigsaw(ResourceLocation, ResourceLocation, i32, Option<Coordinates>),

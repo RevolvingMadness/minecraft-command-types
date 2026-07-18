@@ -1,10 +1,7 @@
-use crate::item::ItemStack;
-use crate::snbt::SNBT;
-use crate::{command::item_source::ItemSource, option_write_chain};
-use minecraft_command_types_procedural_macros::HasMacro;
+use crate::{command::item_source::ItemSource, item::ItemStack, option_write_chain, snbt::SNBT};
 use std::fmt::{self, Display, Formatter};
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum ItemCommand {
     Modifier(SNBT),
     With(ItemStack, Option<i32>),

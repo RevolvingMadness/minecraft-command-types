@@ -1,9 +1,7 @@
-use crate::coordinate::Coordinates;
-use crate::entity_selector::EntitySelector;
-use minecraft_command_types_procedural_macros::HasMacro;
+use crate::{coordinate::Coordinates, entity_selector::EntitySelector};
 use std::fmt::{self, Display, Formatter};
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum ItemSource {
     Block(Coordinates),
     Entity(EntitySelector),

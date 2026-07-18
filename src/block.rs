@@ -1,11 +1,13 @@
-use crate::nbt_path::SNBTCompound;
-use crate::resource_location::ResourceLocation;
-use crate::snbt::fmt_snbt_compound;
-use minecraft_command_types_procedural_macros::HasMacro;
-use std::collections::BTreeMap;
-use std::fmt::{self, Display, Formatter};
+use crate::{
+    resource_location::ResourceLocation,
+    snbt::{SNBTCompound, fmt_snbt_compound},
+};
+use std::{
+    collections::BTreeMap,
+    fmt::{self, Display, Formatter},
+};
 
-#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct BlockState {
     pub id: ResourceLocation,
     pub block_states: BTreeMap<String, String>,

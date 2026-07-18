@@ -1,8 +1,7 @@
 use crate::{command::Command, option_write_chain, resource_location::ResourceLocation};
-use minecraft_command_types_procedural_macros::HasMacro;
 use std::fmt::{self, Display, Formatter};
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum RunfailedTestCommand {
     NumberOfTimes(Option<i32>, Option<bool>, Option<i32>, Option<i32>),
     OnlyRequiredTest(Option<bool>, Option<i32>),
@@ -31,7 +30,7 @@ impl Display for RunfailedTestCommand {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum TestCommand {
     ClearAll(Option<i32>),
     ClearThat,

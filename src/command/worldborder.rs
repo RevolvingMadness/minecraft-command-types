@@ -1,11 +1,13 @@
-use crate::option_write_chain;
-use crate::time::Time;
-use crate::types::{Double, Float};
-use crate::{column_position::ColumnPosition, command::Command};
-use minecraft_command_types_procedural_macros::HasMacro;
+use crate::{
+    column_position::ColumnPosition,
+    command::Command,
+    option_write_chain,
+    time::Time,
+    types::{Double, Float},
+};
 use std::fmt::{self, Display, Formatter};
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum DamageWorldborderCommand {
     Amount(Float),
     Buffer(Float),
@@ -20,7 +22,7 @@ impl Display for DamageWorldborderCommand {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum WarningWorldborderCommand {
     Distance(i32),
     Time(Time),
@@ -35,7 +37,7 @@ impl Display for WarningWorldborderCommand {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum WorldborderCommand {
     Add(Double, Option<Time>),
     Center(ColumnPosition),

@@ -1,8 +1,7 @@
 use crate::resource_location::ResourceLocation;
-use minecraft_command_types_procedural_macros::HasMacro;
 use std::fmt::{self, Display, Formatter};
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum CloneMaskMode {
     Replace,
     Masked,

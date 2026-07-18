@@ -1,12 +1,10 @@
-use crate::coordinate::Coordinates;
-use crate::entity_selector::EntitySelector;
-use crate::item::ItemStack;
-use crate::resource_location::ResourceLocation;
-use crate::{command::item_source::ItemSource, option_write_chain};
-use minecraft_command_types_procedural_macros::HasMacro;
+use crate::{
+    command::item_source::ItemSource, coordinate::Coordinates, entity_selector::EntitySelector,
+    item::ItemStack, option_write_chain, resource_location::ResourceLocation,
+};
 use std::fmt::{self, Display, Formatter};
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum LootTarget {
     Give(EntitySelector),
     Insert(Coordinates),
@@ -31,7 +29,7 @@ impl Display for LootTarget {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum LootItemSource {
     Tool(ItemStack),
     Mainhand,
@@ -48,7 +46,7 @@ impl Display for LootItemSource {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum LootSource {
     Fish(ResourceLocation, Coordinates, Option<LootItemSource>),
     Loot(ResourceLocation),

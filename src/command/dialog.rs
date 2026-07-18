@@ -1,9 +1,9 @@
-use crate::resource_location::ResourceLocation;
-use crate::{command::Command, entity_selector::EntitySelector};
-use minecraft_command_types_procedural_macros::HasMacro;
+use crate::{
+    command::Command, entity_selector::EntitySelector, resource_location::ResourceLocation,
+};
 use std::fmt::{self, Display, Formatter};
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum DialogCommand {
     Show(EntitySelector, ResourceLocation),
     Clear(EntitySelector),

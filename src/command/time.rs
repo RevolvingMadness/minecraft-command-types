@@ -1,10 +1,13 @@
-use crate::command::enums::time_query_type::TimeQueryType;
-use crate::command::{Command, enums::time_of_day::TimeOfDay};
-use crate::time::Time;
-use minecraft_command_types_procedural_macros::HasMacro;
+use crate::{
+    command::{
+        Command,
+        enums::{time_of_day::TimeOfDay, time_query_type::TimeQueryType},
+    },
+    time::Time,
+};
 use std::fmt::{self, Display, Formatter};
 
-#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum TimeSetType {
     Time(Time),
     TimeOfDay(TimeOfDay),
@@ -19,7 +22,7 @@ impl Display for TimeSetType {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum TimeCommand {
     Add(Time),
     Query(TimeQueryType),

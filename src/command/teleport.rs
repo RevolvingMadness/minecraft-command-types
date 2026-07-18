@@ -1,12 +1,13 @@
-use crate::command::{Command, enums::entity_anchor::EntityAnchor};
-use crate::coordinate::Coordinates;
-use crate::entity_selector::EntitySelector;
-use crate::option_write_chain;
-use crate::rotation::Rotation;
-use minecraft_command_types_procedural_macros::HasMacro;
+use crate::{
+    command::{Command, enums::entity_anchor::EntityAnchor},
+    coordinate::Coordinates,
+    entity_selector::EntitySelector,
+    option_write_chain,
+    rotation::Rotation,
+};
 use std::fmt::{self, Display, Formatter};
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum TeleportFacing {
     Position(Coordinates),
     Entity(EntitySelector, Option<EntityAnchor>),
@@ -27,7 +28,7 @@ impl Display for TeleportFacing {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum TeleportCoordinatesType {
     Rotation(Rotation),
     Facing(TeleportFacing),
@@ -44,7 +45,7 @@ impl Display for TeleportCoordinatesType {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum TargetTeleportCommand {
     Coordinates(Coordinates, Option<TeleportCoordinatesType>),
     Entity(EntitySelector),
@@ -65,7 +66,7 @@ impl Display for TargetTeleportCommand {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum TeleportCommand {
     Coordinates(Coordinates),
     Entity(EntitySelector, Option<TargetTeleportCommand>),

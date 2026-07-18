@@ -1,16 +1,17 @@
-use crate::command::enums::gamemode::Gamemode;
-use crate::command::enums::sort::Sort;
-use crate::macroable::Macroable;
-use crate::range::{FloatRange, IntegerRange};
-use crate::resource_location::ResourceLocation;
-use crate::snbt::SNBT;
-use crate::types::Float;
-use minecraft_command_types_procedural_macros::HasMacro;
-use std::collections::BTreeMap;
-use std::fmt::{self, Display, Formatter};
-use std::str::FromStr;
+use crate::{
+    command::enums::{gamemode::Gamemode, sort::Sort},
+    range::{FloatRange, IntegerRange},
+    resource_location::ResourceLocation,
+    snbt::SNBT,
+    types::Float,
+};
+use std::{
+    collections::BTreeMap,
+    fmt::{self, Display, Formatter},
+    str::FromStr,
+};
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, HasMacro)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum EntitySelectorVariable {
     P,
     R,
@@ -71,7 +72,7 @@ fn fmt_hash_map<K: Display, V: Display>(
     f.write_str("}")
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum AdvancementChoiceType {
     Boolean(bool),
     Criterion(BTreeMap<String, bool>),
@@ -98,7 +99,7 @@ impl Display for AdvancementChoiceType {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum EntitySelectorOption {
     X(Float),
     Y(Float),
@@ -115,7 +116,7 @@ pub enum EntitySelectorOption {
     Name(bool, String),
     Type(bool, ResourceLocation),
     Predicate(bool, ResourceLocation),
-    Nbt(bool, Macroable<SNBT>),
+    Nbt(bool, SNBT),
     Gamemode(bool, Gamemode),
     Level(IntegerRange),
     Advancements(BTreeMap<ResourceLocation, AdvancementChoiceType>),
@@ -210,7 +211,7 @@ impl Display for EntitySelectorOption {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum EntitySelector {
     Variable(EntitySelectorVariable, Vec<EntitySelectorOption>),
     Name(String),

@@ -1,11 +1,12 @@
-use crate::command::{Command, enums::random_type::RandomType};
-use crate::option_write_chain;
-use crate::range::IntegerRange;
-use crate::resource_location::ResourceLocation;
-use minecraft_command_types_procedural_macros::HasMacro;
+use crate::{
+    command::{Command, enums::random_type::RandomType},
+    option_write_chain,
+    range::IntegerRange,
+    resource_location::ResourceLocation,
+};
 use std::fmt::{self, Display, Formatter};
 
-#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum RandomResetType {
     All,
     Sequence(ResourceLocation),
@@ -20,7 +21,7 @@ impl Display for RandomResetType {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum RandomCommand {
     ValueRoll(RandomType, IntegerRange, Option<ResourceLocation>),
     Reset(RandomResetType, Option<i32>, Option<bool>, Option<bool>),

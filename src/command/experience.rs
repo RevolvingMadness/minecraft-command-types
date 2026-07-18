@@ -1,9 +1,10 @@
-use crate::command::{Command, enums::experience_type::ExperienceType};
-use crate::entity_selector::EntitySelector;
-use minecraft_command_types_procedural_macros::HasMacro;
+use crate::{
+    command::{Command, enums::experience_type::ExperienceType},
+    entity_selector::EntitySelector,
+};
 use std::fmt::{self, Display, Formatter};
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum ExperienceCommand {
     Add(EntitySelector, i32, ExperienceType),
     Set(EntitySelector, i32, ExperienceType),

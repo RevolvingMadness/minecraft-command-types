@@ -1,5 +1,4 @@
-use crate::command::enums::team_color_with_reset::TeamColorWithReset;
-use crate::create_enum;
+use crate::{command::enums::team_color_with_reset::TeamColorWithReset, create_enum};
 
 create_enum!(
     TeamColor,

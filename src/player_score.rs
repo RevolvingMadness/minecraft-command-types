@@ -1,7 +1,5 @@
 use std::fmt::{self, Display, Formatter};
 
-use minecraft_command_types_procedural_macros::HasMacro;
-
 use crate::{
     command::{
         Command,
@@ -9,14 +7,12 @@ use crate::{
         scoreboard::{PlayersScoreboardCommand, ScoreboardCommand},
     },
     entity_selector::EntitySelector,
-    macroable::RegularMacroableExt,
-    nbt_path::SNBTCompound,
-    snbt::{SNBT, SNBTString},
+    snbt::{SNBT, SNBTCompound},
 };
 
 pub type ScoreValue = i32;
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct PlayerScore {
     pub selector: EntitySelector,
     pub objective: String,
@@ -42,23 +38,17 @@ impl PlayerScore {
         let mut score_compound = SNBTCompound::new();
 
         score_compound.insert(
-            SNBTString(false, "name".to_owned()),
-            SNBT::String(SNBTString(false, format!("{}", self.selector))).regular_macroable(),
+            "name".to_owned(),
+            SNBT::String(format!("{}", self.selector)),
         );
 
-        score_compound.insert(
-            SNBTString(false, "objective".to_owned()),
-            SNBT::String(SNBTString(false, self.objective)).regular_macroable(),
-        );
+        score_compound.insert("objective".to_owned(), SNBT::String(self.objective));
 
         let score_compound = SNBT::Compound(score_compound);
 
         let mut compound = SNBTCompound::new();
 
-        compound.insert(
-            SNBTString(false, "score".to_owned()),
-            score_compound.regular_macroable(),
-        );
+        compound.insert("score".to_owned(), score_compound);
 
         SNBT::Compound(compound)
     }

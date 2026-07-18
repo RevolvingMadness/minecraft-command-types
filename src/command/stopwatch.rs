@@ -1,10 +1,9 @@
 use crate::{
     command::Command, option_write_chain, resource_location::ResourceLocation, types::Float,
 };
-use minecraft_command_types_procedural_macros::HasMacro;
 use std::fmt::{self, Display, Formatter};
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum StopwatchCommand {
     Create(ResourceLocation),
     Query(ResourceLocation, Option<Float>),

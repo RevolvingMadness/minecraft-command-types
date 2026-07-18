@@ -1,10 +1,11 @@
-use crate::command::{Command, enums::datapack_list_type::DatapackListType};
-use crate::option_write_chain;
-use crate::snbt::SNBT;
-use minecraft_command_types_procedural_macros::HasMacro;
+use crate::{
+    command::{Command, enums::datapack_list_type::DatapackListType},
+    option_write_chain,
+    snbt::SNBT,
+};
 use std::fmt::{self, Display, Formatter};
 
-#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum DatapackLoadPriority {
     First,
     Last,
@@ -23,7 +24,7 @@ impl Display for DatapackLoadPriority {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum DatapackCommand {
     Disable(String),
     Enable(String, Option<DatapackLoadPriority>),

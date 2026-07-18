@@ -1,20 +1,18 @@
-use minecraft_command_types_procedural_macros::HasMacro;
-use std::fmt::{self, Display, Formatter};
-use std::ops::Range as OpsRange;
+use std::{
+    fmt::{self, Display, Formatter},
+    ops::Range as OpsRange,
+};
 
 use crate::types::Float;
 
 pub type IntegerRange = Range<i32>;
 pub type FloatRange = Range<Float>;
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, HasMacro)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum Range<T> {
     LowerBound(T),
     UpperBound(T),
-    Bounds {
-        lower: T,
-        upper: T,
-    },
+    Bounds { lower: T, upper: T },
     Single(T),
 }
 
@@ -53,10 +51,7 @@ impl<T: PartialEq + PartialOrd> Range<T> {
                         return None;
                     }
 
-                    Self::Bounds {
-                        lower,
-                        upper,
-                    }
+                    Self::Bounds { lower, upper }
                 }
             }
         })
@@ -75,10 +70,7 @@ impl<T: Clone> Range<T> {
         Some(match self {
             Self::LowerBound(lower) => lower.clone(),
             Self::UpperBound(..) => return None,
-            Self::Bounds {
-                lower,
-                ..
-            } => lower.clone(),
+            Self::Bounds { lower, .. } => lower.clone(),
             Self::Single(value) => value.clone(),
         })
     }
@@ -88,10 +80,7 @@ impl<T: Clone> Range<T> {
         Some(match self {
             Self::LowerBound(..) => return None,
             Self::UpperBound(upper) => upper.clone(),
-            Self::Bounds {
-                upper,
-                ..
-            } => upper.clone(),
+            Self::Bounds { upper, .. } => upper.clone(),
             Self::Single(value) => value.clone(),
         })
     }
@@ -102,10 +91,7 @@ impl<T: Display> Display for Range<T> {
         match self {
             Self::LowerBound(lower) => write!(f, "{}..", lower),
             Self::UpperBound(upper) => write!(f, "..{}", upper),
-            Self::Bounds {
-                lower,
-                upper,
-            } => write!(f, "{}..{}", lower, upper),
+            Self::Bounds { lower, upper } => write!(f, "{}..{}", lower, upper),
             Self::Single(value) => value.fmt(f),
         }
     }
@@ -113,10 +99,7 @@ impl<T: Display> Display for Range<T> {
 
 impl<T> From<(T, T)> for Range<T> {
     fn from((lower, upper): (T, T)) -> Self {
-        Self::Bounds {
-            lower,
-            upper,
-        }
+        Self::Bounds { lower, upper }
     }
 }
 

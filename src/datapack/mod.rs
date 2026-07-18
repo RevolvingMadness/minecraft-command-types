@@ -1,24 +1,24 @@
 pub mod pack;
 pub mod tag;
 
-use crate::datapack::pack::Pack;
-use crate::datapack::pack::feature::Features;
-use crate::datapack::pack::filter::Filter;
-use crate::datapack::pack::language::Language;
-use crate::datapack::pack::overlay::Overlays;
-use crate::datapack::tag::{Tag, Worldgen};
-use crate::function::Function;
-use crate::resource_location::{ResourceLocationPaths, ResourceLocationPathsRef};
-use hashbrown::HashMap;
-use hashbrown::hash_map::EntryRef;
+use crate::{
+    datapack::{
+        pack::{Pack, feature::Features, filter::Filter, language::Language, overlay::Overlays},
+        tag::{Tag, Worldgen},
+    },
+    function::Function,
+    resource_location::{ResourceLocationPaths, ResourceLocationPathsRef},
+};
+use hashbrown::{HashMap, hash_map::EntryRef};
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
-use std::collections::BTreeMap;
-use std::path::{Path, PathBuf};
-use std::{fs, io};
+use std::{
+    collections::BTreeMap,
+    fs, io,
+    path::{Path, PathBuf},
+};
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
-#[serde(rename_all = "snake_case")]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct PackMCMeta {
     pub pack: Pack,
     #[serde(skip_serializing_if = "Option::is_none")]

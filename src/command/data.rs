@@ -1,16 +1,16 @@
-use crate::command::Command;
-use crate::entity_selector::EntitySelector;
-use crate::macroable::RegularMacroableExt;
-use crate::nbt_path::{NbtPath, SNBTCompound};
-use crate::option_write_chain;
-use crate::resource_location::ResourceLocation;
-use crate::snbt::{SNBT, SNBTString};
-use crate::types::Float;
-use crate::{coordinate::Coordinates, macroable::Macroable};
-use minecraft_command_types_procedural_macros::HasMacro;
+use crate::{
+    command::Command,
+    coordinate::Coordinates,
+    entity_selector::EntitySelector,
+    nbt_path::NbtPath,
+    option_write_chain,
+    resource_location::ResourceLocation,
+    snbt::{SNBT, SNBTCompound},
+    types::Float,
+};
 use std::fmt::{self, Display, Formatter};
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum DataTarget {
     Block(Coordinates),
     Entity(EntitySelector),
@@ -38,35 +38,21 @@ impl DataTarget {
     pub fn to_snbt(&self) -> SNBTCompound {
         let mut compound = SNBTCompound::new();
 
-        let source = match self {
-            Self::Block(..) => "block",
-            Self::Entity(..) => "entity",
-            Self::Storage(..) => "storage",
-        };
-
-        compound.insert(
-            SNBTString(false, "source".to_owned()),
-            SNBT::String(SNBTString(false, source.to_owned())).regular_macroable(),
-        );
-
         match self {
             Self::Block(coordinates) => {
-                compound.insert(
-                    SNBTString(false, "block".to_owned()),
-                    SNBT::String(SNBTString(false, format!("{}", coordinates))).regular_macroable(),
-                );
+                compound.insert("source".to_owned(), SNBT::String("block".to_owned()));
+
+                compound.insert("block".to_owned(), SNBT::String(format!("{}", coordinates)));
             }
             Self::Entity(selector) => {
-                compound.insert(
-                    SNBTString(false, "entity".to_owned()),
-                    SNBT::String(SNBTString(false, format!("{}", selector))).regular_macroable(),
-                );
+                compound.insert("source".to_owned(), SNBT::String("entity".to_owned()));
+
+                compound.insert("entity".to_owned(), SNBT::String(format!("{}", selector)));
             }
             Self::Storage(storage) => {
-                compound.insert(
-                    SNBTString(false, "storage".to_owned()),
-                    SNBT::String(SNBTString(false, format!("{}", storage))).regular_macroable(),
-                );
+                compound.insert("source".to_owned(), SNBT::String("storage".to_owned()));
+
+                compound.insert("storage".to_owned(), SNBT::String(format!("{}", storage)));
             }
         }
 
@@ -74,11 +60,11 @@ impl DataTarget {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum DataCommandModification {
     From(DataTarget, Option<NbtPath>),
     String(DataTarget, Option<NbtPath>, Option<i32>, Option<i32>),
-    Value(Macroable<SNBT>),
+    Value(SNBT),
 }
 
 impl Display for DataCommandModification {
@@ -105,7 +91,7 @@ impl Display for DataCommandModification {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum DataCommandModificationMode {
     Append,
     Prepend,
@@ -126,10 +112,10 @@ impl Display for DataCommandModificationMode {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum DataCommand {
     Get(DataTarget, Option<NbtPath>, Option<Float>),
-    Merge(DataTarget, Macroable<SNBT>),
+    Merge(DataTarget, SNBT),
     Modify(
         DataTarget,
         NbtPath,
@@ -177,13 +163,13 @@ impl DataCommand {
     pub fn has_side_effects(&self) -> bool {
         match self {
             Self::Get(..) => false,
-            Self::Merge(_, Macroable::Regular(SNBT::Compound(compound))) => !compound.is_empty(),
+            Self::Merge(_, SNBT::Compound(compound)) => !compound.is_empty(),
             Self::Merge(..) => true,
             Self::Modify(
                 _,
                 _,
                 DataCommandModificationMode::Merge,
-                DataCommandModification::Value(Macroable::Regular(SNBT::Compound(compound))),
+                DataCommandModification::Value(SNBT::Compound(compound)),
             ) => !compound.is_empty(),
             Self::Modify(..) => true,
             Self::Remove(..) => true,

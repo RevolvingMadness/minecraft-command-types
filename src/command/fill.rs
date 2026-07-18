@@ -1,10 +1,11 @@
-use crate::command::enums::fill_mode::FillMode;
-use crate::command::enums::fill_replace_mode::FillReplaceMode;
-use crate::{block::BlockState, option_write_chain};
-use minecraft_command_types_procedural_macros::HasMacro;
+use crate::{
+    block::BlockState,
+    command::enums::{fill_mode::FillMode, fill_replace_mode::FillReplaceMode},
+    option_write_chain,
+};
 use std::fmt::{self, Display, Formatter};
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum FillCommand {
     Mode(FillMode),
     Replace(BlockState, Option<FillReplaceMode>),

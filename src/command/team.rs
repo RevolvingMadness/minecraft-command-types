@@ -1,13 +1,18 @@
-use crate::command::enums::team_color::TeamColor;
-use crate::command::enums::team_visibility::TeamVisibility;
-use crate::command::{Command, enums::team_collision_rule::TeamCollisionRule};
-use crate::entity_selector::EntitySelector;
-use crate::option_write_chain;
-use crate::snbt::SNBT;
-use minecraft_command_types_procedural_macros::HasMacro;
+use crate::{
+    command::{
+        Command,
+        enums::{
+            team_collision_rule::TeamCollisionRule, team_color::TeamColor,
+            team_visibility::TeamVisibility,
+        },
+    },
+    entity_selector::EntitySelector,
+    option_write_chain,
+    snbt::SNBT,
+};
 use std::fmt::{self, Display, Formatter};
 
-#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum TeamOption {
     DisplayName(SNBT),
     Color(TeamColor),
@@ -54,7 +59,7 @@ impl Display for TeamOption {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum TeamCommand {
     List(Option<String>),
     Add(String, Option<SNBT>),

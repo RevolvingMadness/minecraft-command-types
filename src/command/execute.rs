@@ -1,32 +1,34 @@
-use crate::block::BlockState;
-use crate::column_position::ColumnPosition;
-use crate::command::Command;
-use crate::command::data::DataTarget;
-use crate::command::enums::axis::Axis;
-use crate::command::enums::bossbar_store_type::BossbarStoreType;
-use crate::command::enums::entity_anchor::EntityAnchor;
-use crate::command::enums::heightmap::Heightmap;
-use crate::command::enums::if_blocks_mode::IfBlocksMode;
-use crate::command::enums::numeric_snbt_type::NumericSNBTType;
-use crate::command::enums::relation::Relation;
-use crate::command::enums::store_type::StoreType;
-use crate::command::item_source::ItemSource;
-use crate::coordinate::Coordinates;
-use crate::entity_selector::EntitySelector;
-use crate::item::ItemPredicate;
-use crate::nbt_path::NbtPath;
-use crate::option_write_chain;
-use crate::player_score::PlayerScore;
-use crate::range::{FloatRange, IntegerRange};
-use crate::resource_location::ResourceLocation;
-use crate::rotation::Rotation;
-use crate::types::Float;
-use minecraft_command_types_procedural_macros::HasMacro;
-use std::collections::BTreeSet;
-use std::fmt::{self, Display, Formatter};
+use crate::{
+    block::BlockState,
+    column_position::ColumnPosition,
+    command::{
+        Command,
+        data::DataTarget,
+        enums::{
+            axis::Axis, bossbar_store_type::BossbarStoreType, entity_anchor::EntityAnchor,
+            heightmap::Heightmap, if_blocks_mode::IfBlocksMode, numeric_snbt_type::NumericSNBTType,
+            relation::Relation, store_type::StoreType,
+        },
+        item_source::ItemSource,
+    },
+    coordinate::Coordinates,
+    entity_selector::EntitySelector,
+    item::ItemPredicate,
+    nbt_path::NbtPath,
+    option_write_chain,
+    player_score::PlayerScore,
+    range::{FloatRange, IntegerRange},
+    resource_location::ResourceLocation,
+    rotation::Rotation,
+    types::Float,
+};
+use std::{
+    collections::BTreeSet,
+    fmt::{self, Display, Formatter},
+};
 use strum::Display;
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum Facing {
     Position(Coordinates),
     Entity(EntitySelector, EntityAnchor),
@@ -41,7 +43,7 @@ impl Display for Facing {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum Positioned {
     Position(Coordinates),
     As(EntitySelector),
@@ -58,7 +60,7 @@ impl Display for Positioned {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum Rotated {
     Rotation(Rotation),
     As(EntitySelector),
@@ -73,7 +75,7 @@ impl Display for Rotated {
     }
 }
 
-#[derive(Display, Debug, Clone, Copy, PartialEq, Eq, Hash, HasMacro)]
+#[derive(Display, Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum ScoreComparisonOperator {
     #[strum(serialize = "<")]
     LessThan,
@@ -100,7 +102,7 @@ impl ScoreComparisonOperator {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum ScoreComparison {
     Range(IntegerRange),
     Score(ScoreComparisonOperator, PlayerScore),
@@ -117,7 +119,7 @@ impl Display for ScoreComparison {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum ExecuteIfSubcommand {
     Biome(
         Coordinates,
@@ -385,7 +387,7 @@ impl ExecuteIfSubcommand {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum ExecuteStoreSubcommand {
     Data(
         DataTarget,
@@ -439,7 +441,7 @@ impl ExecuteStoreSubcommand {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum ExecuteSubcommand {
     Align(BTreeSet<Axis>, Box<Self>),
     Anchored(EntityAnchor, Box<Self>),

@@ -1,10 +1,7 @@
-use crate::command::enums::title_type::TitleType;
-use crate::snbt::SNBT;
-use crate::time::Time;
-use minecraft_command_types_procedural_macros::HasMacro;
+use crate::{command::enums::title_type::TitleType, snbt::SNBT, time::Time};
 use std::fmt::{self, Display, Formatter};
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum TitleCommand {
     Clear,
     Reset,

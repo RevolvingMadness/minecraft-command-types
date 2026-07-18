@@ -1,10 +1,10 @@
-use crate::option_write_chain;
-use crate::resource_location::ResourceLocation;
-use crate::{command::Command, entity_selector::EntitySelector};
-use minecraft_command_types_procedural_macros::HasMacro;
+use crate::{
+    command::Command, entity_selector::EntitySelector, option_write_chain,
+    resource_location::ResourceLocation,
+};
 use std::fmt::{self, Display, Formatter};
 
-#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum EffectDuration {
     Duration(i32),
     Infinite,
@@ -19,7 +19,7 @@ impl Display for EffectDuration {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum EffectCommand {
     Clear(Option<EntitySelector>, Option<ResourceLocation>),
     Give(

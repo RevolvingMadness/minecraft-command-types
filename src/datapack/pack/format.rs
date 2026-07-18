@@ -1,5 +1,4 @@
-use serde::ser::SerializeTuple;
-use serde::{Serialize, Serializer, de};
+use serde::{Serialize, Serializer, de, ser::SerializeTuple};
 use std::fmt;
 
 #[derive(Debug, Clone)]

@@ -1,11 +1,12 @@
-use crate::command::{Command, enums::schedule_mode::ScheduleMode};
-use crate::option_write_chain;
-use crate::resource_location::ResourceLocation;
-use crate::time::Time;
-use minecraft_command_types_procedural_macros::HasMacro;
+use crate::{
+    command::{Command, enums::schedule_mode::ScheduleMode},
+    option_write_chain,
+    resource_location::ResourceLocation,
+    time::Time,
+};
 use std::fmt::{self, Display, Formatter};
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum ScheduleCommand {
     Function(ResourceLocation, Time, Option<ScheduleMode>),
     Clear(ResourceLocation),

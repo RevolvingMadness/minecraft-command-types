@@ -1,10 +1,10 @@
-use crate::resource_location::ResourceLocation;
-use crate::types::Float;
-use crate::{command::enums::attribute::AttributeAddModifier, option_write_chain};
-use minecraft_command_types_procedural_macros::HasMacro;
+use crate::{
+    command::enums::attribute::AttributeAddModifier, option_write_chain,
+    resource_location::ResourceLocation, types::Float,
+};
 use std::fmt::{self, Display, Formatter};
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum BaseAttributeCommand {
     Get(Option<Float>),
     Set(Float),
@@ -38,7 +38,7 @@ impl BaseAttributeCommand {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum ModifierAttributeCommand {
     Add(ResourceLocation, Float, AttributeAddModifier),
     Remove(ResourceLocation),
@@ -76,7 +76,7 @@ impl ModifierAttributeCommand {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum AttributeCommand {
     Get(Option<Float>),
     Base(BaseAttributeCommand),

@@ -1,8 +1,7 @@
-use crate::coordinate::WorldCoordinate;
-use minecraft_command_types_procedural_macros::HasMacro;
+use crate::coordinate::world::WorldCoordinate;
 use std::fmt::{self, Display, Formatter};
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, HasMacro)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct ColumnPosition {
     pub x: WorldCoordinate,
     pub z: WorldCoordinate,
@@ -11,10 +10,7 @@ pub struct ColumnPosition {
 impl ColumnPosition {
     #[must_use]
     pub const fn new(x: WorldCoordinate, z: WorldCoordinate) -> Self {
-        Self {
-            x,
-            z,
-        }
+        Self { x, z }
     }
 }
 
