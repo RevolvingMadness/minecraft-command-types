@@ -1,3 +1,3 @@
 use crate::create_enum;
 
-create_enum!(IfBlocksMode, [], All, Masked);
+create_enum!(ConditionBlocksMode, [], All, Masked);
