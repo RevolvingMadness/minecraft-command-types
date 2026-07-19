@@ -10,6 +10,7 @@ pub mod pack_information;
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct PackMcMeta {
+    #[serde(rename = "pack")]
     pub information: PackInformation,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub features: Option<Features>,

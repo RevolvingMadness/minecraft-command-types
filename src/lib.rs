@@ -13,6 +13,7 @@ pub mod pack_mc_meta;
 pub mod player_score;
 pub mod range;
 pub mod resource_location;
+pub mod resourcepack;
 pub mod rotation;
 pub mod snbt;
 pub mod time;

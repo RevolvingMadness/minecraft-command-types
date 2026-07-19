@@ -1,7 +1,7 @@
 use serde::{Serialize, Serializer, de, ser::SerializeTuple};
 use std::fmt;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Format {
     Integer(i32),
     Array(i32, i32),

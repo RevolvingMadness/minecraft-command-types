@@ -32,7 +32,7 @@ impl Display for ResourceLocation {
                 f.write_str("/")?;
             }
 
-            path.fmt(f)?;
+            write!(f, "{}", path)?;
         }
 
         Ok(())
@@ -133,7 +133,7 @@ impl Visitor<'_> for ResourceLocationVisitor {
     type Value = ResourceLocation;
 
     fn expecting(&self, formatter: &mut Formatter) -> std::fmt::Result {
-        formatter.write_str("a string representing a Minecraft resource location (e.g., 'minecraft:stone', 'stone', or '#forge:ingots/iron')")
+        formatter.write_str("resource location")
     }
 
     fn visit_str<E>(self, v: &str) -> Result<Self::Value, E>
