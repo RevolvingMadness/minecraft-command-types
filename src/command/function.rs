@@ -2,7 +2,7 @@ use crate::{
     command::data::DataTarget,
     nbt_path::NbtPath,
     option_write_chain,
-    snbt::{SnbtCompound, fmt_snbt_compound},
+    snbt::{SnbtCompound, SnbtCompoundExt},
 };
 use std::fmt::{self, Display, Formatter};
 
@@ -15,7 +15,7 @@ pub enum FunctionCommandArguments {
 impl Display for FunctionCommandArguments {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
-            Self::Compound(compound) => fmt_snbt_compound(f, compound),
+            Self::Compound(compound) => write!(f, "{}", (*compound).display()),
             Self::DataTarget(target, path) => {
                 write!(f, "with {}", target)?;
 

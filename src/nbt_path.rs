@@ -1,4 +1,4 @@
-use crate::snbt::{Snbt, SnbtCompound, fmt_snbt_compound};
+use crate::snbt::{Snbt, SnbtCompound, SnbtCompoundExt};
 use std::fmt::{self, Display, Formatter};
 
 fn escape_nbt_path_key(name: &str) -> String {
@@ -59,14 +59,14 @@ impl NbtPath {
 impl Display for NbtPathNode {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
-            Self::RootCompound(compound) => fmt_snbt_compound(f, compound),
+            Self::RootCompound(compound) => write!(f, "{}", (*compound).display()),
             Self::Named(name, filter) => {
                 f.write_str(&escape_nbt_path_key(name))?;
 
                 if let Some(filter) = filter
                     && !filter.is_empty()
                 {
-                    fmt_snbt_compound(f, filter)?;
+                    write!(f, "{}", filter.display())?;
                 }
 
                 Ok(())

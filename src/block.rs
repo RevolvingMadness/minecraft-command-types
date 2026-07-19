@@ -1,6 +1,6 @@
 use crate::{
     resource_location::ResourceLocation,
-    snbt::{SnbtCompound, fmt_snbt_compound},
+    snbt::{SnbtCompound, SnbtCompoundExt},
 };
 use std::{
     collections::BTreeMap,
@@ -28,7 +28,7 @@ impl Display for BlockState {
         }
 
         if let Some(snbt) = &self.data_tags {
-            fmt_snbt_compound(f, snbt)?;
+            write!(f, "{}", (*snbt).display())?;
         }
 
         Ok(())

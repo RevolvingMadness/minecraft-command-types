@@ -540,7 +540,7 @@ impl Display for Command {
                 Ok(())
             }
             Self::Data(data_command) => write!(f, "data {}", data_command),
-            Self::Datapack(datapack_command) => write!(f, "datapack {},", datapack_command),
+            Self::Datapack(datapack_command) => write!(f, "datapack {}", datapack_command),
             Self::Debug(debug_type) => write!(f, "debug {}", debug_type),
             Self::DefaultGamemode(gamemode) => write!(f, "defaultgamemode {}", gamemode),
             Self::Deop(selector) => write!(f, "deop {}", selector),
@@ -692,7 +692,7 @@ impl Display for Command {
                 Ok(())
             }
             Self::Publish(allow_commands, gamemode, port) => {
-                f.write_str("playsound")?;
+                f.write_str("publish")?;
 
                 option_write_chain!(f, allow_commands, gamemode, port);
 

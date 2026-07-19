@@ -6,6 +6,48 @@ use std::{
 
 pub type SnbtCompound = BTreeMap<String, Snbt>;
 
+pub(crate) trait SnbtCompoundExt {
+    fn display(&self) -> SnbtCompoundDisplay<'_>;
+}
+
+impl SnbtCompoundExt for SnbtCompound {
+    fn display(&self) -> SnbtCompoundDisplay<'_> {
+        SnbtCompoundDisplay { this: self }
+    }
+}
+
+pub(crate) struct SnbtCompoundDisplay<'this> {
+    this: &'this SnbtCompound,
+}
+
+impl Display for SnbtCompoundDisplay<'_> {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+        write!(f, "{{")?;
+
+        for (i, (key, value)) in self.this.iter().enumerate() {
+            if i > 0 {
+                write!(f, ", ")?;
+            }
+
+            let should_quote = !is_valid_unquoted_snbt_compound_key(key);
+
+            if should_quote {
+                write!(f, "\"")?;
+            }
+
+            key.fmt(f)?;
+
+            if should_quote {
+                write!(f, "\"")?;
+            }
+
+            write!(f, ": {}", value)?;
+        }
+
+        write!(f, "}}")
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum Snbt {
     Byte(i8),
@@ -45,50 +87,17 @@ pub fn is_valid_unquoted_snbt_string(string: &str) -> bool {
     for (i, char) in string.chars().enumerate() {
         let is_first_char = i == 0;
 
-        if is_first_char && char.is_ascii_digit() && char != '-' && char != '.' && char != '+' {
+        if is_first_char && (char.is_ascii_digit() || char == '-' || char == '.' || char == '+') {
             return false;
         }
 
-        if !(char.is_ascii_alphanumeric()
-            && char != '_'
-            && char != '-'
-            && char != '.'
-            && char != '+')
+        if !char.is_ascii_alphanumeric() && char != '_' && char != '-' && char != '.' && char != '+'
         {
             return false;
         }
     }
 
     true
-}
-
-pub(crate) fn fmt_snbt_compound(
-    f: &mut Formatter<'_>,
-    compound: &SnbtCompound,
-) -> std::fmt::Result {
-    f.write_str("{")?;
-
-    for (i, (key, value)) in compound.iter().enumerate() {
-        if i > 0 {
-            f.write_str(", ")?;
-        }
-
-        let should_quote = !is_valid_unquoted_snbt_compound_key(key);
-
-        if should_quote {
-            f.write_str("\"")?;
-        }
-
-        key.fmt(f)?;
-
-        if should_quote {
-            f.write_str("\"")?;
-        }
-
-        write!(f, ": {}", value)?;
-    }
-
-    f.write_str("}")
 }
 
 impl Display for Snbt {
@@ -104,13 +113,13 @@ impl Display for Snbt {
                 let requires_quotes = !is_valid_unquoted_snbt_string(string);
 
                 if requires_quotes {
-                    f.write_str("\"")?;
+                    write!(f, "\"")?;
                 }
 
                 string.escape_default().fmt(f)?;
 
                 if requires_quotes {
-                    f.write_str("\"")?;
+                    write!(f, "\"")?;
                 }
 
                 Ok(())
@@ -128,7 +137,7 @@ impl Display for Snbt {
 
                 f.write_str("]")
             }
-            Self::Compound(compound) => fmt_snbt_compound(f, compound),
+            Self::Compound(compound) => write!(f, "{}", (*compound).display()),
             Self::ByteArray(byte_array) => {
                 f.write_str("[B; ")?;
 
