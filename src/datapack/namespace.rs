@@ -7,43 +7,43 @@ use crate::{
     datapack::{
         TagRegistry, function::Function, tag::Tag, worldgen::Worldgen, write_file_path_nodes,
     },
-    resource_location::{ResourceLocationPaths, ResourceLocationPathsRef},
+    resource_location::{ResourceLocationPathSegments, ResourceLocationPathSegmentsRef},
 };
 
 #[derive(Debug, Clone, Default)]
 pub struct DatapackNamespace {
-    pub functions: HashMap<ResourceLocationPaths, Function>,
-    pub tags: HashMap<TagRegistry, HashMap<ResourceLocationPaths, Tag>>,
+    pub functions: HashMap<ResourceLocationPathSegments, Function>,
+    pub tags: HashMap<TagRegistry, HashMap<ResourceLocationPathSegments, Tag>>,
 
-    pub advancements: HashMap<ResourceLocationPaths, Value>,
-    pub banner_patterns: HashMap<ResourceLocationPaths, Value>,
-    pub cat_variants: HashMap<ResourceLocationPaths, Value>,
-    pub chat_types: HashMap<ResourceLocationPaths, Value>,
-    pub chicken_variants: HashMap<ResourceLocationPaths, Value>,
-    pub cow_variants: HashMap<ResourceLocationPaths, Value>,
-    pub damage_types: HashMap<ResourceLocationPaths, Value>,
-    pub dialogs: HashMap<ResourceLocationPaths, Value>,
-    pub dimensions: HashMap<ResourceLocationPaths, Value>,
-    pub dimension_types: HashMap<ResourceLocationPaths, Value>,
-    pub enchantments: HashMap<ResourceLocationPaths, Value>,
-    pub enchantment_providers: HashMap<ResourceLocationPaths, Value>,
-    pub frog_variants: HashMap<ResourceLocationPaths, Value>,
-    pub instruments: HashMap<ResourceLocationPaths, Value>,
-    pub item_modifiers: HashMap<ResourceLocationPaths, Value>,
-    pub jukebox_songs: HashMap<ResourceLocationPaths, Value>,
-    pub loot_tables: HashMap<ResourceLocationPaths, Value>,
-    pub painting_variants: HashMap<ResourceLocationPaths, Value>,
-    pub pig_variants: HashMap<ResourceLocationPaths, Value>,
-    pub predicates: HashMap<ResourceLocationPaths, Value>,
-    pub recipes: HashMap<ResourceLocationPaths, Value>,
-    pub test_environments: HashMap<ResourceLocationPaths, Value>,
-    pub test_instances: HashMap<ResourceLocationPaths, Value>,
-    pub timelines: HashMap<ResourceLocationPaths, Value>,
-    pub trial_spawners: HashMap<ResourceLocationPaths, Value>,
-    pub trim_materials: HashMap<ResourceLocationPaths, Value>,
-    pub trim_patterns: HashMap<ResourceLocationPaths, Value>,
-    pub wolf_sound_variants: HashMap<ResourceLocationPaths, Value>,
-    pub wolf_variants: HashMap<ResourceLocationPaths, Value>,
+    pub advancements: HashMap<ResourceLocationPathSegments, Value>,
+    pub banner_patterns: HashMap<ResourceLocationPathSegments, Value>,
+    pub cat_variants: HashMap<ResourceLocationPathSegments, Value>,
+    pub chat_types: HashMap<ResourceLocationPathSegments, Value>,
+    pub chicken_variants: HashMap<ResourceLocationPathSegments, Value>,
+    pub cow_variants: HashMap<ResourceLocationPathSegments, Value>,
+    pub damage_types: HashMap<ResourceLocationPathSegments, Value>,
+    pub dialogs: HashMap<ResourceLocationPathSegments, Value>,
+    pub dimensions: HashMap<ResourceLocationPathSegments, Value>,
+    pub dimension_types: HashMap<ResourceLocationPathSegments, Value>,
+    pub enchantments: HashMap<ResourceLocationPathSegments, Value>,
+    pub enchantment_providers: HashMap<ResourceLocationPathSegments, Value>,
+    pub frog_variants: HashMap<ResourceLocationPathSegments, Value>,
+    pub instruments: HashMap<ResourceLocationPathSegments, Value>,
+    pub item_modifiers: HashMap<ResourceLocationPathSegments, Value>,
+    pub jukebox_songs: HashMap<ResourceLocationPathSegments, Value>,
+    pub loot_tables: HashMap<ResourceLocationPathSegments, Value>,
+    pub painting_variants: HashMap<ResourceLocationPathSegments, Value>,
+    pub pig_variants: HashMap<ResourceLocationPathSegments, Value>,
+    pub predicates: HashMap<ResourceLocationPathSegments, Value>,
+    pub recipes: HashMap<ResourceLocationPathSegments, Value>,
+    pub test_environments: HashMap<ResourceLocationPathSegments, Value>,
+    pub test_instances: HashMap<ResourceLocationPathSegments, Value>,
+    pub timelines: HashMap<ResourceLocationPathSegments, Value>,
+    pub trial_spawners: HashMap<ResourceLocationPathSegments, Value>,
+    pub trim_materials: HashMap<ResourceLocationPathSegments, Value>,
+    pub trim_patterns: HashMap<ResourceLocationPathSegments, Value>,
+    pub wolf_sound_variants: HashMap<ResourceLocationPathSegments, Value>,
+    pub wolf_variants: HashMap<ResourceLocationPathSegments, Value>,
     pub worldgen: Worldgen,
 }
 
@@ -153,7 +153,12 @@ impl DatapackNamespace {
         Ok(())
     }
 
-    pub fn add_tag(&mut self, registry: TagRegistry, path: &ResourceLocationPaths, tag: Tag) {
+    pub fn add_tag(
+        &mut self,
+        registry: TagRegistry,
+        path: &ResourceLocationPathSegments,
+        tag: Tag,
+    ) {
         if let Some(original_tags) = self.tags.get_mut(&registry) {
             if let Some(original_tag) = original_tags.get_mut(path) {
                 original_tag.extend(tag);
@@ -167,12 +172,15 @@ impl DatapackNamespace {
     }
 
     #[must_use]
-    pub fn get_function(&mut self, paths: ResourceLocationPathsRef) -> &Function {
-        self.functions.entry_ref(paths).or_default()
+    pub fn get_function(&mut self, path_segments: ResourceLocationPathSegmentsRef) -> &Function {
+        self.functions.entry_ref(path_segments).or_default()
     }
 
     #[must_use]
-    pub fn get_function_mut(&mut self, paths: ResourceLocationPathsRef) -> &mut Function {
-        self.functions.entry_ref(paths).or_default()
+    pub fn get_function_mut(
+        &mut self,
+        path_segments: ResourceLocationPathSegmentsRef,
+    ) -> &mut Function {
+        self.functions.entry_ref(path_segments).or_default()
     }
 }

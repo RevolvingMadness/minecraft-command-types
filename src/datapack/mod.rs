@@ -1,7 +1,7 @@
 use crate::{
     datapack::namespace::DatapackNamespace,
     pack_mc_meta::{PackMcMeta, pack_information::PackInformation},
-    resource_location::ResourceLocationPaths,
+    resource_location::ResourceLocationPathSegments,
 };
 use hashbrown::{HashMap, hash_map::EntryRef};
 use serde_json::Value;
@@ -52,7 +52,7 @@ pub type TagRegistry = String;
 
 fn write_file_path_nodes<T>(
     base_path: &Path,
-    nodes: &HashMap<ResourceLocationPaths, T>,
+    nodes: &HashMap<ResourceLocationPathSegments, T>,
     extension: &str,
     serializer: &impl Fn(&T) -> io::Result<String>,
 ) -> io::Result<()> {

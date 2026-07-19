@@ -4,15 +4,15 @@ use std::{
     str::FromStr,
 };
 
-pub type ResourceLocationPaths = Vec<String>;
+pub type ResourceLocationPathSegments = Vec<String>;
 
-pub type ResourceLocationPathsRef<'a> = &'a [String];
+pub type ResourceLocationPathSegmentsRef<'a> = &'a [String];
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct ResourceLocation {
     pub is_tag: bool,
     pub namespace: Option<String>,
-    pub paths: ResourceLocationPaths,
+    pub path_segments: ResourceLocationPathSegments,
 }
 
 impl Display for ResourceLocation {
@@ -27,7 +27,7 @@ impl Display for ResourceLocation {
             write!(f, "{}:", namespace)?;
         }
 
-        for (i, path) in self.paths.iter().enumerate() {
+        for (i, path) in self.path_segments.iter().enumerate() {
             if i != 0 {
                 f.write_str("/")?;
             }
@@ -83,7 +83,7 @@ impl FromStr for ResourceLocation {
 
         let parts: Vec<&str> = remaining.split(':').collect();
 
-        let (namespace_raw, path_raw) = match parts.len() {
+        let (namespace_raw, raw_path_segments) = match parts.len() {
             1 => (None, parts[0]),
             2 => {
                 if parts[0].is_empty() {
@@ -100,20 +100,23 @@ impl FromStr for ResourceLocation {
             }
         };
 
-        if path_raw.is_empty() {
+        if raw_path_segments.is_empty() {
             return Err(ResourceLocationParseError::InvalidFormat(
                 "Path component cannot be empty".to_string(),
             ));
         }
 
-        let paths: Vec<String> = path_raw.split('/').map(ToString::to_string).collect();
+        let path_segments: Vec<String> = raw_path_segments
+            .split('/')
+            .map(ToString::to_string)
+            .collect();
 
         let namespace = namespace_raw.map(ToString::to_string);
 
         Ok(Self {
             is_tag,
             namespace,
-            paths,
+            path_segments,
         })
     }
 }
