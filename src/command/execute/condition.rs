@@ -180,15 +180,15 @@ impl ExecuteConditionSubcommand {
     }
 
     #[must_use]
-    pub fn then<S: Into<ExecuteSubcommand>>(self, next: S) -> Self {
+    pub fn then<S: Into<ExecuteSubcommand>>(self, next: S) -> Option<Self> {
         let next = next.into();
 
-        match self {
+        Some(match self {
             Self::Biome(coordinates, resource_location, inner_next) => Self::Biome(
                 coordinates,
                 resource_location,
                 Some(Box::new(match inner_next {
-                    Some(inner_next) => inner_next.then(next),
+                    Some(inner_next) => inner_next.then(next)?,
                     None => next,
                 })),
             ),
@@ -196,7 +196,7 @@ impl ExecuteConditionSubcommand {
                 coordinates,
                 block_state,
                 Some(Box::new(match inner_next {
-                    Some(inner_next) => inner_next.then(next),
+                    Some(inner_next) => inner_next.then(next)?,
                     None => next,
                 })),
             ),
@@ -212,7 +212,7 @@ impl ExecuteConditionSubcommand {
                 destination,
                 mode,
                 next: Some(Box::new(match inner_next {
-                    Some(inner_next) => inner_next.then(next),
+                    Some(inner_next) => inner_next.then(next)?,
                     None => next,
                 })),
             },
@@ -220,26 +220,26 @@ impl ExecuteConditionSubcommand {
                 data_target,
                 nbt_path,
                 Some(Box::new(match inner_next {
-                    Some(inner_next) => inner_next.then(next),
+                    Some(inner_next) => inner_next.then(next)?,
                     None => next,
                 })),
             ),
             Self::Dimension(resource_location, inner_next) => Self::Dimension(
                 resource_location,
                 Some(Box::new(match inner_next {
-                    Some(inner_next) => inner_next.then(next),
+                    Some(inner_next) => inner_next.then(next)?,
                     None => next,
                 })),
             ),
             Self::Entity(entity_selector, inner_next) => Self::Entity(
                 entity_selector,
                 Some(Box::new(match inner_next {
-                    Some(inner_next) => inner_next.then(next),
+                    Some(inner_next) => inner_next.then(next)?,
                     None => next,
                 })),
             ),
             Self::Function(resource_location, inner_next) => {
-                Self::Function(resource_location, Box::new(inner_next.then(next)))
+                Self::Function(resource_location, Box::new(inner_next.then(next)?))
             }
             Self::Items {
                 source,
@@ -251,21 +251,21 @@ impl ExecuteConditionSubcommand {
                 slots,
                 predicate,
                 next: Some(Box::new(match inner_next {
-                    Some(inner_next) => inner_next.then(next),
+                    Some(inner_next) => inner_next.then(next)?,
                     None => next,
                 })),
             },
             Self::Loaded(column_position, inner_next) => Self::Loaded(
                 column_position,
                 Some(Box::new(match inner_next {
-                    Some(inner_next) => inner_next.then(next),
+                    Some(inner_next) => inner_next.then(next)?,
                     None => next,
                 })),
             ),
             Self::Predicate(resource_location, inner_next) => Self::Predicate(
                 resource_location,
                 Some(Box::new(match inner_next {
-                    Some(inner_next) => inner_next.then(next),
+                    Some(inner_next) => inner_next.then(next)?,
                     None => next,
                 })),
             ),
@@ -273,7 +273,7 @@ impl ExecuteConditionSubcommand {
                 player_score,
                 score_comparison,
                 Some(Box::new(match inner_next {
-                    Some(inner_next) => inner_next.then(next),
+                    Some(inner_next) => inner_next.then(next)?,
                     None => next,
                 })),
             ),
@@ -281,11 +281,11 @@ impl ExecuteConditionSubcommand {
                 resource_location,
                 float_range,
                 Some(Box::new(match inner_next {
-                    Some(inner_next) => inner_next.then(next),
+                    Some(inner_next) => inner_next.then(next)?,
                     None => next,
                 })),
             ),
-        }
+        })
     }
 
     #[must_use]

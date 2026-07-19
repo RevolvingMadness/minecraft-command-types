@@ -49,19 +49,19 @@ impl Display for ExecuteStoreSubcommand {
 
 impl ExecuteStoreSubcommand {
     #[must_use]
-    pub fn then(self, next: ExecuteSubcommand) -> Self {
-        match self {
+    pub fn then(self, next: ExecuteSubcommand) -> Option<Self> {
+        Some(match self {
             Self::Data(target, path, num_type, scale, inner_next) => Self::Data(
                 target,
                 path,
                 num_type,
                 scale,
-                Box::new(inner_next.then(next)),
+                Box::new(inner_next.then(next)?),
             ),
             Self::Bossbar(id, store_type, inner_next) => {
-                Self::Bossbar(id, store_type, Box::new(inner_next.then(next)))
+                Self::Bossbar(id, store_type, Box::new(inner_next.then(next)?))
             }
-            Self::Score(score, inner_next) => Self::Score(score, Box::new(inner_next.then(next))),
-        }
+            Self::Score(score, inner_next) => Self::Score(score, Box::new(inner_next.then(next)?)),
+        })
     }
 }

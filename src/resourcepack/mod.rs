@@ -12,8 +12,6 @@ use crate::{
     resourcepack::namespace::ResourcepackNamespace,
 };
 
-pub mod block_state_definition;
-pub mod item_definition;
 pub mod namespace;
 
 #[derive(Debug, Clone)]

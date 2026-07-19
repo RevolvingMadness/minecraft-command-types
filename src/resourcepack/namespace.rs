@@ -5,20 +5,16 @@ use std::{
     path::{Path, PathBuf},
 };
 
-use serde::de::DeserializeOwned;
-
-use crate::resourcepack::block_state_definition::BlockstateDefinition;
+use serde_json::Value;
 
 #[derive(Debug, Clone)]
 pub struct ResourcepackNamespace {
-    pub blockstates: HashMap<String, BlockstateDefinition>,
+    pub blockstates: HashMap<String, Value>,
     // pub items: HashMap<String, ItemModelDefinition>,
 }
 
 impl ResourcepackNamespace {
-    fn open_registry<Definition: DeserializeOwned>(
-        definitions_folder_path: PathBuf,
-    ) -> Option<HashMap<String, Definition>> {
+    fn open_json_registry(definitions_folder_path: PathBuf) -> Option<HashMap<String, Value>> {
         let definition_entries = fs::read_dir(definitions_folder_path).ok()?;
 
         let mut definitions = HashMap::new();
@@ -41,10 +37,9 @@ impl ResourcepackNamespace {
 
             let definitions_definition_file = File::open(definitions_definition_file_path).ok()?;
 
-            let definitions_definition = serde_json::from_reader::<_, Definition>(BufReader::new(
-                definitions_definition_file,
-            ))
-            .unwrap();
+            let definitions_definition =
+                serde_json::from_reader::<_, Value>(BufReader::new(definitions_definition_file))
+                    .unwrap();
 
             definitions.insert(definition_name, definitions_definition);
         }
@@ -56,7 +51,7 @@ impl ResourcepackNamespace {
     pub fn open<P: AsRef<Path>>(path: P) -> Option<Self> {
         let path = path.as_ref();
 
-        let blockstates = Self::open_registry(path.join("blockstates"))?;
+        let blockstates = Self::open_json_registry(path.join("blockstates"))?;
         // let items = Self::open_registry(path.join("items"))?;
 
         Some(Self {

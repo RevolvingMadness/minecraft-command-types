@@ -36,17 +36,97 @@ pub mod score_comparison;
 pub mod store;
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub enum ExecuteModifier {
+    Align(BTreeSet<Axis>),
+    Anchored(EntityAnchor),
+    As(EntitySelector),
+    At(EntitySelector),
+    Facing(Facing),
+    In(ResourceLocation),
+    On(Relation),
+    Positioned(Positioned),
+    Rotated(Rotated),
+    Summon(ResourceLocation),
+}
+
+impl Display for ExecuteModifier {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Align(axes) => {
+                write!(f, "align {}", axes.iter().format(""))?;
+
+                Ok(())
+            }
+            Self::Anchored(anchor) => {
+                write!(f, "anchored {}", anchor)?;
+
+                Ok(())
+            }
+            Self::As(selector) => {
+                write!(f, "as {}", selector)?;
+
+                Ok(())
+            }
+            Self::At(selector) => {
+                write!(f, "at {}", selector)?;
+
+                Ok(())
+            }
+            Self::Facing(facing) => {
+                write!(f, "facing {}", facing)?;
+
+                Ok(())
+            }
+            Self::In(dimension) => {
+                write!(f, "in {}", dimension)?;
+
+                Ok(())
+            }
+            Self::On(relation) => {
+                write!(f, "on {}", relation)?;
+
+                Ok(())
+            }
+            Self::Positioned(positioned) => {
+                write!(f, "positioned {}", positioned)?;
+
+                Ok(())
+            }
+            Self::Rotated(rotated) => {
+                write!(f, "rotated {}", rotated)?;
+
+                Ok(())
+            }
+            Self::Summon(entity_id) => {
+                write!(f, "summon {}", entity_id)?;
+
+                Ok(())
+            }
+        }
+    }
+}
+
+impl ExecuteModifier {
+    #[must_use]
+    pub const fn has_side_effects(&self) -> bool {
+        match self {
+            Self::Align(..) => false,
+            Self::Anchored(..) => false,
+            Self::As(..) => false,
+            Self::At(..) => false,
+            Self::Facing(..) => false,
+            Self::In(..) => false,
+            Self::On(..) => false,
+            Self::Positioned(..) => false,
+            Self::Rotated(..) => false,
+            Self::Summon(..) => true,
+        }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum ExecuteSubcommand {
-    Align(BTreeSet<Axis>, Box<Self>),
-    Anchored(EntityAnchor, Box<Self>),
-    As(EntitySelector, Box<Self>),
-    At(EntitySelector, Box<Self>),
-    Facing(Facing, Box<Self>),
-    In(ResourceLocation, Box<Self>),
-    On(Relation, Box<Self>),
-    Positioned(Positioned, Box<Self>),
-    Rotated(Rotated, Box<Self>),
-    Summon(ResourceLocation, Box<Self>),
+    Modifier(ExecuteModifier, Box<Self>),
     If(bool, ExecuteConditionSubcommand),
     Store(StoreType, ExecuteStoreSubcommand),
     Run(Box<Command>),
@@ -55,55 +135,8 @@ pub enum ExecuteSubcommand {
 impl Display for ExecuteSubcommand {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
-            Self::Align(axes, next) => {
-                write!(f, "align {} {}", axes.iter().format(""), next)?;
-
-                Ok(())
-            }
-            Self::Anchored(anchor, next) => {
-                write!(f, "anchored {} {}", anchor, next)?;
-
-                Ok(())
-            }
-            Self::As(selector, next) => {
-                write!(f, "as {} {}", selector, next)?;
-
-                Ok(())
-            }
-            Self::At(selector, next) => {
-                write!(f, "at {} {}", selector, next)?;
-
-                Ok(())
-            }
-            Self::Facing(facing, next) => {
-                write!(f, "facing {} {}", facing, next)?;
-
-                Ok(())
-            }
-            Self::In(dimension, next) => {
-                write!(f, "in {} {}", dimension, next)?;
-
-                Ok(())
-            }
-            Self::On(relation, next) => {
-                write!(f, "on {} {}", relation, next)?;
-
-                Ok(())
-            }
-            Self::Positioned(positioned, next) => {
-                write!(f, "positioned {} {}", positioned, next)?;
-
-                Ok(())
-            }
-            Self::Rotated(rotated, next) => {
-                write!(f, "rotated {} {}", rotated, next)?;
-
-                Ok(())
-            }
-            Self::Summon(entity_id, next) => {
-                write!(f, "summon {} {}", entity_id, next)?;
-
-                Ok(())
+            Self::Modifier(modifier, next) => {
+                write!(f, "{} {}", modifier, next)
             }
             Self::If(is_inverted, subcommand) => {
                 let keyword = if *is_inverted {
@@ -132,36 +165,17 @@ impl From<ExecuteSubcommand> for Command {
 
 impl ExecuteSubcommand {
     #[must_use]
-    pub fn then<S: Into<Self>>(self, next: S) -> Self {
+    pub fn then<S: Into<Self>>(self, next: S) -> Option<Self> {
         let next = next.into();
 
-        match self {
-            Self::Align(axes, inner_next) => Self::Align(axes, Box::new(inner_next.then(next))),
-            Self::Anchored(anchor, inner_next) => {
-                Self::Anchored(anchor, Box::new(inner_next.then(next)))
+        Some(match self {
+            Self::Modifier(modifier, inner_next) => {
+                Self::Modifier(modifier, Box::new(inner_next.then(next)?))
             }
-            Self::As(selector, inner_next) => Self::As(selector, Box::new(inner_next.then(next))),
-            Self::At(selector, inner_next) => Self::At(selector, Box::new(inner_next.then(next))),
-            Self::Facing(facing, inner_next) => {
-                Self::Facing(facing, Box::new(inner_next.then(next)))
-            }
-            Self::In(resource_location, inner_next) => {
-                Self::In(resource_location, Box::new(inner_next.then(next)))
-            }
-            Self::On(relation, inner_next) => Self::On(relation, Box::new(inner_next.then(next))),
-            Self::Positioned(positioned, inner_next) => {
-                Self::Positioned(positioned, Box::new(inner_next.then(next)))
-            }
-            Self::Rotated(rotated, inner_next) => {
-                Self::Rotated(rotated, Box::new(inner_next.then(next)))
-            }
-            Self::Summon(resource_location, inner_next) => {
-                Self::Summon(resource_location, Box::new(inner_next.then(next)))
-            }
-            Self::If(inverted, subcommand) => Self::If(inverted, subcommand.then(next)),
-            Self::Store(store_type, subcommand) => Self::Store(store_type, subcommand.then(next)),
-            Self::Run(..) => next.then(self),
-        }
+            Self::If(inverted, subcommand) => Self::If(inverted, subcommand.then(next)?),
+            Self::Store(store_type, subcommand) => Self::Store(store_type, subcommand.then(next)?),
+            Self::Run(..) => return None,
+        })
     }
 
     #[inline]
@@ -269,19 +283,23 @@ impl ExecuteSubcommand {
 
     #[inline]
     #[must_use]
-    pub fn conditionally(self, inverted: bool, subcommand: ExecuteConditionSubcommand) -> Self {
-        Self::If(inverted, subcommand.then(self))
+    pub fn conditionally(
+        self,
+        inverted: bool,
+        subcommand: ExecuteConditionSubcommand,
+    ) -> Option<Self> {
+        Some(Self::If(inverted, subcommand.then(self)?))
     }
 
     #[inline]
     #[must_use]
-    pub fn if_(self, subcommand: ExecuteConditionSubcommand) -> Self {
+    pub fn if_(self, subcommand: ExecuteConditionSubcommand) -> Option<Self> {
         self.conditionally(false, subcommand)
     }
 
     #[inline]
     #[must_use]
-    pub fn unless(self, subcommand: ExecuteConditionSubcommand) -> Self {
+    pub fn unless(self, subcommand: ExecuteConditionSubcommand) -> Option<Self> {
         self.conditionally(true, subcommand)
     }
 
@@ -423,16 +441,9 @@ impl ExecuteSubcommand {
     #[must_use]
     pub fn has_side_effects(&self) -> bool {
         match self {
-            Self::Align(.., next) => next.has_side_effects(),
-            Self::Anchored(.., next) => next.has_side_effects(),
-            Self::As(.., next) => next.has_side_effects(),
-            Self::At(.., next) => next.has_side_effects(),
-            Self::Facing(.., next) => next.has_side_effects(),
-            Self::In(.., next) => next.has_side_effects(),
-            Self::On(.., next) => next.has_side_effects(),
-            Self::Positioned(.., next) => next.has_side_effects(),
-            Self::Rotated(.., next) => next.has_side_effects(),
-            Self::Summon(..) => true,
+            Self::Modifier(modifier, next) => {
+                modifier.has_side_effects() || next.has_side_effects()
+            }
             Self::If(.., subcommand) => subcommand.has_side_effects(),
             Self::Store(..) => true,
             Self::Run(command) => command.has_side_effects(),
