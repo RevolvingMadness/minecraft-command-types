@@ -2,7 +2,7 @@ use std::fmt::{self, Display, Formatter};
 
 use crate::types::Float;
 
-#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum TimeSuffix {
     Days,
     Seconds,

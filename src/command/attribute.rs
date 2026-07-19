@@ -4,7 +4,7 @@ use crate::{
 };
 use std::fmt::{self, Display, Formatter};
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum BaseAttributeCommand {
     Get(Option<Float>),
     Set(Float),

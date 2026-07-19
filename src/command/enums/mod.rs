@@ -60,7 +60,7 @@ macro_rules! create_enum {
         $($(#[$variant_attr:meta])* $variant:ident),+
         $(,)?
     ) => {
-        #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, ::strum::Display, ::strum::EnumString, $($custom_derives),*)]
+        #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, ::strum::Display, ::strum::EnumString, $($custom_derives),*)]
         #[strum(serialize_all = $serialize_all)]
         pub enum $name {
             $($(#[$variant_attr])* $variant,)*

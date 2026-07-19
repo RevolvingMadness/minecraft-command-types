@@ -1,7 +1,7 @@
 use crate::coordinate::world::WorldCoordinate;
 use std::fmt::{self, Display, Formatter};
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct ColumnPosition {
     pub x: WorldCoordinate,
     pub z: WorldCoordinate,

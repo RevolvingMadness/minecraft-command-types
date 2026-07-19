@@ -91,7 +91,7 @@ impl Display for DataCommandModification {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum DataCommandModificationMode {
     Append,
     Prepend,

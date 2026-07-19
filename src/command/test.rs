@@ -1,7 +1,7 @@
 use crate::{command::Command, option_write_chain, resource_location::ResourceLocation};
 use std::fmt::{self, Display, Formatter};
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum RunfailedTestCommand {
     NumberOfTimes(Option<i32>, Option<bool>, Option<i32>, Option<i32>),
     OnlyRequiredTest(Option<bool>, Option<i32>),

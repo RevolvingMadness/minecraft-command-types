@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::{resource_location::ResourceLocation, types::Double};
 
-#[derive(Debug, Clone, PartialEq, Eq, Deserialize, Serialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize, Serialize)]
 #[serde(tag = "type")]
 #[serde(deny_unknown_fields)]
 pub enum TintSource {
@@ -13,7 +13,7 @@ pub enum TintSource {
 }
 
 #[serde_with::skip_serializing_none]
-#[derive(Debug, Clone, PartialEq, Eq, Deserialize, Serialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize, Serialize)]
 #[serde(rename_all = "snake_case")]
 #[serde(deny_unknown_fields)]
 pub enum SelectItemModelWhen {
@@ -28,7 +28,7 @@ pub struct SelectItemModelCase {
 }
 
 #[serde_with::skip_serializing_none]
-#[derive(Debug, Clone, PartialEq, Eq, Deserialize, Serialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize, Serialize)]
 #[serde(rename_all = "snake_case")]
 #[serde(deny_unknown_fields)]
 pub enum SelectItemModelProperty {
@@ -36,7 +36,7 @@ pub enum SelectItemModelProperty {
     DisplayContext,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Deserialize, Serialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
 pub enum BooleanProperty {
     #[serde(rename = "minecraft:bundle/has_selected_item")]
