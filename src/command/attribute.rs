@@ -1,6 +1,6 @@
 use crate::{
-    command::enums::attribute::AttributeAddModifier, option_write_chain,
-    resource_location::ResourceLocation, types::Float,
+    command::enums::attribute::AttributeAddModifier, resource_location::ResourceLocation,
+    types::Float,
 };
 use std::fmt::{self, Display, Formatter};
 
@@ -17,7 +17,9 @@ impl Display for BaseAttributeCommand {
             Self::Get(scale) => {
                 f.write_str("get")?;
 
-                option_write_chain!(f, scale);
+                if let Some(scale) = scale {
+                    write!(f, " {}", scale)?;
+                }
 
                 Ok(())
             }
@@ -57,7 +59,9 @@ impl Display for ModifierAttributeCommand {
             Self::Get(id, scale) => {
                 write!(f, "value get {}", id)?;
 
-                option_write_chain!(f, scale);
+                if let Some(scale) = scale {
+                    write!(f, " {}", scale)?;
+                }
 
                 Ok(())
             }
@@ -89,7 +93,9 @@ impl Display for AttributeCommand {
             Self::Get(scale) => {
                 f.write_str("get")?;
 
-                option_write_chain!(f, scale);
+                if let Some(scale) = scale {
+                    write!(f, " {}", scale)?;
+                }
 
                 Ok(())
             }

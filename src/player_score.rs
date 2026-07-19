@@ -130,4 +130,22 @@ impl PlayerScore {
     pub const fn modulo(self, other: Self) -> ScoreboardCommand {
         self.operation(ScoreOperationOperator::Remainder, other)
     }
+
+    #[inline]
+    #[must_use]
+    pub const fn swap(self, other: Self) -> ScoreboardCommand {
+        self.operation(ScoreOperationOperator::Swap, other)
+    }
+
+    #[inline]
+    #[must_use]
+    pub const fn choose_minimum(self, other: Self) -> ScoreboardCommand {
+        self.operation(ScoreOperationOperator::ChooseMinimum, other)
+    }
+
+    #[inline]
+    #[must_use]
+    pub const fn choose_maximum(self, other: Self) -> ScoreboardCommand {
+        self.operation(ScoreOperationOperator::ChooseMaximum, other)
+    }
 }

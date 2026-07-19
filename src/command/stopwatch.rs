@@ -1,6 +1,4 @@
-use crate::{
-    command::Command, option_write_chain, resource_location::ResourceLocation, types::Float,
-};
+use crate::{command::Command, resource_location::ResourceLocation, types::Float};
 use std::fmt::{self, Display, Formatter};
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
@@ -20,7 +18,9 @@ impl Display for StopwatchCommand {
             Self::Query(location, scale) => {
                 write!(f, "query {}", location)?;
 
-                option_write_chain!(f, scale);
+                if let Some(scale) = scale {
+                    write!(f, " {}", scale)?;
+                }
 
                 Ok(())
             }

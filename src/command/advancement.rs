@@ -1,4 +1,4 @@
-use crate::{option_write_chain, resource_location::ResourceLocation};
+use crate::resource_location::ResourceLocation;
 use std::fmt::{self, Display, Formatter};
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
@@ -17,7 +17,9 @@ impl Display for AdvancementCommand {
             Self::Only(advancement, criterion) => {
                 advancement.fmt(f)?;
 
-                option_write_chain!(f, criterion);
+                if let Some(criterion) = criterion {
+                    write!(f, " {}", criterion)?;
+                }
 
                 Ok(())
             }

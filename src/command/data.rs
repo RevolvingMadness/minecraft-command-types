@@ -35,7 +35,7 @@ impl Display for DataTarget {
 
 impl DataTarget {
     #[must_use]
-    pub fn to_snbt(&self) -> SnbtCompound {
+    pub fn to_text_component(&self) -> SnbtCompound {
         let mut compound = SnbtCompound::new();
 
         match self {
@@ -62,23 +62,39 @@ impl DataTarget {
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum DataCommandModification {
-    From(DataTarget, Option<NbtPath>),
-    String(DataTarget, Option<NbtPath>, Option<i32>, Option<i32>),
+    From {
+        target: DataTarget,
+        path: Option<NbtPath>,
+    },
+    String {
+        target: DataTarget,
+        path: Option<NbtPath>,
+        start: Option<i32>,
+        end: Option<i32>,
+    },
     Value(Snbt),
 }
 
 impl Display for DataCommandModification {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
-            Self::From(source, path) => {
+            Self::From {
+                target: source,
+                path,
+            } => {
                 write!(f, "from {}", source)?;
 
                 option_write_chain!(f, path);
 
                 Ok(())
             }
-            Self::String(source, path, start, end) => {
-                write!(f, "string {}", source)?;
+            Self::String {
+                target,
+                path,
+                start,
+                end,
+            } => {
+                write!(f, "string {}", target)?;
 
                 option_write_chain!(f, path, start, end);
 
@@ -92,20 +108,20 @@ impl Display for DataCommandModification {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-pub enum DataCommandModificationMode {
+pub enum DataCommandModificationType {
     Append,
     Prepend,
-    Insert(i32),
+    Insert { index: i32 },
     Merge,
     Set,
 }
 
-impl Display for DataCommandModificationMode {
+impl Display for DataCommandModificationType {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
             Self::Append => f.write_str("append"),
             Self::Prepend => f.write_str("prepend"),
-            Self::Insert(index) => write!(f, "insert {}", index),
+            Self::Insert { index } => write!(f, "insert {}", index),
             Self::Merge => f.write_str("merge"),
             Self::Set => f.write_str("set"),
         }
@@ -114,38 +130,57 @@ impl Display for DataCommandModificationMode {
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum DataCommand {
-    Get(DataTarget, Option<NbtPath>, Option<Float>),
-    Merge(DataTarget, Snbt),
-    Modify(
-        DataTarget,
-        NbtPath,
-        DataCommandModificationMode,
-        DataCommandModification,
-    ),
-    Remove(DataTarget, NbtPath),
+    Get {
+        target: DataTarget,
+        path: Option<NbtPath>,
+        scale: Option<Float>,
+    },
+    Merge {
+        target: DataTarget,
+        value: Snbt,
+    },
+    Modify {
+        target: DataTarget,
+        path: NbtPath,
+        modification_type: DataCommandModificationType,
+        modification: DataCommandModification,
+    },
+    Remove {
+        target: DataTarget,
+        path: NbtPath,
+    },
 }
 
 impl Display for DataCommand {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
-            Self::Get(target, path, scale) => {
+            Self::Get {
+                target,
+                path,
+                scale,
+            } => {
                 write!(f, "get {}", target)?;
 
                 option_write_chain!(f, path, scale);
 
                 Ok(())
             }
-            Self::Merge(target, nbt) => {
+            Self::Merge { target, value: nbt } => {
                 write!(f, "merge {} {}", target, nbt)
             }
-            Self::Modify(target, path, modification_mode, modification_command) => {
+            Self::Modify {
+                target,
+                path,
+                modification_type,
+                modification,
+            } => {
                 write!(
                     f,
                     "modify {} {} {} {}",
-                    target, path, modification_mode, modification_command
+                    target, path, modification_type, modification
                 )
             }
-            Self::Remove(target, path) => {
+            Self::Remove { target, path } => {
                 write!(f, "remove {} {}", target, path)
             }
         }
@@ -162,17 +197,20 @@ impl DataCommand {
     #[must_use]
     pub fn has_side_effects(&self) -> bool {
         match self {
-            Self::Get(..) => false,
-            Self::Merge(_, Snbt::Compound(compound)) => !compound.is_empty(),
-            Self::Merge(..) => true,
-            Self::Modify(
-                _,
-                _,
-                DataCommandModificationMode::Merge,
-                DataCommandModification::Value(Snbt::Compound(compound)),
-            ) => !compound.is_empty(),
-            Self::Modify(..) => true,
-            Self::Remove(..) => true,
+            Self::Get { .. } => false,
+            Self::Merge {
+                target: _,
+                value: Snbt::Compound(compound),
+            } => !compound.is_empty(),
+            Self::Merge { .. } => true,
+            Self::Modify {
+                target: _,
+                path: _,
+                modification_type: DataCommandModificationType::Merge,
+                modification: DataCommandModification::Value(Snbt::Compound(compound)),
+            } => !compound.is_empty(),
+            Self::Modify { .. } => true,
+            Self::Remove { .. } => true,
         }
     }
 }

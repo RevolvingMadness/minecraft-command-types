@@ -27,32 +27,37 @@ impl NbtPathNode {
     pub const fn named(name: String) -> Self {
         Self::Named(name, None)
     }
+
+    #[must_use]
+    pub const fn can_dot_be_omitted(&self) -> bool {
+        match self {
+            Self::RootCompound(..) => false,
+            Self::Named(..) => false,
+            Self::Index(..) => true,
+        }
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
-pub struct NbtPath(pub Vec<NbtPathNode>);
+pub struct NbtPath {
+    pub nodes: Vec<NbtPathNode>,
+}
 
 impl NbtPath {
     #[must_use]
     pub fn with_node(mut self, node: NbtPathNode) -> Self {
-        self.0.push(node);
+        self.nodes.push(node);
 
         self
     }
 
     #[must_use]
     pub fn with_named_compound(mut self, compound: SnbtCompound) -> Self {
-        if let Some(NbtPathNode::Named(_, inner_compound @ None)) = self.0.last_mut() {
+        if let Some(NbtPathNode::Named(_, inner_compound @ None)) = self.nodes.last_mut() {
             *inner_compound = Some(compound);
         }
 
         self
-    }
-
-    #[inline]
-    #[must_use]
-    pub fn to_snbt_string(&self) -> Snbt {
-        Snbt::String(self.to_string())
     }
 }
 
@@ -79,8 +84,8 @@ impl Display for NbtPathNode {
 
 impl Display for NbtPath {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
-        for (i, node) in self.0.iter().enumerate() {
-            if i != 0 && !matches!(node, NbtPathNode::Index(..)) {
+        for (i, node) in self.nodes.iter().enumerate() {
+            if i != 0 && !node.can_dot_be_omitted() {
                 write!(f, ".")?;
             }
 
