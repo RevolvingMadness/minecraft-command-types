@@ -15,7 +15,7 @@ pub enum FunctionCommandArguments {
 impl Display for FunctionCommandArguments {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
-            Self::Compound(compound) => write!(f, "{}", (*compound).display()),
+            Self::Compound(compound) => write!(f, "{}", (*compound).display_as_compound()),
             Self::DataTarget(target, path) => {
                 write!(f, "with {}", target)?;
 

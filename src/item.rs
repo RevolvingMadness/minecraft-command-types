@@ -1,3 +1,5 @@
+use itertools::Itertools;
+
 use crate::{resource_location::ResourceLocation, snbt::Snbt};
 use std::fmt::{self, Display, Formatter};
 
@@ -38,18 +40,19 @@ pub struct OrGroup(pub Vec<(bool, ItemTest)>);
 
 impl Display for OrGroup {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
-        let parts: Vec<String> = self
-            .0
-            .iter()
-            .map(|(negated, test)| {
-                if *negated {
-                    format!("!{}", test)
-                } else {
-                    test.to_string()
-                }
-            })
-            .collect();
-        write!(f, "{}", parts.join("|"))
+        for (i, (inverted, test)) in self.0.iter().enumerate() {
+            if i != 0 {
+                write!(f, "|")?;
+            }
+
+            if *inverted {
+                write!(f, "!")?;
+            }
+
+            write!(f, "{}", test)?;
+        }
+
+        Ok(())
     }
 }
 
@@ -63,14 +66,11 @@ impl Display for ItemPredicate {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         self.id.fmt(f)?;
 
-        if self.or_groups.is_empty() {
-            return Ok(());
+        if !self.or_groups.is_empty() {
+            write!(f, "[{}]", self.or_groups.iter().format("|"))?;
         }
 
-        write!(f, "[")?;
-
-        let parts: Vec<String> = self.or_groups.iter().map(ToString::to_string).collect();
-        write!(f, "{}]", parts.join(","))
+        Ok(())
     }
 }
 
@@ -126,20 +126,7 @@ impl Display for ItemStack {
         self.id.fmt(f)?;
 
         if !self.components.is_empty() {
-            write!(f, "[")?;
-            let mut first = true;
-
-            for component in &self.components {
-                if !first {
-                    write!(f, ", ")?;
-                }
-
-                write!(f, "{}", component)?;
-
-                first = false;
-            }
-
-            write!(f, "]")?;
+            write!(f, "[{}]", self.components.iter().format(", "))?;
         }
 
         Ok(())

@@ -22,6 +22,7 @@ use crate::{
     rotation::Rotation,
     types::Float,
 };
+use itertools::Itertools;
 use std::{
     collections::BTreeSet,
     fmt::{self, Display, Formatter},
@@ -462,8 +463,7 @@ impl Display for ExecuteSubcommand {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
             Self::Align(axes, next) => {
-                let axes_str: String = axes.iter().map(ToString::to_string).collect();
-                write!(f, "align {} {}", axes_str, next)?;
+                write!(f, "align {} {}", axes.iter().format(""), next)?;
 
                 Ok(())
             }

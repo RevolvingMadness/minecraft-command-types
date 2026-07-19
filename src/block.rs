@@ -1,3 +1,5 @@
+use itertools::Itertools;
+
 use crate::{
     resource_location::ResourceLocation,
     snbt::{SnbtCompound, SnbtCompoundExt},
@@ -19,16 +21,19 @@ impl Display for BlockState {
         self.id.fmt(f)?;
 
         if !self.block_states.is_empty() {
-            let states: Vec<String> = self
-                .block_states
-                .iter()
-                .map(|(k, v)| format!("{}={}", k, v))
-                .collect();
-            write!(f, "[{}]", states.join(", "))?;
+            write!(
+                f,
+                "[{}]",
+                self.block_states
+                    .iter()
+                    .format_with(", ", |(key, value), f| {
+                        f(&format_args!("{}={}", key, value))
+                    })
+            )?;
         }
 
         if let Some(snbt) = &self.data_tags {
-            write!(f, "{}", (*snbt).display())?;
+            write!(f, "{}", (*snbt).display_as_compound())?;
         }
 
         Ok(())

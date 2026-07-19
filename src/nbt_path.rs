@@ -59,14 +59,14 @@ impl NbtPath {
 impl Display for NbtPathNode {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
-            Self::RootCompound(compound) => write!(f, "{}", (*compound).display()),
+            Self::RootCompound(compound) => write!(f, "{}", (*compound).display_as_compound()),
             Self::Named(name, filter) => {
                 f.write_str(&escape_nbt_path_key(name))?;
 
                 if let Some(filter) = filter
                     && !filter.is_empty()
                 {
-                    write!(f, "{}", filter.display())?;
+                    write!(f, "{}", filter.display_as_compound())?;
                 }
 
                 Ok(())

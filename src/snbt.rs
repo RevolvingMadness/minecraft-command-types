@@ -7,11 +7,11 @@ use std::{
 pub type SnbtCompound = BTreeMap<String, Snbt>;
 
 pub(crate) trait SnbtCompoundExt {
-    fn display(&self) -> SnbtCompoundDisplay<'_>;
+    fn display_as_compound(&self) -> SnbtCompoundDisplay<'_>;
 }
 
 impl SnbtCompoundExt for SnbtCompound {
-    fn display(&self) -> SnbtCompoundDisplay<'_> {
+    fn display_as_compound(&self) -> SnbtCompoundDisplay<'_> {
         SnbtCompoundDisplay { this: self }
     }
 }
@@ -137,7 +137,7 @@ impl Display for Snbt {
 
                 f.write_str("]")
             }
-            Self::Compound(compound) => write!(f, "{}", (*compound).display()),
+            Self::Compound(compound) => write!(f, "{}", (*compound).display_as_compound()),
             Self::ByteArray(byte_array) => {
                 f.write_str("[B; ")?;
 
